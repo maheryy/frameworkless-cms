@@ -1,0 +1,8 @@
+.DS_Store
+
+.db_data
+docker-compose.*.yaml
+.env*
+
+.docker/config/*.*.ini
+.docker/config/*.*.conf

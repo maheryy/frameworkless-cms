@@ -1,0 +1,41 @@
+version: '3'
+services:
+  server_cms:
+    build: .docker
+    container_name: cms_server
+    ports :
+     - "${SERVER_PORT}:80"
+    volumes:
+     - ./app:/var/www/html/
+     - ./.docker/config/000-default.conf:/etc/apache2/sites-available/000-default.conf
+     - ./.docker/config/apache2.conf:/etc/apache2/apache2.conf
+     - ./.docker/config/php.ini:/usr/local/etc/php/php.ini
+    depends_on:
+     - database_cms
+
+  database_cms:
+    image: mysql:5.7
+    container_name: cms_database
+    ports :
+      - "${DB_PORT}:3306"
+    environment:
+      MYSQL_ROOT_PASSWORD: ${DB_ROOT_PWD}
+      MYSQL_USER: ${DB_USER}
+      MYSQL_PASSWORD: ${DB_PWD}
+      MYSQL_DATABASE: default_db
+    volumes:
+      - ./.db_data:/var/lib/mysql
+    restart: always
+
+  phpmyadmin_cms:
+    image: phpmyadmin/phpmyadmin:5.0
+    container_name: cms_phpmyadmin
+    depends_on:
+      - database_cms
+    ports:
+      - "${PHP_ADMIN_PORT}:80"
+    environment:
+      - PMA_ARBITRARY=1
+      - PMA_HOST=${DB_HOST}
+      - PMA_USER=${DB_USER}
+      - PMA_PASSWORD=${DB_PWD}
