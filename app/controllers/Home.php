@@ -10,4 +10,14 @@ class Home extends Controller {
     {
 
     }
+
+    public function defaultAction()
+    {
+        echo 'default';
+    }
+
+    public function loginAction()
+    {
+        echo 'login';
+    }
 }

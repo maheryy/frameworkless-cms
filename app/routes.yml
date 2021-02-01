@@ -1,0 +1,7 @@
+/:
+  controller: Home
+  action: default
+
+/login:
+  controller: Home
+  action: login

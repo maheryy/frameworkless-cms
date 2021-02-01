@@ -1,13 +1,8 @@
 FROM php:7.2-apache
 
-# yaml extension
-# RUN apt-get update -y \
-#     && apt-get install -y libyaml-dev libyaml \
-#     && pecl install yamL \
-
 RUN apt-get update -y \
-    && apt-get install -y libpng-dev libfreetype6-dev \
-    && pecl install xdebug 
+    && apt-get install -y libpng-dev libfreetype6-dev libyaml-dev \
+    && pecl install xdebug yamL
     
 RUN docker-php-ext-enable xdebug \
     && docker-php-ext-configure gd --with-freetype-dir=/usr/include/freetype2 \
