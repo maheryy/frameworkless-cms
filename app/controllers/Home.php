@@ -6,18 +6,21 @@ use App\Core\Controller;
 
 class Home extends Controller {
 
-    public function __construct() 
-    {
-
+    public function __construct() {
+        parent::__construct();
     }
 
-    public function defaultAction()
-    {
-        echo 'default';
+    public function defaultAction() {
+        $this->setView('default');
+        $this->setArrayData([
+            'name' => 'nonnn',
+            'test' => 'bla',
+            'age' => 8
+        ]);
+        $this->setData('test2', 'oui');
     }
 
-    public function loginAction()
-    {
+    public function logInAction() {
         echo 'login';
     }
 }
