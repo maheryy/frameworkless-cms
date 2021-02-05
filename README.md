@@ -22,6 +22,7 @@ DB_DRIVER=mysql
 DB_HOST=database_cms
 # You can change these variables below
 DB_NAME=default_db
+DB_PREFIX=aaa #Prefix tables / ex: aaa_user
 DB_ROOT_PWD=root
 DB_USER=root
 DB_PWD=root

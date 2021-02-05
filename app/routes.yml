@@ -1,0 +1,11 @@
+/:
+  controller: Home
+  action: default
+
+/login:
+  controller: Home
+  action: login
+
+/register:
+  controller: Home
+  action: register
