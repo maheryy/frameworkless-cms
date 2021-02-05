@@ -2,11 +2,11 @@
 
 namespace App\Core;
 
-class Controller {
+abstract class Controller {
     protected $view;
     protected $view_data;
 
-    public function __construct() {
+    protected function __construct() {
         
     }
 
