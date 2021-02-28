@@ -2,40 +2,43 @@
 
 namespace App\Core;
 
-abstract class Controller {
-    protected $view;
-    protected $view_data;
+use App\Core\Utils\Session;
 
-    protected function __construct() {
-        
-    }
+abstract class Controller
+{
+    protected $template;
+    protected $view_data = [];
 
-    protected function setView(string $view, string $template = 'default') 
+    protected function __construct()
     {
-        if( isset($this->view) ) {
-            $this->view->setView($view);
-            $this->view->setTemplate($template);
-        } else {
-            $this->view = new View($view, $template);
-        }
+        Session::start();
     }
 
-    protected function setData(string $key, string $value) 
+    protected function render(string $view, string $template = 'default')
+    {
+        new View($view, $template, $this->view_data);
+    }
+
+    protected function setParam(string $key, $value)
     {
         $this->view_data[$key] = $value;
     }
 
-    protected function setArrayData(array $data) 
+    protected function setData(array $data)
     {
-        $this->view_data = !empty($this->view_data) 
-                            ? array_merge($this->view_data, $data)
-                            : $data;
+        $this->view_data = !empty($this->view_data)
+            ? array_merge($this->view_data, $data)
+            : $data;
     }
 
-    public function __destruct()
+    protected function send(string $message)
     {
-        if( isset($this->view) ) {
-            $this->view->setData($this->view_data);
-        }
+        echo $message;
+    }
+
+    protected function sendJSON(array $data)
+    {
+        header('Content-Type: application/json');
+        echo json_encode($data);
     }
 }

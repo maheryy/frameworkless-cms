@@ -5,7 +5,8 @@ namespace App\Models;
 use App\Core\Database;
 use App\Core\Model;
 
-class User extends Model {
+class User extends Model
+{
     private $id;
     protected $login;
     protected $password;
@@ -58,39 +59,39 @@ class User extends Model {
         $this->updatedAt = $updatedAt;
     }
 
-    public function getId() 
+    public function getId()
     {
         return $this->id;
     }
-    public function getLogin() 
+    public function getLogin()
     {
         return $this->login;
     }
-    public function getPassword() 
+    public function getPassword()
     {
         return $this->password;
     }
-    public function getUsername() 
+    public function getUsername()
     {
         return $this->username;
     }
-    public function getEmail() 
+    public function getEmail()
     {
         return $this->email;
     }
-    public function getRole() 
+    public function getRole()
     {
         return $this->role;
     }
-    public function getStatus() 
+    public function getStatus()
     {
         return $this->status;
     }
-    public function getCreatedAt() 
+    public function getCreatedAt()
     {
         return $this->createdAt;
     }
-    public function getUpdatedAt() 
+    public function getUpdatedAt()
     {
         return $this->updatedAt;
     }

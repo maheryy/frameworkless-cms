@@ -4,76 +4,79 @@ namespace App\Core;
 
 use Exception;
 
-class Router {
+class Router
+{
     private $uri;
     private $routes = [];
     private $routesPath = './routes.yml';
     private $controller;
-    private $slugs;
-    private $action;
+    private $method;
+    static private $slugs;
 
     public function __construct()
     {
         $this->loadRoutes();
 
         $uri = $this->getParsedUri();
-        $action = $this->findAction($uri['slug']);
-        
-        $this->setController($action['controller']);
-        $this->setAction($action['action']);
+        $method = $this->findMethod($uri['slug']);
+
+
+        $this->setController($method['controller']);
+        $this->setMethod($method['method']);
     }
 
     private function loadRoutes()
     {
-        if( !file_exists($this->routesPath) ) {
+        if (!file_exists($this->routesPath)) {
             throw new Exception('File no exist');
         }
 
         $this->routes = yaml_parse_file($this->routesPath);
-        if( empty($this->routes) ) {
-            throw new Exception('no routes found in the file '. $this->routesPath);
+        if (empty($this->routes)) {
+            throw new Exception('no routes found in the file ' . $this->routesPath);
         }
-        
+
         foreach ($this->routes as $slug => $data) {
-            $this->slugs[$data['controller']][$data['action']] = $slug;
-        } 
+            self::$slugs[$data['controller']][$data['method']] = $slug;
+        }
     }
 
-    private function setUri(string $uri) {
+    private function setUri(string $uri)
+    {
         $this->uri = $uri;
     }
 
     private function setController(string $controller)
     {
-        $this->controller = ucfirst(mb_strtolower($controller));
+        $this->controller = ucfirst($controller);
     }
 
-    private function setAction(string $action)
+    private function setMethod(string $method)
     {
-        $this->action = mb_strtolower($action) .'Action';
+        $this->method = $method;
     }
 
-    public function getControllerPath() : string 
+    public function getControllerPath(): string
     {
-        return PATH_CONTROLLERS. $this->controller .'.php';
+        return PATH_CONTROLLERS . $this->controller . '.php';
     }
 
-    public function getControllerNamespace() : string 
+    public function getControllerNamespace(): string
     {
-        return 'App\Controllers\\'. $this->controller;
+        return 'App\Controllers\\' . $this->controller;
     }
 
-    public function getAction() : string
+    public function getMethod(): string
     {
-        return $this->action;
+        return $this->method;
     }
 
     private function getParsedUri(): array
     {
-        $uri = explode('?',$_SERVER['REQUEST_URI'])[0];
+        $uri = explode('?', $_SERVER['REQUEST_URI'])[0];
         $this->setUri($uri);
         $uri_exploded = explode('/', ltrim($uri, '/'));
-        $slug = '/'. array_shift($uri_exploded);
+        $slug = '/' . array_shift($uri_exploded);
 
         return [
             'slug' => $slug,
@@ -81,67 +84,67 @@ class Router {
         ];
     }
 
-    private function findAction(string $slug) : array
+    private function findMethod(string $slug): array
     {
-        if ( empty($this->routes[$slug])) {
-            throw new Exception('this route doesnt exist '. $slug);
+        if (empty($this->routes[$slug])) {
+            throw new Exception('this route doesnt exist ' . $slug);
         }
         $controller = trim($this->routes[$slug]['controller']);
-        $action = trim($this->routes[$slug]['action']);
-        if ( empty($controller) ) {
-            throw new Exception('no controller found at route'. $this->routes[$slug]);
+        $method = trim($this->routes[$slug]['method']);
+
+        if (empty($controller)) {
+            throw new Exception('no controller found at route' . $this->routes[$slug]);
         }
-        if ( empty($action) ) {
-            throw new Exception('no action found at route'. $this->routes[$slug]);
-        }   
+        if (empty($method)) {
+            throw new Exception('no method found at route' . $this->routes[$slug]);
+        }
 
         return [
             'controller' => $controller,
-            'action' => $action
+            'method' => $method,
         ];
     }
 
-    private function callAction(string $class_name, string $action)
+    private function callMethod(string $class_name, string $method_name)
     {
         $class_path = $this->getControllerPath();
-        if( file_exists($class_path) ) {
+        if (file_exists($class_path)) {
             include $class_path;
 
-            if( class_exists($class_name, false) ) {
+            if (class_exists($class_name, false)) {
                 $controller = new $class_name();
 
-                if( method_exists($class_name, $action) ){
-                    $controller->{$action}();
+                if (method_exists($class_name, $method_name)) {
+                    $controller->{$method_name}();
                 } else {
-                    die("L'action ". $action ." n'existe pas");
+                    die("La méthode " . $method_name . " n'existe pas");
                 }
             } else {
-                die("La classe ". $class_name ." n'existe pas");
+                die("La classe " . $class_name . " n'existe pas");
             }
         } else {
-            die("Le fichier ". $class_path ." n'existe pas");
+            die("Le fichier " . $class_path . " n'existe pas");
         }
     }
 
     public function run()
     {
         $class_name = $this->getControllerNamespace();
-        $action = $this->getAction();
+        $method = $this->getMethod();
 
-        $this->callAction($class_name, $action);
+        $this->callMethod($class_name, $method);
     }
 
-    public function getRoute(string $controller, string $action)
+    public static function getRoute(string $controller, string $method): string
     {
-		if(empty($this->slugs[$controller]) && empty($this->slugs[$controller][$action]))
-            throw new Exception("Aucune route associé à ".$controller." -> ".$action );
-        
-        return $this->slugs[$controller][$action];		
-	}
+        if (empty(self::$slugs[$controller]) && empty(self::$slugs[$controller][$method]))
+            throw new Exception("Aucune route associé à " . $controller . " -> " . $method);
+
+        return self::$slugs[$controller][$method];
+    }
 
     public static function redirect(string $path = '')
     {
-        header('Location: http://localhost/'. $path);
+        header('Location: http://localhost/' . $path);
     }
-    
 }
