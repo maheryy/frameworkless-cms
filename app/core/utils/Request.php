@@ -4,6 +4,7 @@ namespace App\Core\Utils;
 
 class Request
 {
+    
     const REQUEST = 0;
     const REQUEST_POST = 1;
     const REQUEST_GET = 2;
@@ -14,6 +15,14 @@ class Request
     const COOKIE_EXPIRATION_DAY = 2;
 
 
+    /**
+     * Return the defined $_REQUEST[$key] variable, null otherwise
+     * $_REQUEST contains $_GET, $_POST, $_COOKIE
+     * 
+     * @param string $key
+     * 
+     * @return string|int|null 
+     */
     public static function get(string $key)
     {
         return isset($_REQUEST[$key])
@@ -21,6 +30,13 @@ class Request
             : null;
     }
 
+    /**
+     * Return the defined $_GET[$key] variable, null otherwise
+     * 
+     * @param string $key
+     * 
+     * @return string|int|null 
+     */
     public static function getGET(string $key)
     {
         return isset($_GET[$key])
@@ -28,6 +44,13 @@ class Request
             : null;
     }
 
+     /**
+     * Return the defined $_POST[$key] variable, null otherwise
+     * 
+     * @param string $key
+     * 
+     * @return string|int|null 
+     */
     public static function getPOST(string $key)
     {
         return isset($_POST[$key])
@@ -35,6 +58,13 @@ class Request
             : null;
     }
 
+     /**
+     * Return the defined $COOKIE[$key] variable, null otherwise
+     * 
+     * @param string $key
+     * 
+     * @return string|int|null 
+     */
     public static function getCookie(string $key)
     {
         return isset($_COOKIE[$key])
@@ -42,6 +72,13 @@ class Request
             : null;
     }
 
+    /**
+     * Delete a cookie
+     * 
+     * @param string $key
+     * 
+     * @return void
+     */
     public static function deleteCookie(string $key)
     {
         self::setCookie($key, '', [
@@ -50,6 +87,19 @@ class Request
         ]);
     }
 
+    /**
+     * Set a cookie
+     * 
+     * @param string $key
+     * @param string $value
+     * @param array $options 
+     * Possible options :
+     * - int expiration : 0 is default
+     * - int expiration_basis : COOKIE_EXPIRATION_DAY|COOKIE_EXPIRATION_HOUR|COOKIE_EXPIRATION_MIN
+     * - string path : '/' is default
+     * 
+     * @return void
+     */
     public static function setCookie(string $key, string $value, array $options = [])
     {
         $path = '/';
@@ -79,24 +129,51 @@ class Request
         setcookie($key, $value, $expire, $path);
     }
 
-    public static function allGet(): array
+    /**
+     * Return all GET Variables
+     * 
+     * @return array
+     */
+    public static function allGet()
     {
         return self::all(self::REQUEST_GET);
     }
-    public static function allPost(): array
+    /**
+     * Return all POST Variables
+     * 
+     * @return array
+     */
+    public static function allPost()
     {
         return self::all(self::REQUEST_POST);
     }
-    public static function allRequest(): array
+    /**
+     * Return all REQUEST Variables (GET, POST, COOKIE)
+     * 
+     * @return array
+     */
+    public static function allRequest()
     {
         return self::all(self::REQUEST);
     }
-    public static function allCookie(): array
+    /**
+     * Return all COOKIE Variables
+     * 
+     * @return array
+     */
+    public static function allCookie()
     {
         return self::all(self::REQUEST_COOKIE);
     }
 
-    private static function all(int $source = self::REQUEST): array
+    /**
+     * Return all COOKIE|POST|GET|REQUEST Variables
+     * 
+     * @param int $source REQUEST|REQUEST_GET|REQUEST_POST|REQUEST_COOKIE
+     * 
+     * @return array
+     */
+    private static function all(int $source = self::REQUEST)
     {
         $res = $vars = [];
         

@@ -15,6 +15,11 @@ class View
         $this->setData($data);
     }
 
+    /**
+     * @param string $view
+     * 
+     * @return void
+     */
     public function setView(string $view)
     {
         $view_path = PATH_VIEWS . $view . '.view.php';
@@ -24,6 +29,11 @@ class View
         $this->view = $view_path;
     }
 
+    /**
+     * @param string $template
+     * 
+     * @return void
+     */
     public function setTemplate(string $template)
     {
         $template_path = PATH_TEMPLATES . $template . '.tpl.php';
@@ -33,6 +43,11 @@ class View
         $this->template = $template_path;
     }
 
+    /**
+     * @param array $data
+     * 
+     * @return void
+     */
     public function setData(array $data)
     {
         $this->data = $data;

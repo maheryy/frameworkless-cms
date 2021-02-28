@@ -24,17 +24,25 @@ class QueryBuilder
     {
     }
 
-    public function __toString(): string
+    public function __toString()
     {
         return $this->buildQuery();
     }
 
-    public function getParams(): array
+    /**
+     * @return array
+     */
+    public function getParams()
     {
         return $this->params;
     }
 
-    public function buildQuery(): string
+    /**
+     * Return the final statement with placeholders
+     * 
+     * @return string
+     */
+    public function buildQuery()
     {
         $select = "SELECT\n" . (!empty($this->fields) ? implode(', ', $this->fields) : '*');
         $from = "\nFROM\n" . $this->from;
@@ -47,7 +55,12 @@ class QueryBuilder
         return "$select $from $join $where $group $order $limit\n";
     }
 
-    public function buildQueryWithParams(): string
+    /**
+     * Return the final statement with values
+     * 
+     * @return string
+     */
+    public function buildQueryWithParams()
     {
         $query = $this->buildQuery();
         foreach ($this->params as $key => $value) {
@@ -57,7 +70,12 @@ class QueryBuilder
         return $query;
     }
 
-    public function cleanUnusedParams(): self
+    /**
+     * Remove all params that doesn't exist in the final statement
+     * 
+     * @return QueryBuilder
+     */
+    public function cleanUnusedParams()
     {
         $query = $this->buildQuery();
         $unused_params = [];
@@ -73,7 +91,20 @@ class QueryBuilder
         return $this;
     }
 
-    public function select(array $fields): self
+    /**
+     * Specify all fields. 
+     * Same field name with different table name are supported
+     * 
+     * ex : 
+     * - ['id', 'name'] : SELECT id, name FROM ..
+     * - [ 'table1' => ['id', 'name'], 'table2' => ['id_table_2' => 'id', 'name_table_2' => 'name'] ] 
+     * -> SELECT table1.id, table1.name, table2.id AS id_table_2, table2.name AS name_table_2 FROM ...
+     * 
+     * @param array $fields
+     * 
+     * @return QueryBuilder
+     */
+    public function select(array $fields)
     {
         foreach ($fields as $key => $field) {
             if (is_array($field)) {
@@ -92,13 +123,29 @@ class QueryBuilder
         return $this;
     }
 
-    public function from(string $table): self
+    /**
+     * Specify the main table in the statement
+     * 
+     * @param string $table
+     * 
+     * @return QueryBuilder
+     */
+    public function from(string $table)
     {
         $this->from = $table;
         return $this;
     }
 
-    public function join(string $type, string $table, string ...$conditions): self
+    /**
+     * Specify join clauses
+     * 
+     * @param string $type JOIN_FULL|JOIN_INNER|JOIN_LEFT|JOIN_RIGHT
+     * @param string $table
+     * @param string ...$conditions ex : QueryBuilder::eq('id', 5) | "table1.id = table2.id"
+     * 
+     * @return QueryBuilder
+     */
+    private function join(string $type, string $table, string ...$conditions)
     {
         if (!empty($conditions)) {
             $group_conditions = '';
@@ -122,7 +169,18 @@ class QueryBuilder
         return $this;
     }
 
-    public function where(array ...$conditions): self
+    /**
+     * Specify all the clauses
+     * 
+     * ex: 
+     * - QueryBuilder::eq('id', 4) : WHERE id = :id
+     * - [QueryBuilder::eq('id', 4), QueryBuilder::like('name', 'test')] : WHERE id = :id OR name LIKE :name
+     * 
+     * @param array ...$conditions
+     * 
+     * @return QueryBuilder
+     */
+    public function where(array ...$conditions)
     {
         $group_conditions = '';
         foreach ($conditions as $key => $condition) {
@@ -136,46 +194,78 @@ class QueryBuilder
         return $this;
     }
 
-    public function order(string $direction, string ...$fields): self
+    /**
+     * Specify all the fields that should be ordered
+     * 
+     * 
+     * @param string $direction ORDER_ASC|ORDER_DESC
+     * @param string ...$fields
+     * 
+     * @return QueryBuilder
+     */
+    private function order(string $direction, string ...$fields)
     {
         $this->orders[] = !empty($fields) ? implode(', ', $fields) . ' ' . $direction : null;
         return $this;
     }
 
-    public function group(string ...$fields): self
+    /**
+     * Specify all the fields that should be grouped
+     * 
+     * @param string ...$fields
+     * 
+     * @return QueryBuilder
+     */
+    public function group(string ...$fields)
     {
         $this->group = !empty($fields) ? implode(', ', $fields) : null;
         return $this;
     }
 
-    public function limit(int $limit, int $from = 0): self
+    /**
+     * Specify the limit
+     * 
+     * @param int $limit
+     * @param int $from optional
+     * 
+     * @return QueryBuilder
+     */
+    public function limit(int $limit, int $from = 0)
     {
         $this->limit = !empty($from) ? "$from, $limit" : $limit;
         return $this;
     }
 
-    public function joinLeft(string $table, string ...$conditions): self
+    public function joinLeft(string $table, string ...$conditions)
     {
         return $this->join(self::JOIN_LEFT, $table, ...$conditions);
     }
-    public function joinRight(string $table, string ...$conditions): self
+    public function joinRight(string $table, string ...$conditions)
     {
         return $this->join(self::JOIN_RIGHT, $table, ...$conditions);
     }
-    public function joinInner(string $table, string ...$conditions): self
+    public function joinInner(string $table, string ...$conditions)
     {
         return $this->join(self::JOIN_INNER, $table, ...$conditions);
     }
-    public function orderAsc(string ...$fields): self
+    public function orderAsc(string ...$fields)
     {
         return $this->order(self::ORDER_ASC, ...$fields);
     }
-    public function orderDesc(string ...$fields): self
+    public function orderDesc(string ...$fields)
     {
         return $this->order(self::ORDER_DESC, ...$fields);
     }
 
-    public function debug(): array
+    /**
+     * Return :
+     * - the final statement with placeholders
+     * - the final statement with values binded
+     * - bind parameters associated with value
+     * 
+     * @return array
+     */
+    public function debug()
     {
         return [
             'sql' => $this->buildQuery(),
@@ -185,8 +275,15 @@ class QueryBuilder
     }
 
 
-    # WHERE id = 5
-    public static function eq(string $identifier, $value): array
+    /**
+     * WHERE id = :id | ['id' => 5]
+     * 
+     * @param string $identifier
+     * @param mixed $value
+     * 
+     * @return array
+     */
+    public static function eq(string $identifier, $value)
     {
         $placeholder = self::makePlaceholder($identifier);
         return [
@@ -194,8 +291,16 @@ class QueryBuilder
             'bind' => [$placeholder => $value]
         ];
     }
-    # WHERE id <> 5
-    public static function neq(string $identifier, $value): array
+
+    /**
+     * WHERE id <> :id | ['id' => 5]
+     * 
+     * @param string $identifier
+     * @param mixed $value
+     * 
+     * @return array
+     */
+    public static function neq(string $identifier, $value)
     {
         $placeholder = self::makePlaceholder($identifier);
         return [
@@ -203,8 +308,16 @@ class QueryBuilder
             'bind' => [$placeholder => $value]
         ];
     }
-    # WHERE id < 5
-    public static function lt(string $identifier, $value): array
+
+    /**
+     * WHERE id < :id | ['id' => 5]
+     * 
+     * @param string $identifier
+     * @param mixed $value
+     * 
+     * @return array
+     */
+    public static function lt(string $identifier, $value)
     {
         $placeholder = self::makePlaceholder($identifier);
         return [
@@ -212,8 +325,16 @@ class QueryBuilder
             'bind' => [$placeholder => $value]
         ];
     }
-    # WHERE id <= 5
-    public static function lte(string $identifier, $value): array
+
+    /**
+     * WHERE id <= :id | ['id' => 5]
+     * 
+     * @param string $identifier
+     * @param mixed $value
+     * 
+     * @return array
+     */
+    public static function lte(string $identifier, $value)
     {
         $placeholder = self::makePlaceholder($identifier);
         return [
@@ -221,8 +342,16 @@ class QueryBuilder
             'bind' => [$placeholder => $value]
         ];
     }
-    # WHERE id > 5
-    public static function gt(string $identifier, $value): array
+
+    /**
+     * WHERE id > :id | ['id' => 5]
+     * 
+     * @param string $identifier
+     * @param mixed $value
+     * 
+     * @return array
+     */
+    public static function gt(string $identifier, $value)
     {
         $placeholder = self::makePlaceholder($identifier);
         return [
@@ -230,8 +359,16 @@ class QueryBuilder
             'bind' => [$placeholder => $value]
         ];
     }
-    # WHERE id >= 5
-    public static function gte(string $identifier, $value): array
+
+    /**
+     * WHERE id >= :id | ['id' => 5]
+     * 
+     * @param string $identifier
+     * @param mixed $value
+     * 
+     * @return array
+     */
+    public static function gte(string $identifier, $value)
     {
         $placeholder = self::makePlaceholder($identifier);
         return [
@@ -239,8 +376,17 @@ class QueryBuilder
             'bind' => [$placeholder => $value]
         ];
     }
-    # WHERE id >= 1 AND id <= 5
-    public static function between(string $identifier, $value1, $value2): array
+
+    /**
+     * WHERE id >= :id_1 AND id <= :id_2 | ['id_1' => 1, 'id_2' => 5]
+     * 
+     * @param string $identifier
+     * @param mixed $value1
+     * @param mixed $value2
+     * 
+     * @return array
+     */
+    public static function between(string $identifier, $value1, $value2)
     {
         $placeholder = self::makePlaceholder($identifier);
         return [
@@ -248,8 +394,16 @@ class QueryBuilder
             'bind' => ["{$placeholder}_1" => $value1, "{$placeholder}_2" => $value2]
         ];
     }
-    # WHERE name LIKE 'bob'
-    public static function like(string $identifier, string $value): array
+
+    /**
+     * WHERE name LIKE :name | ['name' => 'bob']
+     * 
+     * @param string $identifier
+     * @param string $value
+     * 
+     * @return array
+     */
+    public static function like(string $identifier, string $value)
     {
         $placeholder = self::makePlaceholder($identifier);
         return [
@@ -257,8 +411,16 @@ class QueryBuilder
             'bind' => [$placeholder => $value]
         ];
     }
-    # WHERE name NOT LIKE 'bob'
-    public static function notLike(string $identifier, string $value): array
+
+    /**
+     * WHERE name NOT LIKE :name | ['name' => 'bob']
+     * 
+     * @param string $identifier
+     * @param string $value
+     * 
+     * @return array
+     */
+    public static function notLike(string $identifier, string $value)
     {
         $placeholder = self::makePlaceholder($identifier);
         return [
@@ -266,8 +428,16 @@ class QueryBuilder
             'bind' => [$placeholder => $value]
         ];
     }
-    # WHERE id IN (1,2,3,4)
-    public static function in(string $identifier, array $values): array
+
+    /**
+     * WHERE id IN (:id_1, :id_2, :id_3) | ['id_1' => 1, 'id_2' => 2, 'id_3' => 3]
+     * 
+     * @param string $identifier
+     * @param array $values
+     * 
+     * @return array
+     */
+    public static function in(string $identifier, array $values)
     {
         $placeholder = self::makePlaceholder($identifier);
         $params = [];
@@ -279,8 +449,16 @@ class QueryBuilder
             'bind' => $params
         ];
     }
-    # WHERE id NOT IN (1,2,3,4)
-    public static function notIn(string $identifier, array $values): array
+
+    /**
+     * WHERE id NOT IN (:id_1, :id_2, :id_3) | ['id_1' => 1, 'id_2' => 2, 'id_3' => 3]
+     * 
+     * @param string $identifier
+     * @param array $values
+     * 
+     * @return array
+     */
+    public static function notIn(string $identifier, array $values)
     {
         $placeholder = self::makePlaceholder($identifier);
         $params = [];
@@ -292,16 +470,30 @@ class QueryBuilder
             'bind' => $params
         ];
     }
-    # WHERE content IS NULL
-    public static function isNull(string $identifier): array
+
+    /**
+     * WHERE content IS NULL
+     * 
+     * @param string $identifier
+     * 
+     * @return array
+     */
+    public static function isNull(string $identifier)
     {
         return [
             'expr' => "$identifier IS NULL",
             'bind' => []
         ];
     }
-    # WHERE content IS NOT NULL
-    public static function isNotNull(string $identifier): array
+
+    /**
+     * WHERE content IS NOT NULL
+     * 
+     * @param string $identifier
+     * 
+     * @return array
+     */
+    public static function isNotNull(string $identifier)
     {
         return [
             'expr' => "$identifier IS NOT NULL",
@@ -309,7 +501,14 @@ class QueryBuilder
         ];
     }
 
-    public static function makePlaceholder(string $identifier): string
+    /**
+     * Generate placeholder for prepared statements
+     * 
+     * @param string $identifier
+     * 
+     * @return string
+     */
+    public static function makePlaceholder(string $identifier)
     {
         return str_replace('.', '_', $identifier);
     }

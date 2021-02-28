@@ -7,6 +7,14 @@ abstract class ConstantManager
 
 	public static $env_path = './config/.env';
 
+	/**
+	 * Define a constant
+	 * 
+	 * @param string $key
+	 * @param string $value
+	 * 
+	 * @return void
+	 */
 	public static function defineConstant(string $key, string $value)
 	{
 		$key = str_replace(' ', '_', mb_strtoupper(trim($key)));
@@ -17,6 +25,11 @@ abstract class ConstantManager
 		}
 	}
 
+	/**
+	 * Define constants located in .env and conf.inc.php
+	 * 
+	 * @return void
+	 */
 	public static function loadConstants()
 	{
 		if (!file_exists(self::$env_path)) {

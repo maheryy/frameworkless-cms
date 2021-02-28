@@ -25,6 +25,11 @@ class Router
         $this->setMethod($method['method']);
     }
 
+    /**
+     * Parse routes.yml and set $slugs to retrieve a route
+     * 
+     * @return void
+     */
     private function loadRoutes()
     {
         if (!file_exists($this->routesPath)) {
@@ -41,37 +46,66 @@ class Router
         }
     }
 
+    /**
+     * @param string $uri
+     * 
+     * @return void
+     */
     private function setUri(string $uri)
     {
         $this->uri = $uri;
     }
 
+    /**
+     * @param string $controller
+     * 
+     * @return void
+     */
     private function setController(string $controller)
     {
         $this->controller = ucfirst($controller);
     }
 
+    /**
+     * @param string $method
+     * 
+     * @return void
+     */
     private function setMethod(string $method)
     {
         $this->method = $method;
     }
 
-    public function getControllerPath(): string
+    /**
+     * @return string
+     */
+    public function getControllerPath()
     {
         return PATH_CONTROLLERS . $this->controller . '.php';
     }
 
-    public function getControllerNamespace(): string
+    /**
+     * @return string
+     */
+    public function getControllerNamespace()
     {
         return 'App\Controllers\\' . $this->controller;
     }
 
-    public function getMethod(): string
+    /**
+     * @return string
+     */
+    public function getMethod()
     {
         return $this->method;
     }
 
-    private function getParsedUri(): array
+    /**
+     * Return the route and the queries of a given URI
+     * 
+     * @return array
+     */
+    private function getParsedUri()
     {
         $uri = explode('?', $_SERVER['REQUEST_URI'])[0];
         $this->setUri($uri);
@@ -84,7 +118,15 @@ class Router
         ];
     }
 
-    private function findMethod(string $slug): array
+
+    /**
+     * Return the right controller & method associated with the route
+     * 
+     * @param string $slug 
+     * 
+     * @return array
+     */
+    private function findMethod(string $slug)
     {
         if (empty($this->routes[$slug])) {
             throw new Exception('this route doesnt exist ' . $slug);
@@ -105,6 +147,15 @@ class Router
         ];
     }
 
+
+    /**
+     * Calls $method_name of a specified $class_name
+     * 
+     * @param string $class_name
+     * @param string $method_name
+     * 
+     * @return void
+     */
     private function callMethod(string $class_name, string $method_name)
     {
         $class_path = $this->getControllerPath();
@@ -127,6 +178,11 @@ class Router
         }
     }
 
+    /**
+     * Run the route requested by the URI
+     * 
+     * @return void
+     */
     public function run()
     {
         $class_name = $this->getControllerNamespace();
@@ -135,7 +191,15 @@ class Router
         $this->callMethod($class_name, $method);
     }
 
-    public static function getRoute(string $controller, string $method): string
+    /**
+     * Return the URI of a specified $method in a $controller
+     * 
+     * @param string $controller
+     * @param string $method
+     * 
+     * @return string
+     */
+    public static function getRoute(string $controller, string $method)
     {
         if (empty(self::$slugs[$controller]) && empty(self::$slugs[$controller][$method]))
             throw new Exception("Aucune route associé à " . $controller . " -> " . $method);
@@ -143,6 +207,13 @@ class Router
         return self::$slugs[$controller][$method];
     }
 
+    /**
+     * Redirect the user to $path
+     * 
+     * @param string $path
+     * 
+     * @return void
+     */
     public static function redirect(string $path = '')
     {
         header('Location: http://localhost/' . $path);

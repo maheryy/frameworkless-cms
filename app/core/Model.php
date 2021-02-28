@@ -24,15 +24,19 @@ abstract class Model
         ));
     }
 
-    /* Main actions */
+    /* --------- Main actions ---------- */
 
-    public function get(): array
-    {
-        $by_id = $this->hasId() ? ['id' => $this->getId()] : [];
-        return $this->getBy($by_id, Database::FETCH_ONE);
-    }
-
-    public function getBy(array $conditions, int $type_fetch = Database::FETCH_ALL): array
+    /**
+     * Fetch all fields by specific $conditions.
+     * Only equivalences are supported.
+     * - ex: ['id' => 2, 'name' => 'bob] : WHERE id = 2 AND name = 'bob'
+     * 
+     * @param array $conditions 
+     * @param int $type_fetch FETCH_ALL|FETCH_ONE
+     * 
+     * @return array
+     */
+    public function getBy(array $conditions, int $type_fetch = Database::FETCH_ALL)
     {
         $qb = (new QueryBuilder())->from($this->table_name);
         foreach ($conditions as $key => $value) {
@@ -49,7 +53,13 @@ abstract class Model
         return $this->fetchAll($qb);
     }
 
-    public function save(): array
+    /**
+     * Insert or update query.
+     * Update query is triggered if a model has an id. Insert query otherwise
+     * 
+     * @return array affected rows and last inserted id
+     */
+    public function save()
     {
         $data = $this->getModelData();
 
@@ -82,6 +92,13 @@ abstract class Model
         ];
     }
 
+    /**
+     * Set all the properties of a given model (usually from the database)
+     * 
+     * @param array $data
+     * 
+     * @return void
+     */
     public function populate(array $data)
     {
         foreach ($data as $column => $value) {
@@ -108,23 +125,48 @@ abstract class Model
     //     return true;
     // }
 
-    /* Utilities */
+    /* --------- Utilities ---------- */
 
-    protected function fetchAll(QueryBuilder $qb, bool $debug = false): array
+    /**
+     * Get all the result from a prepared query
+     * 
+     * @param QueryBuilder $qb
+     * @param bool $debug if true, the query (statement, params) is dumped before executing the query
+     * 
+     * @return array 1D array
+     */
+    protected function fetchAll(QueryBuilder $qb, bool $debug = false)
     {
         if ($debug) var_dump($qb->debug());
 
         return $this->fetch($qb->buildQuery(), $qb->getParams());
     }
 
-    protected function fetchOne(QueryBuilder $qb, bool $debug = false): array
+    /**
+     * Get the first result from a prepared query
+     * 
+     * @param QueryBuilder $qb
+     * @param bool $debug if true, the query (statement, params) is dumped before executing the query
+     * 
+     * @return array 2D array
+     */
+    protected function fetchOne(QueryBuilder $qb, bool $debug = false)
     {
         if ($debug) var_dump($qb->debug());
 
         return $this->fetch($qb->buildQuery(), $qb->getParams(), Database::FETCH_ONE);
     }
 
-    private function fetch(string $sql, array $params, int $type = Database::FETCH_ALL): array
+    /**
+     * Fetch a prepared statement
+     * 
+     * @param string $sql
+     * @param array $params
+     * @param int $type FETCH_ALL|FETCH_ONE
+     * 
+     * @return array
+     */
+    private function fetch(string $sql, array $params, int $type = Database::FETCH_ALL)
     {
         $st = $this->execute($sql, $params);
         $results = false;
@@ -141,7 +183,15 @@ abstract class Model
         return $results;
     }
 
-    private function execute(string $sql, array $params): \PDOStatement
+    /**
+     * Execute a prepared statement
+     * 
+     * @param string $sql
+     * @param array $params
+     * 
+     * @return PDOStatement
+     */
+    private function execute(string $sql, array $params)
     {
         $st = $this->db->prepare($sql);
         $st->execute($params);
@@ -149,7 +199,12 @@ abstract class Model
         return $st;
     }
 
-    private function getModelTableName(string $class): string
+    /**
+     * @param string $class
+     * 
+     * @return string
+     */
+    private function getModelTableName(string $class)
     {
         $class_name = explode("\\", $class);
         $class_name = $class_name[count($class_name) - 1];
@@ -157,12 +212,22 @@ abstract class Model
         return DB_PREFIX . '_' . mb_strtolower($class_name);
     }
 
+    /**
+     * Check if a model has an id
+     * 
+     * @return bool
+     */
     private function hasId()
     {
         return !is_null($this->getId());
     }
 
-    private function getModelData(): array
+    /**
+     * Return all the model properties => values
+     * 
+     * @return array
+     */
+    private function getModelData()
     {
         $res = [];
         foreach ($this->columns as $column) {
@@ -172,12 +237,26 @@ abstract class Model
         return $res;
     }
 
-    private function toGetter(string $column): string
+    /**
+     * Convert a table column name to a model's getter
+     * 
+     * @param string $column
+     * 
+     * @return string
+     */
+    private function toGetter(string $column)
     {
         return !empty($column) ? 'get' . ucfirst($column) : '';
     }
 
-    private function toSetter(string $column): string
+    /**
+     * Convert a table column name to a model's setter
+     * 
+     * @param string $column
+     * 
+     * @return string
+     */
+    private function toSetter(string $column)
     {
         return !empty($column) ? 'set' . ucfirst($column) : '';
     }

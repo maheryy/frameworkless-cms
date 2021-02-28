@@ -5,6 +5,7 @@ namespace App\Core;
 class Database
 {
     public static $pdo_instance = null;
+
     const FETCH_ONE = 1;
     const FETCH_ALL = 2;
 
@@ -22,7 +23,12 @@ class Database
         }
     }
 
-    public static function getInstance(): \PDO
+    /**
+     * Database singleton
+     * 
+     * @return PDO
+     */
+    public static function getInstance()
     {
         if (is_null(self::$pdo_instance)) {
             new Database();
@@ -31,6 +37,11 @@ class Database
         return self::$pdo_instance;
     }
 
+    /**
+     * Set PDO Attributes
+     * 
+     * @return void
+     */
     private static function setPDOAttributes()
     {
         $attributes = self::getPDOAttributes();
@@ -39,7 +50,12 @@ class Database
         }
     }
 
-    private static function getPDOAttributes(): array
+    /**
+     * Get PDO Attributes
+     * 
+     * @return array
+     */
+    private static function getPDOAttributes()
     {
         return [
             \PDO::ATTR_ERRMODE => \PDO::ERRMODE_EXCEPTION,
