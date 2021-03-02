@@ -38,8 +38,8 @@ abstract class Model
      * @return array
      */
     public function getAll()
-    {   
-        return $this->hasStatus() 
+    {
+        return $this->hasStatus()
             ? $this->getBy([QueryBuilder::neq('status', self::STATUS_DELETED)])
             : $this->getBy();
     }
@@ -304,6 +304,23 @@ abstract class Model
         return $res ? $res->rowCount() : $res;
     }
 
+    /**
+     * Fill a model object with a given ID
+     * Every model must call this function in getId method
+     * 
+     * @return void
+     */
+    protected function hydrate()
+    {
+        $data = $this->getBy(['id' => $this->getId()], Database::FETCH_ONE);
+        if (empty($data)) {
+            die("l'id " . $this->getId() . " n'existe pas");
+        }
+
+        unset($data['id']);
+        $this->populate($data);
+    }
+    
     /**
      * Execute a prepared statement
      * 
