@@ -216,6 +216,6 @@ class Router
      */
     public static function redirect(string $path = '')
     {
-        header('Location: http://localhost/' . $path);
+        header('Location: http://localhost:' . SERVER_PORT . $path);
     }
 }

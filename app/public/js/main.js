@@ -1,5 +1,5 @@
 function bindRoles(root_element = null) {
-    var elements = root_element != null 
+    let elements = root_element != null 
                     ? $(root_element).find('[data-role]') 
                     : $('* [data-role]');
 
@@ -15,16 +15,18 @@ function bindRoles(root_element = null) {
 }
 
 function getOptions(el) {
-    var opts = $(el).data('options');
+    let opts = $(el).data('options');
     return opts != null && opts != undefined && opts != '' ? JSON.parse(opts) : false;
 }
 
 
-var roleFunctions = {
+/* Include every data-role functions declared in the HTML code below */
+
+const roleFunctions = {
     'testFunction': function() {
         console.log(this);
     },
-}
+};
 
 
 

@@ -13,6 +13,10 @@ abstract class Model
     private $columns;
     private $model_class_name;
 
+
+    const STATUS_DELETED = -1;
+    const STATUS_DEFAULT = 1;
+
     protected function __construct()
     {
         $this->db = Database::getInstance();
@@ -26,6 +30,21 @@ abstract class Model
 
     /* --------- Main actions ---------- */
 
+
+    /**
+     * Fetch all rows in the model table.
+     * Archived rows (status = -1) are not fetched
+     * 
+     * @return array
+     */
+    public function getAll()
+    {   
+        return $this->hasStatus() 
+            ? $this->getBy([QueryBuilder::neq('status', self::STATUS_DELETED)])
+            : $this->getBy();
+    }
+
+
     /**
      * Fetch all fields by specific $conditions.
      * Only equivalences are supported.
@@ -36,7 +55,7 @@ abstract class Model
      * 
      * @return array
      */
-    public function getBy(array $conditions, int $type_fetch = Database::FETCH_ALL)
+    public function getBy(array $conditions = [], int $type_fetch = Database::FETCH_ALL)
     {
         $qb = (new QueryBuilder())->from($this->table_name);
         foreach ($conditions as $key => $value) {
@@ -62,34 +81,32 @@ abstract class Model
     public function save()
     {
         $data = $this->getModelData();
+        $res = false;
 
         # Insert query
         if (!$this->hasId()) {
-            $sql = 'INSERT INTO ' . $this->table_name
-                . ' (' . implode(',', $this->columns) . ') 
-                    VALUES (:' . implode(', :', $this->columns) . ')';
+            $insert = $this->insertQuery($data);
+            $res = $insert ? ['inserted_id' => $insert] : false;
         }
         # Update query
         else {
-            $data['id'] = $this->getId();
-            $update = [];
-            foreach ($data as $column => $value) {
-                $update[] = $column . " = :" . $column;
-            }
-            $sql = 'UPDATE ' . $this->table_name
-                . ' SET '
-                . implode(', ', $update)
-                . ' WHERE id = :id';
+            $update = $this->updateQuery($data, [QueryBuilder::eq('id', $this->getId())]);
+            $res = $update ? ['affected_rows' => $update] : false;
         }
+        return $res;
+    }
 
-        $res = $this->execute($sql, $data);
-        if (!$res)
-            return false;
+    /**
+     * Get model data (property => value)
+     * 
+     * @return array
+     */
+    public function getData()
+    {
+        $data = $this->getModelData();
+        $data['id'] = $this->getId();
 
-        return [
-            'affected_rows' => $res->rowCount(),
-            'inserted_id' => !$this->hasId() ? $this->db->lastInsertId() : null
-        ];
+        return $data;
     }
 
     /**
@@ -110,20 +127,44 @@ abstract class Model
         }
     }
 
-    // protected function insert() : array
-    // {
-    //     return [];
-    // }
 
-    // protected function update() : array
-    // {
-    //     return [];
-    // }
+    /**
+     * Delete the row from the table
+     * 
+     * @return void
+     */
+    public function deleteForever()
+    {
+        $this->deleteQuery([QueryBuilder::eq('id', $this->getId())]);
+    }
 
-    // public function delete(int $id) : bool
-    // {
-    //     return true;
-    // }
+    /**
+     * Set status to -1 if "status" column exist, delete row otherwise
+     * 
+     * @return void
+     */
+    public function delete()
+    {
+        if ($this->hasStatus()) {
+            $this->updateQuery(['status' => self::STATUS_DELETED], [QueryBuilder::eq('id', $this->getId())]);
+        } else {
+            $this->deleteForever();
+        }
+    }
+
+    /**
+     * Update one or multiple rows
+     * 
+     * @param array $fields
+     * @param array $conditions
+     * 
+     * @return int|bool affected rows, false otherwise
+     */
+    public function update(array $fields, array $conditions = [])
+    {
+        return $this->updateQuery($fields, $conditions);
+    }
+
 
     /* --------- Utilities ---------- */
 
@@ -133,7 +174,7 @@ abstract class Model
      * @param QueryBuilder $qb
      * @param bool $debug if true, the query (statement, params) is dumped before executing the query
      * 
-     * @return array 1D array
+     * @return array 2D array
      */
     protected function fetchAll(QueryBuilder $qb, bool $debug = false)
     {
@@ -148,7 +189,7 @@ abstract class Model
      * @param QueryBuilder $qb
      * @param bool $debug if true, the query (statement, params) is dumped before executing the query
      * 
-     * @return array 2D array
+     * @return array 1D array
      */
     protected function fetchOne(QueryBuilder $qb, bool $debug = false)
     {
@@ -181,6 +222,86 @@ abstract class Model
         }
 
         return $results;
+    }
+
+    /**
+     * Insert query
+     * 
+     * @param array $data
+     * 
+     * @return int|bool last inserted id, false otherwise
+     */
+    private function insertQuery(array $data)
+    {
+        $sql = 'INSERT INTO ' . $this->table_name
+            . ' (' . implode(',', $this->columns) . ') 
+                    VALUES (:' . implode(', :', $this->columns) . ')';
+
+        $res = $this->execute($sql, $data);
+        return $res ? $this->db->lastInsertId() : $res;
+    }
+
+    /**
+     * Update query with multiple conditions
+     * 
+     * @param array $fields
+     * @param array $conditions
+     * 
+     * @return int|bool affected rows, false otherwise
+     */
+    private function updateQuery(array $fields, array $conditions = [])
+    {
+        $update_fields =  $clauses = [];
+        $params = $fields;
+
+        foreach ($fields as $column => $value) {
+            $update_fields[] = $column . " = :" . $column;
+        }
+
+        foreach ($conditions as $condition) {
+            $clauses[] = $condition['expr'];
+            $params = array_merge($params, $condition['bind']);
+        }
+
+        $sql = 'UPDATE ' . $this->table_name
+            . ' SET '
+            . implode(', ', $update_fields);
+
+        if (!empty($clauses)) {
+            $sql .=  ' WHERE '
+                . implode(' AND ', $clauses);
+        }
+
+        $res = $this->execute($sql, $params);
+        return $res ? $res->rowCount() : $res;
+    }
+
+    /**
+     * Delete one or more rows from the model table
+     * 
+     * @param array $conditions
+     * 
+     * @return int|bool affected rows, false otherwise
+     */
+    private function deleteQuery(array $conditions = [])
+    {
+        $clauses = [];
+        $params = [];
+
+        foreach ($conditions as $condition) {
+            $clauses[] = $condition['expr'];
+            $params = array_merge($params, $condition['bind']);
+        }
+
+        $sql = 'DELETE FROM ' . $this->table_name;
+
+        if (!empty($clauses)) {
+            $sql .=  ' WHERE '
+                . implode(' AND ', $clauses);
+        }
+
+        $res = $this->execute($sql, $params);
+        return $res ? $res->rowCount() : $res;
     }
 
     /**
@@ -220,6 +341,16 @@ abstract class Model
     private function hasId()
     {
         return !is_null($this->getId());
+    }
+
+    /**
+     * Check if a model has status column
+     * 
+     * @return bool
+     */
+    private function hasStatus()
+    {
+        return in_array('status', $this->columns);
     }
 
     /**
