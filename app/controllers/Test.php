@@ -83,8 +83,6 @@ class Test extends Controller
     public function testCreateAction()
     {
         $form_data = Request::allPost();
-        // $options = Request::allGet();
-
 
         $model = new Random();
         $model->setEmail($form_data['email']);
@@ -100,13 +98,12 @@ class Test extends Controller
 
     public function testEditView()
     {
-
-        if (empty(Request::getGET('id'))) {
+        if (empty(Request::get('id'))) {
             die('url must have id');
         }
 
         $model = new Random();
-        $model->setId(Request::getGET('id'));
+        $model->setId(Request::get('id'));
 
         $random_data = $model->getData();
 
@@ -123,23 +120,23 @@ class Test extends Controller
     {
         $form_data = Request::allPost();
 
-        if (Request::getGET('id')) {
+        if (Request::get('id')) {
             $model = new Random();
-            $model->setId(Request::getGET('id'));
+            $model->setId(Request::get('id'));
             $model->setEmail($form_data['email']);
             $model->setPassword($form_data['password']);
             $model->setName($form_data['name']);
             $model->setState($form_data['state']);
             $model->save();
 
-            Router::redirect(UrlBuilder::getUrl('Test', 'testEditView', ['id' => Request::getGET('id')]));
+            Router::redirect(UrlBuilder::getUrl('Test', 'testEditView', ['id' => Request::get('id')]));
         }
     }
 
     public function testListView()
     {
         $list = (new Random())->getAll();
-        
+
         for ($i = 0; $i < count($list); $i++) {
             $list[$i]['url_edit'] = UrlBuilder::getUrl('Test', 'testEditView', ['id' => $list[$i]['id']]);
             $list[$i]['url_delete'] = UrlBuilder::getUrl('Test', 'testListAction', ['id' => $list[$i]['id'], 'action' => self::ACTION_DELETE]);
@@ -157,17 +154,16 @@ class Test extends Controller
 
     public function testListAction()
     {
-
         $model = new Random();
-        if(Request::get('action') === self::ACTION_CREATE) {
+        if (Request::get('action') === self::ACTION_CREATE) {
             $form_data = Request::allPost();
-    
+
             $model->setEmail($form_data['email']);
             $model->setPassword($form_data['password']);
             $model->setName($form_data['name']);
             $model->setState($form_data['state']);
             $model->setStatus(Model::STATUS_DEFAULT);
-    
+
             $model->save();
         } else {
             $model->setId(Request::get('id'));

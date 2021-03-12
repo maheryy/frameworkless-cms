@@ -4,6 +4,7 @@ namespace App\Core;
 
 use App\Core\Database;
 use App\Core\Utils\QueryBuilder;
+use App\Core\Utils\Expr;
 
 abstract class Model
 {
@@ -40,14 +41,13 @@ abstract class Model
     public function getAll()
     {
         return $this->hasStatus()
-            ? $this->getBy([QueryBuilder::neq('status', self::STATUS_DELETED)])
+            ? $this->getBy([Expr::neq('status', self::STATUS_DELETED)])
             : $this->getBy();
     }
 
 
     /**
      * Fetch all fields by specific $conditions.
-     * Only equivalences are supported.
      * - ex: ['id' => 2, 'name' => 'bob] : WHERE id = 2 AND name = 'bob'
      * 
      * @param array $conditions 
@@ -59,10 +59,10 @@ abstract class Model
     {
         $qb = (new QueryBuilder())->from($this->table_name);
         foreach ($conditions as $key => $value) {
-            if (is_array($value)) {
+            if (Expr::isExpr($value)) {
                 $qb->where($value);
             } else {
-                $qb->where(QueryBuilder::eq($key, $value));
+                $qb->where(Expr::eq($key, $value));
             }
         }
 
@@ -90,7 +90,7 @@ abstract class Model
         }
         # Update query
         else {
-            $update = $this->updateQuery($data, [QueryBuilder::eq('id', $this->getId())]);
+            $update = $this->updateQuery($data, [Expr::eq('id', $this->getId())]);
             $res = $update ? ['affected_rows' => $update] : false;
         }
         return $res;
@@ -135,7 +135,7 @@ abstract class Model
      */
     public function deleteForever()
     {
-        $this->deleteQuery([QueryBuilder::eq('id', $this->getId())]);
+        $this->deleteQuery([Expr::eq('id', $this->getId())]);
     }
 
     /**
@@ -146,7 +146,7 @@ abstract class Model
     public function delete()
     {
         if ($this->hasStatus()) {
-            $this->updateQuery(['status' => self::STATUS_DELETED], [QueryBuilder::eq('id', $this->getId())]);
+            $this->updateQuery(['status' => self::STATUS_DELETED], [Expr::eq('id', $this->getId())]);
         } else {
             $this->deleteForever();
         }
@@ -320,7 +320,7 @@ abstract class Model
         unset($data['id']);
         $this->populate($data);
     }
-    
+
     /**
      * Execute a prepared statement
      * 

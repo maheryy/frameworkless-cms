@@ -4,12 +4,6 @@ namespace App\Core\Utils;
 
 class Request
 {
-    
-    const REQUEST = 0;
-    const REQUEST_POST = 1;
-    const REQUEST_GET = 2;
-    const REQUEST_COOKIE = 3;
-
     const COOKIE_EXPIRATION_MIN = 0;
     const COOKIE_EXPIRATION_HOUR = 1;
     const COOKIE_EXPIRATION_DAY = 2;
@@ -21,13 +15,11 @@ class Request
      * 
      * @param string $key
      * 
-     * @return string|int|null 
+     * @return string|int|array|null 
      */
-    public static function get(string $key)
+    public static function request(string $key)
     {
-        return isset($_REQUEST[$key])
-            ? (is_numeric($_REQUEST[$key]) ? (int) $_REQUEST[$key] : htmlspecialchars($_REQUEST[$key]))
-            : null;
+        return self::getVariable($key, $_REQUEST);
     }
 
     /**
@@ -35,41 +27,35 @@ class Request
      * 
      * @param string $key
      * 
-     * @return string|int|null 
+     * @return string|int|array|null 
      */
-    public static function getGET(string $key)
+    public static function get(string $key)
     {
-        return isset($_GET[$key])
-            ? (is_numeric($_GET[$key]) ? (int) $_GET[$key] : htmlspecialchars($_GET[$key]))
-            : null;
+        return self::getVariable($key, $_GET);
     }
 
-     /**
+    /**
      * Return the defined $_POST[$key] variable, null otherwise
      * 
      * @param string $key
      * 
-     * @return string|int|null 
+     * @return string|int|array|null 
      */
-    public static function getPOST(string $key)
+    public static function post(string $key)
     {
-        return isset($_POST[$key])
-            ? (is_numeric($_POST[$key]) ? (int) $_POST[$key] : htmlspecialchars($_POST[$key]))
-            : null;
+        return self::getVariable($key, $_POST);
     }
 
-     /**
+    /**
      * Return the defined $COOKIE[$key] variable, null otherwise
      * 
      * @param string $key
      * 
-     * @return string|int|null 
+     * @return string|int|array|null 
      */
     public static function getCookie(string $key)
     {
-        return isset($_COOKIE[$key])
-            ? (is_numeric($_COOKIE[$key]) ? (int) $_COOKIE[$key] : htmlspecialchars($_COOKIE[$key]))
-            : null;
+        return self::getVariable($key, $_COOKIE);
     }
 
     /**
@@ -136,7 +122,7 @@ class Request
      */
     public static function allGet()
     {
-        return self::all(self::REQUEST_GET);
+        return self::all($_GET);
     }
     /**
      * Return all POST Variables
@@ -145,7 +131,7 @@ class Request
      */
     public static function allPost()
     {
-        return self::all(self::REQUEST_POST);
+        return self::all($_POST);
     }
     /**
      * Return all REQUEST Variables (GET, POST, COOKIE)
@@ -154,7 +140,7 @@ class Request
      */
     public static function allRequest()
     {
-        return self::all(self::REQUEST);
+        return self::all($_REQUEST);
     }
     /**
      * Return all COOKIE Variables
@@ -163,38 +149,34 @@ class Request
      */
     public static function allCookie()
     {
-        return self::all(self::REQUEST_COOKIE);
+        return self::all($_COOKIE);
     }
 
     /**
+     * Return a COOKIE|POST|GET|REQUEST Variable
+     * 
+     * @param string $key 
+     * @param int $source $_COOKIE|$_POST|$_GET|$_REQUEST
+     * 
+     * @return string|int|array|null
+     */
+    private static function getVariable(string $key, array $source)
+    {
+        $var = $source[$key] ?? null;
+        return is_numeric($var) ? (int) $var : (is_string($var) ? htmlspecialchars($var) : $var);
+    }
+    /**
      * Return all COOKIE|POST|GET|REQUEST Variables
      * 
-     * @param int $source REQUEST|REQUEST_GET|REQUEST_POST|REQUEST_COOKIE
+     * @param int $source $_COOKIE|$_POST|$_GET|$_REQUEST
      * 
      * @return array
      */
-    private static function all(int $source = self::REQUEST)
+    private static function all(array $source)
     {
-        $res = $vars = [];
-        
-        switch ($source) {
-            case self::REQUEST:
-                $vars = $_REQUEST;
-                break;
-            case self::REQUEST_GET:
-                $vars = $_GET;
-                break;
-            case self::REQUEST_POST:
-                $vars = $_POST;
-                break;
-            case self::REQUEST_COOKIE:
-                $vars = $_COOKIE;
-                break;
-        }
-
-        
-        foreach ($vars as $key => $value) {
-            $res[$key] = is_numeric($value) ? (int) $value : htmlspecialchars($value);
+        $res = [];
+        foreach ($source as $key => $value) {
+            $res[$key] = is_numeric($value) ? (int) $value : (is_string($value) ? htmlspecialchars($value) : $value);
         }
 
         return $res;
