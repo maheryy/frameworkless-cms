@@ -1,0 +1,47 @@
+@import url('https://fonts.googleapis.com/css2?family=Raleway:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap');
+// @font-face {
+//     font-family: Raleway;
+//     src: url("../../fonts/Raleway/Raleway.ttf") format("truetype");
+//     font-style: normal;
+//     font-weight: normal;
+// }
+
+// @font-face {
+//     font-family: Raleway;
+//     src: url("../../fonts/Raleway/Raleway-Italic.ttf") format("truetype");
+//     font-style: italic;
+// }
+
+
+// Main theme
+
+$bg-primary: #fff;
+$bg-secondary: #f2f2f2;
+// $bg-hover: #22303c;
+// $bg-selected : #47a1eb;
+// $color-primary : #fff;
+// $color-secondary : #8899a6;
+
+//  Dark side
+
+$bg-primary-dark: #0E415E;
+$bg-secondary-dark: #0b3248;
+$bg-hover-dark: #22303c;
+$bg-selected-dark: #47a1eb;
+$color-primary-dark: #fff;
+$color-secondary-dark: #8899a6;
+// $color-primary-dark : #bec1c0;
+// $color-secondary-dark : #fff;
+
+//  Buttons
+
+$btn-color-primary: #2b63ba;
+$btn-color-secondary: #e4e3e2;
+$btn-color-success: #2b63ba;
+$btn-color-danger: #2b63ba;
+
+//  Infos
+$info-primary: #315a9f;
+$info-success: #81ae34;
+$info-warning: #fb902d;
+$info-danger: #e64042;

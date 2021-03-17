@@ -34,6 +34,8 @@ class Test extends Controller
             3 => 'Agitated',
             4 => 'Excited'
         ];
+
+        $this->setLayoutParams();
     }
 
     public function startSessionAction()

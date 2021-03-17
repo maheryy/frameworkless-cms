@@ -32,7 +32,7 @@ class UrlBuilder
      */
     public static function getUrl(string $controller, string $method, array $params = [])
     {
-        $route = Router::getRoute($controller, $method);
+        $route = Router::getRouteURI($controller, $method);
         $query_string = '';
 
         foreach ($params as $key => $value) {

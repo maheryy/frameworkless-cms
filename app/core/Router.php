@@ -118,6 +118,17 @@ class Router
         ];
     }
 
+    /**
+     * Return the current route in the URL
+     * 
+     * @return string
+     */
+    public static function getCurrentRoute()
+    {
+        $uri = explode('?', $_SERVER['REQUEST_URI'])[0];
+        $uri_exploded = explode('/', ltrim($uri, '/'));
+        return '/' . array_shift($uri_exploded);
+    }
 
     /**
      * Return the right controller & method associated with the route
@@ -199,7 +210,7 @@ class Router
      * 
      * @return string
      */
-    public static function getRoute(string $controller, string $method)
+    public static function getRouteURI(string $controller, string $method)
     {
         if (empty(self::$slugs[$controller]) && empty(self::$slugs[$controller][$method]))
             throw new Exception("Aucune route associé à " . $controller . " -> " . $method);

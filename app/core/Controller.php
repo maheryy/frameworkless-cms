@@ -2,12 +2,14 @@
 
 namespace App\Core;
 
+use App\Core\Utils\LayoutManager;
 use App\Core\Utils\Session;
 
 abstract class Controller
 {
     protected $template;
     protected $view_data = [];
+    
 
     protected function __construct()
     {
@@ -76,6 +78,52 @@ abstract class Controller
     protected function sendJSON(array $data)
     {
         header('Content-Type: application/json');
-        echo json_encode($data);
+        $this->send(json_encode($data));
+    }
+
+    /**
+     * Send back success response as JSON
+     * 
+     * @param array $data
+     * 
+     * @return void
+     */
+    protected function sendSuccess(string $message)
+    {
+        $this->sendJSON([
+            'success' => true,
+            'message' => $message
+        ]);
+    }
+
+    /**
+     * Send back success response as JSON
+     * 
+     * @param array $data
+     * 
+     * @return void
+     */
+    protected function sendError(string $message)
+    {
+        $this->sendJSON([
+            'success' => false,
+            'message' => $message
+        ]);
+    }
+
+    /**
+     * Set main parameters for toolbar/sidebar
+     * 
+     * @return void
+     */
+    protected function setLayoutParams()
+    {
+        $layout = new LayoutManager();
+        $sidebar_links = $layout->getSidebarLinks();
+        $this->setParam('current_route', Router::getCurrentRoute());
+        $this->setParam('sidebar_links', $sidebar_links['main']);
+        $this->setParam('link_settings', $sidebar_links['bottom']);
+        $this->setParam('sidebar', $layout->getSidebarPath());
+        $this->setParam('toolbar', $layout->getToolbarPath());
     }
 }

@@ -1,0 +1,11 @@
+.flex-center {
+    @include flex-display(center);
+}
+
+.flex-col-center {
+    @include flex-col-display(space-between);
+}
+
+.hidden {
+    display: none;
+}
