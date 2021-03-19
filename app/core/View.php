@@ -2,6 +2,8 @@
 
 namespace App\Core;
 
+use App\Core\Exceptions\NotFoundException;
+
 class View
 {
     private $view;
@@ -24,7 +26,7 @@ class View
     {
         $view_path = PATH_VIEWS . $view . '.view.php';
         if (!file_exists($view_path)) {
-            throw new \Exception('La vue ' . $view_path . ' n\'existe pas');
+            throw new NotFoundException('La vue ' . $view_path . ' n\'existe pas');
         }
         $this->view = $view_path;
     }
@@ -38,7 +40,7 @@ class View
     {
         $template_path = PATH_TEMPLATES . $template . '.tpl.php';
         if (!file_exists($template_path)) {
-            throw new \Exception('La template ' . $template_path . ' n\'existe pas');
+            throw new NotFoundException('La template ' . $template_path . ' n\'existe pas');
         }
         $this->template = $template_path;
     }

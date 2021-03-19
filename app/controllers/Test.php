@@ -9,6 +9,7 @@ use App\Core\Utils\Session;
 use App\Models\Random;
 use App\Core\Router;
 use App\Core\Utils\UrlBuilder;
+use Exception;
 
 /**
  * TestController dedicated to test the framework
@@ -101,7 +102,7 @@ class Test extends Controller
     public function testEditView()
     {
         if (empty(Request::get('id'))) {
-            die('url must have id');
+            throw new Exception('url must have id');
         }
 
         $model = new Random();

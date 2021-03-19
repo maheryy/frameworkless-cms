@@ -3,6 +3,7 @@
 namespace App\Core;
 
 use App\Core\Database;
+use App\Core\Exceptions\NotFoundException;
 use App\Core\Utils\QueryBuilder;
 use App\Core\Utils\Expr;
 
@@ -122,7 +123,7 @@ abstract class Model
             if (method_exists($this->model_class_name, $this->toSetter($column))) {
                 $this->{$this->toSetter($column)}($value);
             } else {
-                throw new \Exception('La méthode : ' . $this->toSetter($column) . ' de la classe ' . get_called_class() . ' n\' existe pas');
+                throw new NotFoundException('La méthode : ' . $this->toSetter($column) . ' de la classe ' . get_called_class() . ' n\' existe pas');
             }
         }
     }
@@ -314,7 +315,7 @@ abstract class Model
     {
         $data = $this->getBy(['id' => $this->getId()], Database::FETCH_ONE);
         if (empty($data)) {
-            die("l'id " . $this->getId() . " n'existe pas");
+            throw new NotFoundException("l'id " . $this->getId() . " n'existe pas");
         }
 
         unset($data['id']);

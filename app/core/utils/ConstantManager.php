@@ -2,6 +2,8 @@
 
 namespace App\Core\Utils;
 
+use App\Core\Exceptions\NotFoundException;
+
 abstract class ConstantManager
 {
 
@@ -33,7 +35,7 @@ abstract class ConstantManager
 	public static function loadConstants()
 	{
 		if (!file_exists(self::$env_path)) {
-			throw new \Exception('Le fichier ' . self::$env_path . ' n\'existe pas');
+			throw new NotFoundException('Le fichier ' . self::$env_path . ' n\'existe pas');
 		}
 		# Constants in config/conf.inc.php
 		include './config/conf.inc.php';

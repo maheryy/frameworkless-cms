@@ -9,7 +9,7 @@ abstract class Controller
 {
     protected $template;
     protected $view_data = [];
-    
+
 
     protected function __construct()
     {

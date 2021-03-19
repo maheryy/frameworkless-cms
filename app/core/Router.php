@@ -2,6 +2,10 @@
 
 namespace App\Core;
 
+use App\Controllers\Error;
+use App\Core\Exceptions\ForbiddenAccessException;
+use App\Core\Exceptions\HttpNotFoundException;
+use App\Core\Exceptions\NotFoundException;
 use Exception;
 
 class Router
@@ -13,16 +17,23 @@ class Router
     private $method;
     static private $slugs;
 
-    public function __construct()
+    /**
+     * Run the route requested by the URI
+     */
+    public function run()
     {
-        $this->loadRoutes();
-
-        $uri = $this->getParsedUri();
-        $method = $this->findMethod($uri['slug']);
-
-
-        $this->setController($method['controller']);
-        $this->setMethod($method['method']);
+        try {
+            $this->loadRoutes();
+            $this->execute();
+        } catch (NotFoundException $e) {
+            (new Error())->displayErrorNotFound($e);
+        } catch (ForbiddenAccessException $e) {
+            (new Error())->displayErrorNoAccess($e);
+        } catch (HttpNotFoundException $e) {
+            (new Error())->displayError404();
+        } catch (Exception $e) {
+            (new Error())->displayErrorDefault($e);
+        }
     }
 
     /**
@@ -33,12 +44,12 @@ class Router
     private function loadRoutes()
     {
         if (!file_exists($this->routesPath)) {
-            throw new Exception('File no exist');
+            throw new NotFoundException('File no exist');
         }
 
         $this->routes = yaml_parse_file($this->routesPath);
         if (empty($this->routes)) {
-            throw new Exception('no routes found in the file ' . $this->routesPath);
+            throw new NotFoundException('no routes found in the file ' . $this->routesPath);
         }
 
         foreach ($this->routes as $slug => $data) {
@@ -79,7 +90,7 @@ class Router
     /**
      * @return string
      */
-    public function getControllerPath()
+    private function getControllerPath()
     {
         return PATH_CONTROLLERS . $this->controller . '.php';
     }
@@ -87,7 +98,7 @@ class Router
     /**
      * @return string
      */
-    public function getControllerNamespace()
+    private function getControllerNamespace()
     {
         return 'App\Controllers\\' . $this->controller;
     }
@@ -95,7 +106,7 @@ class Router
     /**
      * @return string
      */
-    public function getMethod()
+    private function getMethod()
     {
         return $this->method;
     }
@@ -119,18 +130,6 @@ class Router
     }
 
     /**
-     * Return the current route in the URL
-     * 
-     * @return string
-     */
-    public static function getCurrentRoute()
-    {
-        $uri = explode('?', $_SERVER['REQUEST_URI'])[0];
-        $uri_exploded = explode('/', ltrim($uri, '/'));
-        return '/' . array_shift($uri_exploded);
-    }
-
-    /**
      * Return the right controller & method associated with the route
      * 
      * @param string $slug 
@@ -140,16 +139,16 @@ class Router
     private function findMethod(string $slug)
     {
         if (empty($this->routes[$slug])) {
-            throw new Exception('this route doesnt exist ' . $slug);
+            throw new HttpNotFoundException($slug);
         }
         $controller = trim($this->routes[$slug]['controller']);
         $method = trim($this->routes[$slug]['method']);
 
         if (empty($controller)) {
-            throw new Exception('no controller found at route' . $this->routes[$slug]);
+            throw new NotFoundException('no controller found at route' . $this->routes[$slug]);
         }
         if (empty($method)) {
-            throw new Exception('no method found at route' . $this->routes[$slug]);
+            throw new NotFoundException('no method found at route' . $this->routes[$slug]);
         }
 
         return [
@@ -157,7 +156,6 @@ class Router
             'method' => $method,
         ];
     }
-
 
     /**
      * Calls $method_name of a specified $class_name
@@ -179,27 +177,44 @@ class Router
                 if (method_exists($class_name, $method_name)) {
                     $controller->{$method_name}();
                 } else {
-                    die("La méthode " . $method_name . " n'existe pas");
+                    throw new NotFoundException("La méthode " . $method_name . " n'existe pas");
                 }
             } else {
-                die("La classe " . $class_name . " n'existe pas");
+                throw new NotFoundException("La classe " . $class_name . " n'existe pas");
             }
         } else {
-            die("Le fichier " . $class_path . " n'existe pas");
+            throw new NotFoundException("Le fichier " . $class_path . " n'existe pas");
         }
     }
 
     /**
-     * Run the route requested by the URI
+     * Parse URI and find the right method to execute
      * 
-     * @return void
      */
-    public function run()
+    private function execute()
     {
+        $uri = $this->getParsedUri();
+        $method = $this->findMethod($uri['slug']);
+
+        $this->setController($method['controller']);
+        $this->setMethod($method['method']);
+
         $class_name = $this->getControllerNamespace();
         $method = $this->getMethod();
 
         $this->callMethod($class_name, $method);
+    }
+
+    /**
+     * Return the current route in the URL
+     * 
+     * @return string
+     */
+    public static function getCurrentRoute()
+    {
+        $uri = explode('?', $_SERVER['REQUEST_URI'])[0];
+        $uri_exploded = explode('/', ltrim($uri, '/'));
+        return '/' . array_shift($uri_exploded);
     }
 
     /**
@@ -213,7 +228,7 @@ class Router
     public static function getRouteURI(string $controller, string $method)
     {
         if (empty(self::$slugs[$controller]) && empty(self::$slugs[$controller][$method]))
-            throw new Exception("Aucune route associé à " . $controller . " -> " . $method);
+            throw new NotFoundException("Aucune route associé à " . $controller . " -> " . $method);
 
         return self::$slugs[$controller][$method];
     }
