@@ -6,3 +6,5 @@ docker-compose.*.yaml
 
 .docker/config/*.*.ini
 .docker/config/*.*.conf
+
+db_backups

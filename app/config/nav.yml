@@ -13,14 +13,14 @@ sidebar-main:
   article: 
     label: Articles
     icon: fas fa-newspaper
-    route: /test-list
+    route:
     sub-links:
       list_article:
         label: Liste article
-        route: /test-list
+        route:
       add_article:
         label: Ajouter article
-        route: /test-create
+        route:
   page: 
     label: Pages
     icon: far fa-file
@@ -36,7 +36,8 @@ sidebar-main:
     label: Utilisateurs
     icon: fas fa-users
     route:
-        
+
+# To improve        
 sidebar-bottom:
   settings:
   label: Paramètres

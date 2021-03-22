@@ -3,7 +3,6 @@
 namespace App\Core;
 
 use App\Core\Utils\LayoutManager;
-use App\Core\Utils\Session;
 
 abstract class Controller
 {
@@ -13,7 +12,6 @@ abstract class Controller
 
     protected function __construct()
     {
-        Session::start();
     }
 
     /**
@@ -26,7 +24,7 @@ abstract class Controller
      */
     protected function render(string $view, string $template = 'default')
     {
-        new View($view, $template, $this->view_data);
+        $this->view = new View($view, $template, $this->view_data);
     }
 
     /**
@@ -84,37 +82,36 @@ abstract class Controller
     /**
      * Send back success response as JSON
      * 
-     * @param array $data
+     * @param string $message
+     * @param array $data optional
      * 
      * @return void
      */
-    protected function sendSuccess(string $message)
+    protected function sendSuccess(string $message, array $data = [])
     {
         $this->sendJSON([
             'success' => true,
-            'message' => $message
+            'message' => $message,
+            'data' => $data,
         ]);
     }
 
     /**
-     * Send back success response as JSON
+     * Send back error response
      * 
-     * @param array $data
+     * @param string $message
      * 
      * @return void
      */
     protected function sendError(string $message)
     {
-        $this->sendJSON([
-            'success' => false,
-            'message' => $message
-        ]);
+        http_response_code(400);
+        $this->send($message);
     }
 
     /**
      * Set main parameters for toolbar/sidebar
      * 
-     * @return void
      */
     protected function setLayoutParams()
     {
@@ -125,5 +122,25 @@ abstract class Controller
         $this->setParam('link_settings', $sidebar_links['bottom']);
         $this->setParam('sidebar', $layout->getSidebarPath());
         $this->setParam('toolbar', $layout->getToolbarPath());
+    }
+
+    /**
+     * Set the section title
+     * 
+     * @param string $title
+     */
+    protected function setContentTitle(string $title)
+    {
+        $this->setParam('content_title', $title);
+    }
+
+    /**
+     * Set the page title - browser tab title
+     * 
+     * @param string $title
+     */
+    protected function setPageTitle(string $title)
+    {
+        $this->setParam('meta_title', $title);
     }
 }

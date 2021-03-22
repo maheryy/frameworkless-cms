@@ -48,6 +48,10 @@ function getId(el) {
     return id != null && id != undefined && id != '' ? id : false;
 }
 
+function getUrl(el) {
+    var url = $(el).data('url');
+    return url != null && url != undefined && url != '' ? url : false;
+}
 
 
 function setInfo(type, text) {
@@ -99,10 +103,10 @@ function countElement(element) {
 
 /* Include every data-role functions declared in the HTML code below */
 const roleFunctions = {
-    'setActiveLink': function () {
+    setActiveLink: function () {
         $(this).parents('li.sidebar-link').addClass('selected');
     },
-    'initTableList': function () {
+    initTableList: function () {
         //  Check every table row
         let total_checkbox = countElement('.table-list .table-row-check');
         updateTableListCounter();
@@ -165,34 +169,50 @@ const roleFunctions = {
 
     },
 
-    'initInfoBox': function () {
+    initInfoBox: function () {
         $('#info-close').click(function () {
             $('#info-box').removeClass('active');
         });
     },
 
-    'addData': function () {
+    addData: function () {
         $(this).click(function (e) {
             e.preventDefault();
 
             setInfo(INFO_SUCCESS, "Ajouté avec succès");
         });
     },
-    'deleteData': function () {
+    deleteData: function () {
         $(this).click(function (e) {
             e.preventDefault();
 
             setInfo(INFO_DANGER, "Ce voyage a été supprimé");
         });
     },
-    'saveData': function () {
+    saveData: function () {
         $(this).click(function (e) {
             e.preventDefault();
 
             setInfo(INFO_PRIMARY, "Sauvegardé avec succès");
         });
-    },
+    }
 };
+
+
+const ajaxFunctions = {
+    debug: function (data) {
+        if (typeof data === 'string' || data.success) {
+            console.log('success');
+            console.log(data);
+        } else {
+            console.log('fail');
+            console.log(data);
+        }
+    },
+    errorDefault: function (data) {
+        console.log('An error occured : ', data.responseText);
+    }
+}
 
 $(document).ready(function () {
     bindRoles();

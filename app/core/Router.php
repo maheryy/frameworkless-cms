@@ -11,11 +11,11 @@ use Exception;
 class Router
 {
     private $uri;
-    private $routes = [];
     private $routesPath = './routes.yml';
     private $controller;
     private $method;
-    static private $slugs;
+    private static $routes;
+    private static $slugs;
 
     /**
      * Run the route requested by the URI
@@ -47,12 +47,12 @@ class Router
             throw new NotFoundException('File no exist');
         }
 
-        $this->routes = yaml_parse_file($this->routesPath);
-        if (empty($this->routes)) {
+        self::$routes = yaml_parse_file($this->routesPath);
+        if (empty(self::$routes)) {
             throw new NotFoundException('no routes found in the file ' . $this->routesPath);
         }
 
-        foreach ($this->routes as $slug => $data) {
+        foreach (self::$routes as $slug => $data) {
             self::$slugs[$data['controller']][$data['method']] = $slug;
         }
     }
@@ -138,17 +138,17 @@ class Router
      */
     private function findMethod(string $slug)
     {
-        if (empty($this->routes[$slug])) {
+        if (empty(self::$routes[$slug])) {
             throw new HttpNotFoundException($slug);
         }
-        $controller = trim($this->routes[$slug]['controller']);
-        $method = trim($this->routes[$slug]['method']);
+        $controller = trim(self::$routes[$slug]['controller']);
+        $method = trim(self::$routes[$slug]['method']);
 
         if (empty($controller)) {
-            throw new NotFoundException('no controller found at route' . $this->routes[$slug]);
+            throw new NotFoundException('no controller found at route' . self::$routes[$slug]);
         }
         if (empty($method)) {
-            throw new NotFoundException('no method found at route' . $this->routes[$slug]);
+            throw new NotFoundException('no method found at route' . self::$routes[$slug]);
         }
 
         return [
@@ -203,6 +203,11 @@ class Router
         $method = $this->getMethod();
 
         $this->callMethod($class_name, $method);
+    }
+
+    public static function getRoutes()
+    {
+        return self::$routes;
     }
 
     /**

@@ -13,35 +13,3 @@
 /register:
   controller: Home
   method: registerView
-
-/test-session-start:
-  controller: Test
-  method: startSessionAction
-
-/test-session-stop:
-  controller: Test
-  method: stopSessionAction
-
-/test-create:
-  controller: Test
-  method: testCreateView
-
-/test-create-save:
-  controller: Test
-  method: testCreateAction
-
-/test-edit:
-  controller: Test
-  method: testEditView
-
-/test-edit-save:
-  controller: Test
-  method: testEditAction
-
-/test-list:
-  controller: Test
-  method: testListView
-
-/test-list-save:
-  controller: Test
-  method: testListAction
