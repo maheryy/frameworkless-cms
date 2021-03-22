@@ -1,18 +1,38 @@
+@import "layout/theme";
+
 * {
-    margin : 0;
-    padding : 0;
+    margin: 0;
+    padding: 0;
     box-sizing: border-box;
 }
 
-@import 'variables';
+body {
+    font-family: 'Raleway', sans-serif;
+}
+
+
+
+// Core elements
+@import "utils/variables";
+@import "utils/utils";
+@import "utils/mixins";
+@import "utils/functions";
 
 // Components
-@import 'components/grid';
+@import "components/grid";
+@import "components/table";
+@import "components/button";
+@import "components/form";
+@import "components/info";
 
-// Layouts
-@import 'layout/theme';
-@import 'layout/footer';
-@import 'layout/header';
+// Layout elements
+@import "layout/content";
+@import "layout/toolbar";
+@import "layout/sidebar";
 
-// Others
-@import 'content/home';
+// Extra styles for page content
+@import "content/home";
+
+// Override all styles above with util classes
+// ex: .hidden | .flex-center ...
+@import "utils/override";

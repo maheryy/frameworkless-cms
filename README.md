@@ -5,9 +5,7 @@
 
 ## Get started
 
-Make sure to have Docker installed and running first.
-
-Then, you need to create a **.env file in the root directory**
+First, you need to create a **.env file in the root directory**
 
 ```bash
 # .env file
@@ -20,22 +18,25 @@ PHP_ADMIN_PORT=8888
 # Database informations
 DB_DRIVER=mysql
 DB_HOST=database_cms
-# You can change these variables below
-DB_NAME=default_db
 DB_PREFIX=aaa #Prefix tables / ex: aaa_user
+
+# You better change these variables below
+DB_NAME=default_db
 DB_ROOT_PWD=root
 DB_USER=root
 DB_PWD=root
 
 ```
 
-Then you can run the app :
+**Make sure you have Docker (and docker-compose) installed and running**
+
+Run with :
 
 ```bash
 docker-compose up -d
 ```
 
-Stop the app :
+Stop with :
 
 ```bash
 docker-compose down
@@ -43,7 +44,7 @@ docker-compose down
 
 #### You can create another docker-compose file with the following format :
 
-*docker-compose.[custom_format].yaml* - **(ignored by git)**
+*docker-compose.[custom_format].yaml* - (ignored by git)
 
 #### Run with custom docker-compose :
 

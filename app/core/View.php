@@ -2,35 +2,54 @@
 
 namespace App\Core;
 
-class View {
+use App\Core\Exceptions\NotFoundException;
+
+class View
+{
     private $view;
     private $template;
-    private $data = [];
+    private $data;
 
-    public function __construct(string $view, string $template)
+    public function __construct(string $view, string $template, array $data = [])
     {
         $this->setView($view);
         $this->setTemplate($template);
+        $this->setData($data);
     }
 
+    /**
+     * @param string $view
+     * 
+     * @return void
+     */
     public function setView(string $view)
     {
         $view_path = PATH_VIEWS . $view . '.view.php';
-        if ( !file_exists($view_path) ) {
-            throw new \Exception('La vue ' . $view_path . ' n\'existe pas');
+        if (!file_exists($view_path)) {
+            throw new NotFoundException('La vue ' . $view_path . ' n\'existe pas');
         }
         $this->view = $view_path;
     }
 
+    /**
+     * @param string $template
+     * 
+     * @return void
+     */
     public function setTemplate(string $template)
     {
         $template_path = PATH_TEMPLATES . $template . '.tpl.php';
-        if ( !file_exists($template_path) ) {
-            throw new \Exception('La template ' . $template_path . ' n\'existe pas');
+        if (!file_exists($template_path)) {
+            throw new NotFoundException('La template ' . $template_path . ' n\'existe pas');
         }
         $this->template = $template_path;
-	}
+    }
 
+    /**
+     * @param array $data
+     * 
+     * @return void
+     */
     public function setData(array $data)
     {
         $this->data = $data;

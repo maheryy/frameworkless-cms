@@ -1,19 +1,21 @@
 <?php
+
 namespace App;
 
-class Autoloader {
+class Autoloader
+{
     public static function register()
     {
-		spl_autoload_register(function($class) {
+        spl_autoload_register(function ($class) {
             $class = ucwords(str_ireplace(
                 ['App\\', '\\'],
-                ['', '/'], 
+                ['', '/'],
                 $class
             ));
 
-			if( file_exists($class .'.php') ){
-				include $class .'.php';
-			}
-		});
-	}
+            if (file_exists($class . '.php')) {
+                include $class . '.php';
+            }
+        });
+    }
 }

@@ -1,11 +1,15 @@
 /:
   controller: Home
-  action: default
+  method: defaultView
 
 /login:
   controller: Home
-  action: login
+  method: loginAction
+
+/logout:
+  controller: Home
+  method: logoutAction
 
 /register:
   controller: Home
-  action: register
+  method: registerView
