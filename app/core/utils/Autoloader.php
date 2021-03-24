@@ -7,7 +7,7 @@ class Autoloader
     public static function register()
     {
         spl_autoload_register(function ($class) {
-            $class = ucwords(str_ireplace(
+            $class = '../' . ucwords(str_ireplace(
                 ['App\\', '\\'],
                 ['', '/'],
                 $class

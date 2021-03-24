@@ -4,7 +4,7 @@ namespace App\Core;
 
 class Database
 {
-    public static $pdo_instance = null;
+    private static $pdo_instance = null;
 
     const FETCH_ONE = 1;
     const FETCH_ALL = 2;

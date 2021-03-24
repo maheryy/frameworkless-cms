@@ -7,7 +7,7 @@ use App\Core\Exceptions\NotFoundException;
 abstract class ConstantManager
 {
 
-	public static $env_path = './config/.env';
+	public static $env_path = '../config/.env';
 
 	/**
 	 * Define a constant
@@ -38,7 +38,7 @@ abstract class ConstantManager
 			throw new NotFoundException('Le fichier ' . self::$env_path . ' n\'existe pas');
 		}
 		# Constants in config/conf.inc.php
-		include './config/conf.inc.php';
+		include '../config/conf.inc.php';
 
 		# Constants in .env
 		$env = fopen(self::$env_path, 'r');

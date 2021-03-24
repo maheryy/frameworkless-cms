@@ -32,14 +32,13 @@ class UrlBuilder
      */
     public static function getUrl(string $controller, string $method, array $params = [])
     {
-        $route = Router::getRouteURI($controller, $method);
+        $route = Router::getInstance()->getUriFromMethod($controller, $method);
         $query_string = '';
 
-        foreach ($params as $key => $value) {
-            $query_string .= "$key=$value&";
-        }
-
-        if (!empty($query_string)) {
+        if (!empty($params)) {
+            foreach ($params as $key => $value) {
+                $query_string .= "$key=$value&";
+            }
             $query_string = '?' . rtrim($query_string, '&');
         }
 

@@ -2,9 +2,11 @@
 
 namespace App\Core\Utils;
 
+use App\Core\Exceptions\NotFoundException;
+
 class LayoutManager
 {
-    private $nav_path = './config/nav.yml';
+    private $nav_path = '../routes/nav.yml';
     private $sidebar_links;
     private $toolbar_links;
 
@@ -18,7 +20,12 @@ class LayoutManager
      */
     private function loadData()
     {
+        if (!file_exists($this->nav_path)) {
+            throw new NotFoundException('File no exist');
+        }
+
         $nav_data = yaml_parse_file($this->nav_path);
+
 
         $this->sidebar_links = [
             'main' => $nav_data['sidebar-main'],

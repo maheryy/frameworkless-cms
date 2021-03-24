@@ -2,7 +2,7 @@ sidebar-main:
   dashboard:
     label: Tableau de bord
     icon: fas fa-columns
-    route:
+    route: /
     sub-links:
       stats:
         label: Statistiques
