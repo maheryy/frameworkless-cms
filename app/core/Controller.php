@@ -6,12 +6,13 @@ use App\Core\Utils\LayoutManager;
 
 abstract class Controller
 {
-    protected $template;
-    protected $view_data = [];
-
+    protected $view_data;
+    protected $router;
 
     protected function __construct()
     {
+        $this->view_data = [];
+        $this->router = Router::getInstance();
     }
 
     /**
@@ -100,12 +101,13 @@ abstract class Controller
      * Send back error response
      * 
      * @param string $message
+     * @param int $error HTTP status code (400, 401, 403, 404 ...)
      * 
      * @return void
      */
-    protected function sendError(string $message)
+    protected function sendError(string $message, int $error = 400)
     {
-        http_response_code(400);
+        http_response_code($error);
         $this->send($message);
     }
 
@@ -117,7 +119,7 @@ abstract class Controller
     {
         $layout = new LayoutManager();
         $sidebar_links = $layout->getSidebarLinks();
-        $this->setParam('current_route', Router::getCurrentRoute());
+        $this->setParam('current_route', $this->router->getUri());
         $this->setParam('sidebar_links', $sidebar_links['main']);
         $this->setParam('link_settings', $sidebar_links['bottom']);
         $this->setParam('sidebar', $layout->getSidebarPath());

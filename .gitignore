@@ -2,7 +2,7 @@
 
 .db_data
 docker-compose.*.yaml
-.env*
+.env
 
 .docker/config/*.*.ini
 .docker/config/*.*.conf

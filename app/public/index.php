@@ -6,7 +6,7 @@ use App\Core\Utils\ConstantManager;
 use App\Core\Router;
 use Exception;
 
-require './core/utils/Autoloader.php';
+require '../core/utils/Autoloader.php';
 Autoloader::register();
 
 try {
@@ -15,5 +15,4 @@ try {
     die('Failed to load constants : ' . $e->getMessage());
 }
 
-$router = new Router();
-$router->run();
+Router::getInstance()->run();

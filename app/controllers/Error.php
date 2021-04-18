@@ -18,8 +18,9 @@ class Error extends Controller
 
     public function __construct()
     {
+        parent::__construct();
         $this->error_template = 'error_default';
-        $this->debug = defined('DEBUG_EXCEPTIONS') ? DEBUG_EXCEPTIONS : false;
+        $this->debug = defined('APP_DEBUG') ? APP_DEBUG : false;
         $this->setLayoutParams();
     }
 
@@ -54,6 +55,6 @@ class Error extends Controller
 
     public function displayError404()
     {
-        $this->render('error_404', $this->error_template);
+        $this->render('error_404', $this->error_template);   
     }
 }

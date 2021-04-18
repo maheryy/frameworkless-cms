@@ -1,5 +1,5 @@
 <header id="toolbar">
-    <a id="logo" href="#">
+    <a id="logo" href="/">
         <span class="logo">Go travel</span>
     </a>
     <div id="toolbar__links">
