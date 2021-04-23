@@ -3,6 +3,7 @@
 namespace App\Core;
 
 use App\Core\Utils\LayoutManager;
+use App\Core\Utils\Session;
 
 abstract class Controller
 {
@@ -11,6 +12,7 @@ abstract class Controller
 
     protected function __construct()
     {
+        Session::start();
         $this->view_data = [];
         $this->router = Router::getInstance();
     }

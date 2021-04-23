@@ -2,9 +2,6 @@
   controller: Home
   method: defaultView
 
-/login:
-  controller: Home
-  method: loginAction
 
 /logout:
   controller: Home
@@ -35,3 +32,24 @@
 /installer/register-save:
   controller: Installer
   method: registerAction
+
+# Login
+/login:
+  controller: Auth
+  method: loginView
+
+/auth/login:
+  controller: Auth
+  method: loginAction
+
+/auth/logout:
+  controller: Auth
+  method: logoutAction
+
+/auth/register:
+  controller: Auth
+  method: registerAction
+
+/auth/test:
+  controller: Auth
+  method: test
