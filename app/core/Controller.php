@@ -4,6 +4,7 @@ namespace App\Core;
 
 use App\Core\Utils\LayoutManager;
 use App\Core\Utils\Session;
+use App\Core\Utils\UrlBuilder;
 
 abstract class Controller
 {
@@ -12,7 +13,6 @@ abstract class Controller
 
     protected function __construct()
     {
-        Session::start();
         $this->view_data = [];
         $this->router = Router::getInstance();
     }
@@ -30,7 +30,7 @@ abstract class Controller
 
     /**
      * Set a view param (the variable of $key name can be used in the view)
-     * 
+     *
      * @param string $key
      * @param mixed $value
      */
@@ -41,7 +41,7 @@ abstract class Controller
 
     /**
      * Set multiple view params (the variable of $key name can be used in the view)
-     * 
+     *
      * @param array $data
      */
     protected function setData(array $data)
@@ -105,7 +105,7 @@ abstract class Controller
 
     /**
      * Set main parameters for toolbar/sidebar
-     * 
+     *
      */
     protected function setLayoutParams()
     {
@@ -114,13 +114,14 @@ abstract class Controller
         $this->setParam('current_route', $this->router->getUri());
         $this->setParam('sidebar_links', $sidebar_links['main']);
         $this->setParam('link_settings', $sidebar_links['bottom']);
+        $this->setParam('link_logout', UrlBuilder::makeUrl('Auth', 'logoutAction'));
         $this->setParam('sidebar', $layout->getSidebarPath());
         $this->setParam('toolbar', $layout->getToolbarPath());
     }
 
     /**
      * Set the section title
-     * 
+     *
      * @param string $title
      */
     protected function setContentTitle(string $title)
@@ -130,11 +131,34 @@ abstract class Controller
 
     /**
      * Set the page title - browser tab title
-     * 
+     *
      * @param string $title
      */
     protected function setPageTitle(string $title)
     {
         $this->setParam('meta_title', $title);
+    }
+
+    /**
+     * Start session and check if user is logged in
+     */
+    protected function initSession()
+    {
+        Session::start();
+        if (!Session::isLoggedIn()) {
+            $url_params = $this->router->existRoute($_SERVER['REQUEST_URI']) ? ['redirect' => urlencode($_SERVER['REQUEST_URI'])] : [];
+            $this->router->redirect(UrlBuilder::makeUrl('Auth', 'loginView', $url_params));
+        } else {
+            // Apply session timeout
+            if (Session::hasExpired()) {
+                $this->router->redirect(UrlBuilder::makeUrl('Auth', 'logoutAction', [
+                    'redirect' => $this->router->existRoute($_SERVER['REQUEST_URI']) ? urlencode($_SERVER['REQUEST_URI']) : '/',
+                    'timeout' => true
+                ]));
+            }
+            if (!Session::isDev()) {
+                Session::set('LAST_ACTIVE_TIME', time());
+            }
+        }
     }
 }

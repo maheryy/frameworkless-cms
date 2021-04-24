@@ -34,8 +34,6 @@ class Session
      * Set multiple session variables
      * 
      * @param array $data
-     * 
-     * @return void
      */
     public static function load(array $data)
     {
@@ -48,7 +46,6 @@ class Session
      * @param string $key
      * @param int|string $value
      * 
-     * @return void
      */
     public static function set(string $key, $value)
     {
@@ -66,7 +63,7 @@ class Session
     }
 
     /**
-     * @return void
+     * Get all session variables
      */
     public static function getAll()
     {
@@ -77,8 +74,6 @@ class Session
      * Remove a session variable
      * 
      * @param string $key
-     * 
-     * @return void
      */
     public static function delete(string $key)
     {
@@ -89,8 +84,6 @@ class Session
 
     /**
      * Destroy an active session
-     * 
-     * @return void
      */
     public static function stop()
     {
@@ -101,8 +94,6 @@ class Session
 
     /**
      * Start or resume a session
-     * 
-     * @return void
      */
     public static function start()
     {
@@ -116,7 +107,7 @@ class Session
      */
     public static function isActive()
     {
-        return !is_null($_SESSION);
+        return session_status() === PHP_SESSION_ACTIVE;
     }
 
     /**
@@ -127,5 +118,27 @@ class Session
     public static function isLoggedIn()
     {
         return isset($_SESSION['user_id']);
+    }
+
+    /**
+     * Determines if the app is in developpement or in production
+     *
+     * @return bool
+     */
+    public static function isDev()
+    {
+        return defined('APP_DEV') && APP_DEV;
+    }
+
+    /**
+     * Session has expired
+     * Only in production
+     *
+     * @return bool
+     */
+    public static function hasExpired()
+    {
+        return  !self::isDev() && self::get('LAST_ACTIVE_TIME')
+                && time() - self::get('LAST_ACTIVE_TIME') > SESSION_TIMEOUT * 60;
     }
 }

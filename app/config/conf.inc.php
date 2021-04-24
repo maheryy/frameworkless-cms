@@ -5,3 +5,4 @@ define('PATH_CORE', '../core/');
 define('PATH_VIEWS', '../views/');
 define('PATH_TEMPLATES', '../templates/');
 define('PATH_SQL_DUMP', '../config/db_structure.sql');
+define('SESSION_TIMEOUT', 30);

@@ -32,7 +32,7 @@ form.form-default {
     }
   }
 
-  .form-action {
+  .form-action, .form-info {
     padding: 0.5em 5px;
     align-self: flex-start;
 
@@ -43,6 +43,9 @@ form.form-default {
     &.center {
       align-self: center;
     }
+  }
+  .form-info {
+    padding: 1em 5px;
   }
 }
 

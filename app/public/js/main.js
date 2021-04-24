@@ -279,8 +279,23 @@ const roleFunctions = {
             });
         });
     },
+    sendData: function () {
+        $(this).click(function (e) {
+            e.preventDefault();
+            const form = $(this).closest('form');
+
+            $.ajax({
+                method: $(form).attr('method'),
+                url: $(form).attr('action'),
+                data: $(form).serialize(),
+                success: ajaxFunctions.loginSuccessful,
+                error: ajaxFunctions.loginError,
+            });
+        });
+    }
 };
 
+let delay_function;
 const ajaxFunctions = {
     debug: function (res) {
         if (res.success) {
@@ -303,6 +318,26 @@ const ajaxFunctions = {
             }
             setInfo(INFO_DANGER, res.message, 4);
         }
+    }
+    errorDefault: function (error) {
+        console.log('An error occured : ', error.responseText);
+    },
+    loginSuccessful: function (res) {
+        setInfo(INFO_SUCCESS, res.message);
+        setTimeout(function() {
+            $('#info-box').removeClass('active');
+
+            if (res.data.url_next) {
+                window.location.href = res.data.url_next;
+            }
+        }, 1000);
+    },
+    loginError: function (error) {
+        setInfo(INFO_DANGER, error.responseText);
+        clearTimeout(delay_function);
+        delay_function = setTimeout(function() {
+            $('#info-box').removeClass('active');
+        }, 5000);
     }
 };
 

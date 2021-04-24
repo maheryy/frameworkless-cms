@@ -22,6 +22,7 @@ body {
 @import "components/button";
 @import "components/form";
 @import "components/info";
+@import "components/card";
 
 // Layout elements
 @import "layout/content";
@@ -31,6 +32,7 @@ body {
 // Extra styles for page content
 @import "content/home";
 @import "content/installer";
+@import "content/login";
 
 // Override all styles above with util classes
 // ex: .hidden | .flex-center ...

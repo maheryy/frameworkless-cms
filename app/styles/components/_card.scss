@@ -1,0 +1,8 @@
+$card-background : #fff;
+$card-shadow: #dcdcde;
+
+.card {
+  box-shadow: 0 0 0 1px $card-shadow;
+  background-color: $card-background;
+  padding: 1.5em 1em;
+}

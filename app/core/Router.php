@@ -216,6 +216,12 @@ class Router
         $this->callMethod($class_name, $method);
     }
 
+    public function existRoute(string $uri)
+    {
+        $uri = explode('?', $_SERVER['REQUEST_URI'])[0];
+        return isset($this->routes[$uri]);
+    }
+
     /**
      * Redirect the user to $path
      * 
@@ -226,5 +232,6 @@ class Router
     public function redirect(string $path = '')
     {
         header('Location: http://'. $_SERVER['HTTP_HOST'] . $path);
+        exit;
     }
 }

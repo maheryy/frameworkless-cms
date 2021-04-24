@@ -2,6 +2,9 @@
   controller: Home
   method: defaultView
 
+/dashboard:
+  controller: Home
+  method: defaultView
 
 /logout:
   controller: Home
@@ -33,7 +36,7 @@
   controller: Installer
   method: registerAction
 
-# Login
+# Login / Logout / Register
 /login:
   controller: Auth
   method: loginView
@@ -41,6 +44,10 @@
 /auth/login:
   controller: Auth
   method: loginAction
+
+/auth/password-recovery:
+  controller: Auth
+  method: passwordRecoveryView
 
 /auth/logout:
   controller: Auth

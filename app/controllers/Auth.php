@@ -17,6 +17,10 @@ class Auth extends Controller
     public function __construct()
     {
         parent::__construct();
+
+        if (!Session::isActive()) {
+            Session::start();
+        }
     }
 
     # /login
@@ -24,42 +28,57 @@ class Auth extends Controller
     {
         if (Session::isLoggedIn()) {
             $this->router->redirect(UrlBuilder::makeUrl('Home', 'defaultView'));
-            exit;
         }
+
+        if (Request::get('timeout')) {
+            $this->setParam('active_error', 'Déconnecté pour inactivité');
+        }
+
+        $url_form_params = isset($_GET['redirect']) ? ['redirect' => urlencode($_GET['redirect'])] : [];
+        $this->setData([
+            'url_form' => UrlBuilder::makeUrl('Auth','loginAction', $url_form_params),
+//            'url_forgotten_password' => UrlBuilder::makeUrl('Auth', 'passwordRecoveryView'),
+            'url_forgotten_password' => '#'
+        ]);
+
+        $this->render('login', 'login');
+    }
+
+    # /auth/password-recovery
+    public function passwordRecoveryView()
+    {
 
     }
 
     # /auth/login
     public function loginAction()
     {
-        $fake_post = [
-            'login' => 'charles',
-            'password' => 'best_pwd',
-        ];
-
         [
             'login' => $login,
             'password' => $password,
-        ] = $fake_post;
+        ] = Request::allPost();
 
         $user = (new User())->getBy([Expr::like('login', $login)], Database::FETCH_ONE);
 
         if (!$user || !password_verify($password, $user['password'])) {
-            return $this->sendError('Bad info');
+            $this->sendError('Nom d\'utilisateur ou mot de passe incorrect');
+            return;
         }
 
         $this->createSessionData($user);
-        $this->router->redirect(UrlBuilder::makeUrl('Home', 'defaultView'));
+        $this->sendSuccess('Bien joué ! Tu es connecté', [
+            'url_next' => isset($_GET['redirect']) ? urldecode($_GET['redirect']) : UrlBuilder::makeUrl('Home', 'defaultView'),
+        ]);
     }
 
     # /auth/register
     public function registerAction()
     {
         $fake_post = [
-            'login' => 'charles',
-            'username' => 'ch77',
-            'password' => 'best_pwd',
-            'email' => 'charles@gmail.com',
+            'login' => 'admin',
+            'username' => 'admin',
+            'password' => 'adm',
+            'email' => 'admin@admin.com',
         ];
 
         [
@@ -88,7 +107,9 @@ class Auth extends Controller
             Request::deleteCookie(session_name());
             Session::stop();
         }
-        $this->router->redirect(UrlBuilder::makeUrl('Auth', 'loginView'));
+
+        $url_params = Request::get('timeout') ? ['redirect' => urlencode($_GET['redirect']), 'timeout' => 1] : [];
+        $this->router->redirect(UrlBuilder::makeUrl('Auth', 'loginView', $url_params));
     }
 
     # /auth/test
