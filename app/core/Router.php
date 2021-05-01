@@ -10,25 +10,28 @@ use Exception;
 
 class Router
 {
-    private static $instance;
-    private $uri;
-    private $routesPath = '../routes/routes.yml';
-    private $controller;
-    private $method;
-    private $routes;
-    private $slugs;
+    private static Router $instance;
+    private string $uri;
+    private string $routesPath;
+    private string $controller;
+    private string $method;
+    private array $routes;
+    private array $slugs;
 
-    private function __construct() {}
+    private function __construct()
+    {
+        $this->routesPath = '../routes/routes.yml';
+    }
 
     /**
      * Singleton instance of the router
-     * 
+     *
      * @return Router
-     * 
+     *
      */
     public static function getInstance()
     {
-        if (!self::$instance) {
+        if (!isset(self::$instance)) {
             self::$instance = new Router();
         }
         return self::$instance;
@@ -55,7 +58,7 @@ class Router
 
     /**
      * Parse routes.yml and set $slugs to retrieve a route
-     * 
+     *
      * @return void
      */
     private function loadRoutes()
@@ -125,10 +128,10 @@ class Router
 
     /**
      * Return the URI of a specified $method in a $controller
-     * 
+     *
      * @param string $controller
      * @param string $method
-     * 
+     *
      * @return string
      */
     public function getUriFromMethod(string $controller, string $method)
@@ -176,10 +179,10 @@ class Router
 
     /**
      * Calls $method_name of a specified $class_name
-     * 
+     *
      * @param string $class_name
      * @param string $method_name
-     * 
+     *
      * @return void
      */
     private function callMethod(string $class_name, string $method_name, array $options)
@@ -206,7 +209,7 @@ class Router
 
     /**
      * Parse URI and find the right method to execute
-     * 
+     *
      */
     private function execute()
     {
@@ -232,14 +235,14 @@ class Router
 
     /**
      * Redirect the user to $path
-     * 
+     *
      * @param string $path
-     * 
+     *
      * @return void
      */
     public function redirect(string $path = '')
     {
-        header('Location: http://'. $_SERVER['HTTP_HOST'] . $path);
+        header('Location: http://' . $_SERVER['HTTP_HOST'] . $path);
         exit;
     }
 }

@@ -13,8 +13,8 @@ use Exception;
  */
 class Error extends Controller
 {
-    private $error_template;
-    private $debug;
+    private string $error_template;
+    private bool $debug;
 
     public function __construct(array $options = [])
     {

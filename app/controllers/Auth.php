@@ -6,10 +6,12 @@ use App\Core\Controller;
 use App\Core\Database;
 use App\Core\Router;
 use App\Core\Utils\Expr;
+use App\Core\Utils\Mailer;
 use App\Core\Utils\Request;
 use App\Core\Utils\Session;
 use App\Core\Utils\UrlBuilder;
 use App\Core\Utils\Validator;
+use App\Core\View;
 use App\Models\User;
 
 class Auth extends Controller
@@ -116,7 +118,13 @@ class Auth extends Controller
     # /auth/test
     public function test()
     {
-        var_dump(Session::getAll());
+        $mail = Mailer::send([
+            'to' => 1,
+            'subject' => 'Testing SMTP',
+            'content' => View::getHtml('email/test_email', ['var1' => "HELLO", 'var2' => "WORLD"]),
+        ]);
+
+        echo $mail['message'];
     }
 
     private function createSessionData(array $user_data)

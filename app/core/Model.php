@@ -9,12 +9,11 @@ use App\Core\Utils\Expr;
 
 abstract class Model
 {
-    private $db;
+    private \PDO $db;
 
-    private $table_name;
-    private $columns;
-    private $model_class_name;
-
+    private string $table_name;
+    private string $model_class_name;
+    private array $columns;
 
     const STATUS_DELETED = -1;
     const STATUS_DEFAULT = 1;

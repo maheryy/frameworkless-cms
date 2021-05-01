@@ -11,18 +11,15 @@ class QueryBuilder
     const ORDER_ASC = 'ASC';
     const ORDER_DESC = 'DESC';
 
-    private $fields = [];
-    private $from;
-    private $joins = [];
-    private $wheres = [];
-    private $group;
-    private $orders = [];
-    private $params = [];
-    private $limit;
+    private string $from;
+    private string $group;
+    private string $limit;
+    private array $fields = [];
+    private array $joins = [];
+    private array $wheres = [];
+    private array $orders = [];
+    private array $params = [];
 
-    public function __construct()
-    {
-    }
 
     public function __toString()
     {

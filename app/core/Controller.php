@@ -8,8 +8,8 @@ use App\Core\Utils\UrlBuilder;
 
 abstract class Controller
 {
-    protected $view_data;
-    protected $router;
+    protected array $view_data;
+    protected Router $router;
 
     protected function __construct(array $options)
     {
