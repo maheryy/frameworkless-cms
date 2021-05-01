@@ -16,10 +16,9 @@ class Error extends Controller
     private $error_template;
     private $debug;
 
-    public function __construct()
+    public function __construct(array $options = [])
     {
-        parent::__construct();
-        $this->initSession();
+        parent::__construct($options);
         $this->error_template = 'error_default';
         $this->debug = defined('APP_DEBUG') ? APP_DEBUG : false;
         $this->setLayoutParams();

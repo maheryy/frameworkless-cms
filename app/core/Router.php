@@ -141,29 +141,36 @@ class Router
 
     /**
      * Return the right controller & method associated with the route
-     * 
-     * @param string $slug 
-     * 
+     *
      * @return array
      */
-    private function findMethod(string $slug)
+    private function getRouteData()
     {
-        if (empty($this->routes[$slug])) {
-            throw new HttpNotFoundException($slug);
+        $route = $this->routes[$this->uri];
+        if (empty($route)) {
+            throw new HttpNotFoundException($this->uri);
         }
-        $controller = trim($this->routes[$slug]['controller']);
-        $method = trim($this->routes[$slug]['method']);
+        $controller = trim($route['controller']);
+        $method = trim($route['method']);
 
         if (empty($controller)) {
-            throw new NotFoundException('no controller found at route' . $this->routes[$slug]);
+            throw new NotFoundException('no controller found at route' . $route);
         }
         if (empty($method)) {
-            throw new NotFoundException('no method found at route' . $this->routes[$slug]);
+            throw new NotFoundException('no method found at route' . $route);
+        }
+
+        # Get route options
+        $options = [];
+        if (count($route) > 2) {
+            unset($route['controller'], $route['method']);
+            $options = $route;
         }
 
         return [
             'controller' => $controller,
             'method' => $method,
+            'options' => $options
         ];
     }
 
@@ -175,14 +182,14 @@ class Router
      * 
      * @return void
      */
-    private function callMethod(string $class_name, string $method_name)
+    private function callMethod(string $class_name, string $method_name, array $options)
     {
         $class_path = PATH_CONTROLLERS . $this->controller . '.php';
         if (file_exists($class_path)) {
             include $class_path;
 
             if (class_exists($class_name, false)) {
-                $controller = new $class_name();
+                $controller = new $class_name($options);
 
                 if (method_exists($class_name, $method_name)) {
                     $controller->{$method_name}();
@@ -205,16 +212,17 @@ class Router
     {
         $uri = explode('?', $_SERVER['REQUEST_URI'])[0];
         $this->setUri($uri);
-        $method = $this->findMethod($uri);
 
-        $this->setController($method['controller']);
-        $this->setMethod($method['method']);
+        $route = $this->getRouteData();
+        $this->setController($route['controller']);
+        $this->setMethod($route['method']);
 
         $class_name = $this->getControllerNamespace();
         $method = $this->getMethod();
 
-        $this->callMethod($class_name, $method);
+        $this->callMethod($class_name, $method, $route['options']);
     }
+
 
     public function existRoute(string $uri)
     {

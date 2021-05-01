@@ -11,15 +11,17 @@ abstract class Controller
     protected $view_data;
     protected $router;
 
-    protected function __construct()
+    protected function __construct(array $options)
     {
         $this->view_data = [];
         $this->router = Router::getInstance();
+
+        $this->initSession($options['require_auth'] ?? false);
     }
 
     /**
      * Render a view from any controller
-     * 
+     *
      * @param string $view
      * @param string $template
      */
@@ -53,7 +55,7 @@ abstract class Controller
 
     /**
      * Send back a text message and terminate script execution
-     * 
+     *
      * @param string $message
      */
     protected function send(string $message)
@@ -64,7 +66,7 @@ abstract class Controller
 
     /**
      * Send back a JSON data and terminate script execution
-     * 
+     *
      * @param array $data
      */
     protected function sendJSON(array $data)
@@ -75,7 +77,7 @@ abstract class Controller
 
     /**
      * Send back success response as JSON and terminate script execution
-     * 
+     *
      * @param string $message
      * @param array $data optional
      */
@@ -90,7 +92,7 @@ abstract class Controller
 
     /**
      * Send back error response as JSON and terminate script execution
-     * 
+     *
      * @param string $message
      * @param array $data optional
      */
@@ -142,23 +144,26 @@ abstract class Controller
     /**
      * Start session and check if user is logged in
      */
-    protected function initSession()
+    protected function initSession(bool $require_auth)
     {
         Session::start();
+        if (!$require_auth) return;
+
         if (!Session::isLoggedIn()) {
             $url_params = $this->router->existRoute($_SERVER['REQUEST_URI']) ? ['redirect' => urlencode($_SERVER['REQUEST_URI'])] : [];
             $this->router->redirect(UrlBuilder::makeUrl('Auth', 'loginView', $url_params));
-        } else {
-            // Apply session timeout
-            if (Session::hasExpired()) {
-                $this->router->redirect(UrlBuilder::makeUrl('Auth', 'logoutAction', [
-                    'redirect' => $this->router->existRoute($_SERVER['REQUEST_URI']) ? urlencode($_SERVER['REQUEST_URI']) : '/',
-                    'timeout' => true
-                ]));
-            }
-            if (!Session::isDev()) {
-                Session::set('LAST_ACTIVE_TIME', time());
-            }
         }
+
+        # Apply session timeout
+        if (Session::hasExpired()) {
+            $this->router->redirect(UrlBuilder::makeUrl('Auth', 'logoutAction', [
+                'redirect' => $this->router->existRoute($_SERVER['REQUEST_URI']) ? urlencode($_SERVER['REQUEST_URI']) : '/',
+                'timeout' => true
+            ]));
+        }
+        if (!Session::isDev()) {
+            Session::set('LAST_ACTIVE_TIME', time());
+        }
+
     }
 }

@@ -38,7 +38,7 @@ class Request
      * @param string $key
      * @return string|null
      */
-    public static function getUrl(string $key)
+    public static function url(string $key)
     {
         return $_REQUEST[$key] ?? null;
     }

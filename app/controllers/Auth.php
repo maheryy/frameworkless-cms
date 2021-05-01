@@ -9,18 +9,15 @@ use App\Core\Utils\Expr;
 use App\Core\Utils\Request;
 use App\Core\Utils\Session;
 use App\Core\Utils\UrlBuilder;
+use App\Core\Utils\Validator;
 use App\Models\User;
 
 class Auth extends Controller
 {
 
-    public function __construct()
+    public function __construct(array $options = [])
     {
-        parent::__construct();
-
-        if (!Session::isActive()) {
-            Session::start();
-        }
+        parent::__construct($options);
     }
 
     # /login
@@ -34,7 +31,7 @@ class Auth extends Controller
             $this->setParam('active_error', 'Déconnecté pour inactivité');
         }
 
-        $url_form_params = isset($_GET['redirect']) ? ['redirect' => urlencode($_GET['redirect'])] : [];
+        $url_form_params = Request::url('redirect') ? ['redirect' => urlencode(Request::url('redirect'))] : [];
         $this->setData([
             'url_form' => UrlBuilder::makeUrl('Auth','loginAction', $url_form_params),
 //            'url_forgotten_password' => UrlBuilder::makeUrl('Auth', 'passwordRecoveryView'),
@@ -53,14 +50,18 @@ class Auth extends Controller
     # /auth/login
     public function loginAction()
     {
-        [
-            'login' => $login,
-            'password' => $password,
-        ] = Request::allPost();
+        $data = [
+            'login' => Request::post('login'),
+            'password' => Request::post('password'),
+        ];
 
-        $user = (new User())->getBy([Expr::like('login', $login)], Database::FETCH_ONE);
+        $validator = new Validator();
+        if (!$validator->validateRequiredOnly($data)) {
+            $this->sendError('Veuillez vérifier les champs', $validator->getErrors());
+        }
 
-        if (!$user || !password_verify($password, $user['password'])) {
+        $user = (new User())->getBy([Expr::like('username', $data['login'])], Database::FETCH_ONE);
+        if (!$user || !password_verify($data['password'], $user['password'])) {
             $this->sendError('Nom d\'utilisateur ou mot de passe incorrect');
             return;
         }
@@ -108,7 +109,7 @@ class Auth extends Controller
             Session::stop();
         }
 
-        $url_params = Request::get('timeout') ? ['redirect' => urlencode($_GET['redirect']), 'timeout' => 1] : [];
+        $url_params = Request::get('timeout') ? ['redirect' => urlencode(Request::url('redirect')), 'timeout' => 1] : [];
         $this->router->redirect(UrlBuilder::makeUrl('Auth', 'loginView', $url_params));
     }
 

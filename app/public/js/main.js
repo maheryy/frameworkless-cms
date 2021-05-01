@@ -318,7 +318,7 @@ const ajaxFunctions = {
             }
             setInfo(INFO_DANGER, res.message, 4);
         }
-    }
+    },
     errorDefault: function (error) {
         console.log('An error occured : ', error.responseText);
     },

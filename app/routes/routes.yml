@@ -1,21 +1,14 @@
 /:
   controller: Home
   method: defaultView
+  require_auth: True
 
 /dashboard:
   controller: Home
   method: defaultView
-
-/logout:
-  controller: Home
-  method: logoutAction
-
-/register:
-  controller: Home
-  method: registerView
+  require_auth: True
 
 # installer
-
 /installer-register:
   controller: Installer
   method: installerRegisterView

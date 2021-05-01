@@ -15,9 +15,9 @@ use Exception;
 class Installer extends Controller
 {
 
-    public function __construct()
+    public function __construct(array $options = [])
     {
-        parent::__construct();
+        parent::__construct($options);
     }
 
     # /installer-register
@@ -147,6 +147,7 @@ DB_PWD={$data['db_password']}
 DB_PREFIX={$data['db_prefix']}
 
 APP_DEBUG=1
+APP_DEV=1
 CONF;
 
         file_put_contents(ConstantManager::$env_path, $content, LOCK_EX);
