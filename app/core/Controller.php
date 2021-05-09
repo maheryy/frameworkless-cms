@@ -2,7 +2,9 @@
 
 namespace App\Core;
 
+use App\Core\Utils\Formatter;
 use App\Core\Utils\LayoutManager;
+use App\Core\Utils\Request;
 use App\Core\Utils\Session;
 use App\Core\Utils\UrlBuilder;
 
@@ -25,7 +27,7 @@ abstract class Controller
      * @param string $view
      * @param string $template
      */
-    protected function render(string $view, string $template = 'default')
+    protected function render(string $view, string $template = 'default_back_office')
     {
         $this->view = new View($view, $template, $this->view_data);
     }
@@ -71,6 +73,7 @@ abstract class Controller
      */
     protected function sendJSON(array $data)
     {
+        header_remove();
         header('Content-Type: application/json');
         $this->send(json_encode($data));
     }
@@ -142,28 +145,50 @@ abstract class Controller
     }
 
     /**
+     * Set CSRF Token
+     */
+    protected function setCSRFToken()
+    {
+        $this->setParam('csrf_token', Session::getCSRFToken());
+    }
+
+    /**
      * Start session and check if user is logged in
      */
     protected function initSession(bool $require_auth)
     {
-        Session::start();
+        if (!Session::isActive()) {
+            Session::start();
+        }
+
         if (!$require_auth) return;
 
         if (!Session::isLoggedIn()) {
-            $url_params = $this->router->existRoute($_SERVER['REQUEST_URI']) ? ['redirect' => urlencode($_SERVER['REQUEST_URI'])] : [];
+            $url_params = $_SERVER['REQUEST_URI'] !== '/' && $this->router->existRoute($_SERVER['REQUEST_URI']) ? ['redirect' => Formatter::encodeUrlQuery($_SERVER['REQUEST_URI'])] : [];
             $this->router->redirect(UrlBuilder::makeUrl('Auth', 'loginView', $url_params));
         }
 
         # Apply session timeout
         if (Session::hasExpired()) {
             $this->router->redirect(UrlBuilder::makeUrl('Auth', 'logoutAction', [
-                'redirect' => $this->router->existRoute($_SERVER['REQUEST_URI']) ? urlencode($_SERVER['REQUEST_URI']) : '/',
+                'redirect' => $this->router->existRoute($_SERVER['REQUEST_URI']) ? Formatter::encodeUrlQuery($_SERVER['REQUEST_URI']) : '/',
                 'timeout' => true
             ]));
         }
         if (!Session::isDev()) {
             Session::set('LAST_ACTIVE_TIME', time());
         }
+    }
 
+    /**
+     * Validate CSRF Token for every form that requires user authentification
+     */
+    protected function validateCSRF()
+    {
+        $token = Request::header('X-CSRF-TOKEN');
+        if (!$token || Session::getCSRFToken() !== $token) {
+           $this->sendError('Accès refusé');
+        }
+        return true;
     }
 }

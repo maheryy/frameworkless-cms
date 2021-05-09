@@ -29,26 +29,34 @@
   controller: Installer
   method: registerAction
 
-# Login / Logout / Register
+# Authentification
 /login:
   controller: Auth
   method: loginView
 
-/auth/login:
+/login-send:
   controller: Auth
   method: loginAction
 
-/auth/password-recovery:
-  controller: Auth
-  method: passwordRecoveryView
-
-/auth/logout:
+/logout:
   controller: Auth
   method: logoutAction
 
-/auth/register:
+/recover-password:
   controller: Auth
-  method: registerAction
+  method: passwordRecoveryView
+
+/recover-password-send:
+  controller: Auth
+  method: passwordRecoveryAction
+
+/reset-password:
+  controller: Auth
+  method: passwordResetView
+
+/reset-password-send:
+  controller: Auth
+  method: passwordResetAction
 
 /auth/test:
   controller: Auth

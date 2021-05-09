@@ -4,6 +4,8 @@ namespace App\Core;
 
 use App\Core\Database;
 use App\Core\Exceptions\NotFoundException;
+use App\Core\Utils\Constants;
+use App\Core\Utils\Formatter;
 use App\Core\Utils\QueryBuilder;
 use App\Core\Utils\Expr;
 
@@ -14,9 +16,6 @@ abstract class Model
     private string $table_name;
     private string $model_class_name;
     private array $columns;
-
-    const STATUS_DELETED = -1;
-    const STATUS_DEFAULT = 1;
 
     protected function __construct()
     {
@@ -41,7 +40,7 @@ abstract class Model
     public function getAll()
     {
         return $this->hasStatus()
-            ? $this->getBy([Expr::neq('status', self::STATUS_DELETED)])
+            ? $this->getBy([Expr::neq('status', Constants::STATUS_DELETED)])
             : $this->getBy();
     }
 
@@ -119,10 +118,11 @@ abstract class Model
     public function populate(array $data)
     {
         foreach ($data as $column => $value) {
-            if (method_exists($this->model_class_name, $this->toSetter($column))) {
-                $this->{$this->toSetter($column)}($value);
+            $setter = Formatter::propertyToSetter($column);
+            if (method_exists($this->model_class_name, $setter)) {
+                $this->{$setter}($value);
             } else {
-                throw new NotFoundException('La méthode : ' . $this->toSetter($column) . ' de la classe ' . get_called_class() . ' n\' existe pas');
+                throw new NotFoundException('La méthode : ' . $setter . ' de la classe ' . get_called_class() . ' n\' existe pas');
             }
         }
     }
@@ -146,7 +146,7 @@ abstract class Model
     public function delete()
     {
         if ($this->hasStatus()) {
-            $this->updateQuery(['status' => self::STATUS_DELETED], [Expr::eq('id', $this->getId())]);
+            $this->updateQuery(['status' => Constants::STATUS_DELETED], [Expr::eq('id', $this->getId())]);
         } else {
             $this->deleteForever();
         }
@@ -345,10 +345,8 @@ abstract class Model
      */
     private function getModelTableName(string $class)
     {
-        $class_name = explode("\\", $class);
-        $class_name = $class_name[count($class_name) - 1];
-
-        return DB_PREFIX . '_' . mb_strtolower($class_name);
+        $class_exploded = explode("\\", $class);
+        return DB_PREFIX . '_' . Formatter::camelToSnakeCase($class_exploded[array_key_last($class_exploded)]);
     }
 
     /**
@@ -380,36 +378,12 @@ abstract class Model
     {
         $res = [];
         foreach ($this->columns as $column) {
-            $res[$column] = $this->{$this->toGetter($column)}();
+            $res[$column] = $this->{Formatter::propertyToGetter($column)}();
             if ($code === Database::SAVE_IGNORE_NULL && is_null($res[$column])) {
                 unset($res[$column]);
             }
         }
 
         return $res;
-    }
-
-    /**
-     * Convert a table column name to a model's getter
-     * 
-     * @param string $column
-     * 
-     * @return string
-     */
-    private function toGetter(string $column)
-    {
-        return !empty($column) ? 'get' . ucfirst($column) : '';
-    }
-
-    /**
-     * Convert a table column name to a model's setter
-     * 
-     * @param string $column
-     * 
-     * @return string
-     */
-    private function toSetter(string $column)
-    {
-        return !empty($column) ? 'set' . ucfirst($column) : '';
     }
 }

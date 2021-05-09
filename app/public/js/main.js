@@ -116,6 +116,7 @@ function setInfo(type, text, delay = null) {
 
     $('#info-box').removeClass();
     $('#info-icon').removeClass();
+    $('#info-description').html('');
     $('#info-description').html(text);
 
     $('#info-box').addClass(INFO_DATA[type].class + ' active' + extra_classes);
@@ -273,6 +274,7 @@ const roleFunctions = {
 
             $.ajax({
                 method: $(form).attr('method'),
+                headers: $('meta[name="csrf-token"]').length ?  {'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')} : null,
                 url: $(form).attr('action'),
                 data: data,
                 success: ajaxFunctions.submitDefault
@@ -310,7 +312,7 @@ const ajaxFunctions = {
         if (res.success) {
             setInfo(INFO_SUCCESS, res.message, 1);
             if (res.data && res.data.url_next) {
-                redirect(res.data.url_next, 1.5);
+                redirect(res.data.url_next, res.data.delay_url_next ?? 1.5);
             }
         } else {
             if (res.data) {

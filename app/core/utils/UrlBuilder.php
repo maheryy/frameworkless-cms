@@ -9,25 +9,25 @@ class UrlBuilder
 
     /**
      * Return an absolute URL (ex: localhost:8080/login)
-     * 
+     *
      * @param string $controller
      * @param string $method
      * @param array $params
-     * 
+     *
      * @return string
      */
     public static function makeAbsoluteUrl(string $controller, string $method, array $params = [])
     {
-        return $_SERVER['HTTP_HOST'] . self::makeUrl($controller, $method, $params);
+        return 'http://' . $_SERVER['HTTP_HOST'] . self::makeUrl($controller, $method, $params);
     }
 
     /**
      * Return a method's URL (ex: /login)
-     * 
+     *
      * @param string $controller
      * @param string $method
      * @param array $params
-     * 
+     *
      * @return string
      */
     public static function makeUrl(string $controller, string $method, array $params = [])

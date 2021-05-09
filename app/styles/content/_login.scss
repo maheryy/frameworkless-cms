@@ -4,6 +4,10 @@
   width: 100vw;
   height: 100vh;
 
+  .reset-box {
+    height: 100px;
+  }
+
   .login-container {
     width: 400px;
     position: relative;
@@ -16,7 +20,7 @@
       font-size: .85em;
     }
 
-    .login-box {
+    .card {
       width: 100%;
       padding: .5em 0;
       margin-top: 1em;
@@ -33,15 +37,15 @@
           height: 40px;
           font-size: 1em;
         }
+      }
 
-        .form-info > .link-forgotten-password > a {
-          text-decoration: none;
-          color: #5c5e5f;
-          font-size: .9em;
+      .link-forgotten-password > a, .link-back > a {
+        text-decoration: none;
+        color: #5c5e5f;
+        font-size: .9em;
 
-          &:hover {
-            color: #116dff;
-          }
+        &:hover {
+          color: #116dff;
         }
       }
     }

@@ -29,6 +29,13 @@ class Session
         return (bool) self::get('is_admin');
     }
 
+    /**
+     * @return string
+     */
+    public static function getCSRFToken()
+    {
+        return self::get('csrf_token');
+    }
 
     /**
      * Set multiple session variables
@@ -55,11 +62,11 @@ class Session
     /**
      * @param string $key
      * 
-     * @return string|int|bool
+     * @return string|null
      */
     public static function get(string $key)
     {
-        return isset($_SESSION[$key]) ? $_SESSION[$key] : false;
+        return $_SESSION[$key] ?? null;
     }
 
     /**
@@ -139,6 +146,6 @@ class Session
     public static function hasExpired()
     {
         return  !self::isDev() && self::get('LAST_ACTIVE_TIME')
-                && time() - self::get('LAST_ACTIVE_TIME') > SESSION_TIMEOUT * 60;
+                && time() - self::get('LAST_ACTIVE_TIME') > Constants::SESSION_TIMEOUT * 60;
     }
 }
