@@ -13,3 +13,17 @@
 /register:
   controller: Home
   method: registerView
+
+# installer
+
+/installer:
+  controller: Installer
+  method: installerView
+
+/installer-load:
+  controller: Installer
+  method: installerAction
+
+/installer/test:
+  controller: Installer
+  method: installerAction
