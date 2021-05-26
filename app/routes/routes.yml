@@ -13,3 +13,25 @@
 /register:
   controller: Home
   method: registerView
+
+# installer
+
+/installer-register:
+  controller: Installer
+  method: installerRegisterView
+
+/installer-db:
+  controller: Installer
+  method: installerDatabaseView
+
+/installer/load-db:
+  controller: Installer
+  method: loadDatabaseAction
+
+/installer/test:
+  controller: Installer
+  method: testView
+
+/installer/register-save:
+  controller: Installer
+  method: registerAction
