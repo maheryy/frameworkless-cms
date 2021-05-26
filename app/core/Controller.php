@@ -16,12 +16,10 @@ abstract class Controller
     }
 
     /**
-     * Render a view in from any controller
+     * Render a view from any controller
      * 
      * @param string $view
      * @param string $template
-     * 
-     * @return void
      */
     protected function render(string $view, string $template = 'default')
     {
@@ -33,8 +31,6 @@ abstract class Controller
      * 
      * @param string $key
      * @param mixed $value
-     * 
-     * @return void
      */
     protected function setParam(string $key, $value)
     {
@@ -45,8 +41,6 @@ abstract class Controller
      * Set multiple view params (the variable of $key name can be used in the view)
      * 
      * @param array $data
-     * 
-     * @return void
      */
     protected function setData(array $data)
     {
@@ -56,23 +50,20 @@ abstract class Controller
     }
 
     /**
-     * Send back a text message
+     * Send back a text message and terminate script execution
      * 
      * @param string $message
-     * 
-     * @return void
      */
     protected function send(string $message)
     {
         echo $message;
+        exit;
     }
 
     /**
-     * Send back a JSON data 
+     * Send back a JSON data and terminate script execution
      * 
      * @param array $data
-     * 
-     * @return void
      */
     protected function sendJSON(array $data)
     {
@@ -81,14 +72,12 @@ abstract class Controller
     }
 
     /**
-     * Send back success response as JSON
+     * Send back success response as JSON and terminate script execution
      * 
      * @param string $message
      * @param array $data optional
-     * 
-     * @return void
      */
-    protected function sendSuccess(string $message, array $data = [])
+    protected function sendSuccess(string $message, array $data = null)
     {
         $this->sendJSON([
             'success' => true,
@@ -98,17 +87,18 @@ abstract class Controller
     }
 
     /**
-     * Send back error response
+     * Send back error response as JSON and terminate script execution
      * 
      * @param string $message
-     * @param int $error HTTP status code (400, 401, 403, 404 ...)
-     * 
-     * @return void
+     * @param array $data optional
      */
-    protected function sendError(string $message, int $error = 400)
+    protected function sendError(string $message, array $data = null)
     {
-        http_response_code($error);
-        $this->send($message);
+        $this->sendJSON([
+            'success' => false,
+            'message' => $message,
+            'data' => $data,
+        ]);
     }
 
     /**

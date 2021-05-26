@@ -331,7 +331,7 @@ abstract class Model
      * 
      * @return \PDOStatement
      */
-    private function execute(string $sql, array $params)
+    private function execute(string $sql, array $params = null)
     {
         $st = $this->db->prepare($sql);
         $st->execute($params);

@@ -3,173 +3,229 @@ $label: #5c5e5f;
 $label-hover: #3967f1;
 $label-active: #315bd8;
 $border: #9c9da0;
+$border-error: #ff0000;
 $border-hover: #275efe;
 $border-active: #245dff;
 $transition-duration: 0.25s;
 
 form.form-default {
-    width: $form-width;
-    padding: 20px 10px;
-    margin: auto;
-    height: 120%;
-    @include flex-col-display(space-evenly, flex-start);
+  width: $form-width;
+  padding: 20px 10px;
+  margin: auto;
+  height: 120%;
+  @include flex-col-display(space-evenly, flex-start);
 
-    fieldset {
-        width: 100%;
-        border: none;
-        padding: 1em 0;
-        // & > h3 {
-        // }
+  fieldset {
+    width: 100%;
+    border: none;
+    padding: 1em 0;
+    // & > h3 {
+    // }
+  }
+
+  .form-group-inline {
+    width: 100%;
+    @include flex-display(flex-start, center, wrap);
+
+    & > .form-field, & > .form-field-inline {
+      flex: 1;
     }
-    .form-group-inline {
-        width: 100%;
-        @include flex-display(flex-start, center, wrap);
+  }
 
-        & > .form-field, & > .form-field-inline {
-            flex: 1;
-        }
-    }
+  .form-action {
+    padding: 0.5em 5px;
+    align-self: flex-start;
 
-    .form-action {
-        padding: 0.5em 5px;
-        align-self: flex-start;
-
-        &.right {
-            align-self: flex-end;
-        }
-        &.center {
-            align-self: center;
-        }
-    }
-}
-
-.form-field-inline {
-    @include flex-display(space-between);
-    label {
-        order: 1;
-        flex: 0.3;
-    }
-    input,
-    textarea,
-    select {
-        order: 2;
-        &.form-control {
-            flex: 1;
-        }
-    }
-}
-
-.form-field {
-    @include flex-col-display(center, flex-start);
-    label {
-        order: 1;
-        width: 100%;
-        min-width: 100px;
+    &.right {
+      align-self: flex-end;
     }
 
-    input,
-    textarea,
-    select {
-        order: 2;
-        &.form-control {
-            width: 100%;
-        }
+    &.center {
+      align-self: center;
     }
+  }
 }
 
 .form-field,
 .form-field-inline {
+  width: 100%;
+  padding: 0.5em 5px;
+
+  label {
+    color: $label;
+    transition: color $transition-duration;
+  }
+
+  &.required > label::after {
+    content: "*";
+    color: #dd6666;
+    margin-left: 0.2rem;
+  }
+
+  .form-control {
     width: 100%;
-    padding: 0.5em 5px;
 
-    label {
-        color: $label;
-        transition: color $transition-duration;
+    &:focus + label {
+      color: $label-active;
+    }
+  }
+
+  .error-message {
+    color: $border-error;
+    font-size: .75em;
+  }
+
+  &:hover {
+    & > .form-control {
+      border-color: $border-hover;
+
+      & + label {
+        color: $label-hover;
+      }
+    }
+  }
+}
+
+.form-field-inline {
+  @include flex-display(space-between);
+
+  label {
+    order: 1;
+    flex: 0.3;
+  }
+
+  &.error {
+    flex-wrap: wrap;
+
+    & > .error-container {
+      order: 3;
+      padding-top: .1em;
+      flex-basis: 100%;
+      display: flex;
+      justify-content: flex-end;
+
+      & > .error-message {
+        flex-basis: 76%;
+      }
     }
 
-    &.required > label::after {
-        content: "*";
-        color: #dd6666;
-        margin-left: 0.2rem;
+    & > .form-control {
+      border: 1px solid $border-error;
+      box-shadow: 0 1px 0 1px rgba(lighten($border-error, 10%), 0.15);
+
+      &:focus {
+        box-shadow: 0 1px lighten($border-error, 15%);
+      }
+    }
+  }
+
+  input,
+  textarea,
+  select {
+    order: 2;
+
+    &.form-control {
+      flex: 1;
+    }
+  }
+}
+
+.form-field {
+  @include flex-col-display(center, flex-start);
+
+  label {
+    order: 1;
+    width: 100%;
+    min-width: 100px;
+  }
+
+  &.error {
+    & > .error-container {
+      order: 3;
     }
 
-    .form-control {
-        width: 100%;
+    & > .form-control {
+      border: 1px solid $border-error;
+      box-shadow: 0 1px 0 1px rgba(lighten($border-error, 10%), 0.15);
 
-        &:focus + label {
-            color: $label-active;
-        }
+      &:focus {
+        box-shadow: 0 1px lighten($border-error, 15%);
+      }
     }
 
-    &:hover {
-        & > .form-control {
-            border-color: $border-hover;
-            & + label {
-                color: $label-hover;
-            }
-        }
+  }
+
+  input,
+  textarea,
+  select {
+    order: 2;
+
+    &.form-control {
+      width: 100%;
     }
+  }
 }
 
 input {
-    &.form-control {
-        min-width: 100px;
-        height: 2.25em;
-        padding: 3px 0.5em;
-        border: 1px solid $border;
-        border-radius: 0.3em;
-        color: $label;
-        box-shadow: 0 1px 0 1px rgba(#000, 0.05);
-        transition: border $transition-duration, box-shadow $transition-duration;
-        
-        &:focus {
-            border-color: $border-active;
-            box-shadow: 0 1px lighten($border-active, 15%);
-            outline: none;
-        }
+  &.form-control {
+    min-width: 100px;
+    height: 2.25em;
+    padding: 3px 0.5em;
+    border: 1px solid $border;
+    border-radius: 0.3em;
+    color: $label;
+    box-shadow: 0 1px 0 1px rgba(#000, 0.05);
+    transition: border $transition-duration, box-shadow $transition-duration;
+
+    &:focus {
+      border-color: $border-active;
+      box-shadow: 0 1px lighten($border-active, 15%);
+      outline: none;
     }
-    // &.form-control-check {
-    // }
-    // &.form-control-radio {
-    // }
+  }
+
+  // &.form-control-check {
+  // }
+  // &.form-control-radio {
+  // }
 }
 
 textarea.form-control {
-    height: 5em;
-    min-width: 100px;
-    padding: 0.5em 0.5em;
-    border-radius: 0.3em;
-    border: 1px solid $border;
-    color: $label;
-    font-family: Raleway, sans-serif;
+  height: 5em;
+  min-width: 100px;
+  padding: 0.5em 0.5em;
+  border-radius: 0.3em;
+  border: 1px solid $border;
+  color: $label;
+  font-family: Raleway, sans-serif;
 
-    &:focus {
-        border-color: $border-active;
-        box-shadow: 0 1px lighten($border-active, 15%);
-        outline: none;
-    }
+  &:focus {
+    border-color: $border-active;
+    box-shadow: 0 1px lighten($border-active, 15%);
+    outline: none;
+  }
 }
 
 select.form-control {
-    padding: 3px .5em;
-    height: 2.25em;
-    min-width: 100px;
-    font-weight: 400;
-    color: $label;
-    background-color: #fff;
-    box-shadow: 0 1px 0 1px rgba(#000, 0.05);
-    border: 1px solid $border;
-    border-radius: 0.3em;
-    transition: border $transition-duration;
+  padding: 3px .5em;
+  height: 2.25em;
+  min-width: 100px;
+  font-weight: 400;
+  color: $label;
+  background-color: #fff;
+  box-shadow: 0 1px 0 1px rgba(#000, 0.05);
+  border: 1px solid $border;
+  border-radius: 0.3em;
+  transition: border $transition-duration;
 
-    option {
-        font-weight: normal;
-    }
+  option {
+    font-weight: normal;
+  }
 
-    &:focus {
-        border-color: #aaa;
-        box-shadow: 0 0 1px 1px rgba(59, 153, 252, 0.7);
-        color: #222;
-        outline: none;
-    }
+  &:focus {
+    border-color: #aaa;
+    box-shadow: 0 0 1px 1px rgba(59, 153, 252, 0.7);
+    color: #222;
+    outline: none;
+  }
 }

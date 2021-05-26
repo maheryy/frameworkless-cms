@@ -8,25 +8,26 @@ use App\Core\Model;
 class User extends Model
 {
     private $id;
-    protected $login;
-    protected $password;
     protected $username;
+    protected $password;
     protected $email;
     protected $role;
     protected $status;
-
     protected $createdAt;
     protected $updatedAt;
+
+
+    public function __construct()
+    {
+        parent::__construct();
+    }
 
     public function setId($id)
     {
         $this->id = $id;
         $this->hydrate();
     }
-    public function setLogin($login)
-    {
-        $this->login = $login;
-    }
+
     public function setPassword($password)
     {
         $this->password = $password;
@@ -60,10 +61,6 @@ class User extends Model
     {
         return $this->id;
     }
-    public function getLogin()
-    {
-        return $this->login;
-    }
     public function getPassword()
     {
         return $this->password;
@@ -93,9 +90,4 @@ class User extends Model
         return $this->updatedAt;
     }
 
-
-    public function __construct()
-    {
-        parent::__construct();
-    }
 }

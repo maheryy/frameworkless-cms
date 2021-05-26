@@ -40,7 +40,7 @@ function bindRoles(root_element = null) {
 
 function getOptions(el) {
     let opts = $(el).data('options');
-    return opts != null && opts != undefined && opts != '' ? JSON.parse(opts) : false;
+    return opts != null && opts != undefined && opts != '' ? opts : false;
 }
 
 function getId(el) {
@@ -53,14 +53,80 @@ function getUrl(el) {
     return url != null && url != undefined && url != '' ? url : false;
 }
 
+function redirect(url, delay = null) {
+    if (!delay) {
+        window.location.href = url;
+        return;
+    }
+    setTimeout(function () {
+        window.location.href = url;
+    }, delay * 1000);
+}
 
-function setInfo(type, text) {
+function getFormData(form, options = null, with_validation = true) {
+    let data = $(form).serializeArray();
+    let isValid = true;
+
+    if (with_validation) {
+        data.forEach((el) => {
+            let field_id = '#' + el.name;
+            if ($(field_id).length && $(field_id).parent().hasClass('required') && el.value.trim() === '') {
+                setErrorField(field_id, "Ce champ est obligatoire");
+                isValid = false;
+            }
+        })
+    }
+
+    if (options && options.add_data) {
+        for (const [k, v] of Object.entries(options.add_data)) {
+            data.push({name: k, value: v});
+        }
+    }
+
+    return isValid ? data : false;
+}
+
+
+function displayErrorFields(fields) {
+    fields.forEach(function (el) {
+        if ($('#' + el.name).length) setErrorField('#' + el.name, el.error);
+    });
+}
+
+function setErrorField(input, message) {
+    $(input).parent().addClass('error');
+
+    /* Remove existing error and recreate */
+    const element = "<p class=\"error-container\"><span class=\"error-message\">" + message + "</span></p>"
+    $(input).parent().find('.error-container').remove();
+    $(input).parent().append(element);
+
+    /* Remove error when user has edited the input */
+    $(input).focusout(function () {
+        $(this).parent().removeClass('error')
+        $(this).parent().find('.error-container').remove();
+        $(this).off('focusout');
+    })
+}
+
+let delay_info;
+
+function setInfo(type, text, delay = null) {
+    let extra_classes = $('#info-box').hasClass('center') ? ' center' : '';
+
     $('#info-box').removeClass();
     $('#info-icon').removeClass();
     $('#info-description').html(text);
 
-    $('#info-box').addClass(INFO_DATA[type].class + ' active');
+    $('#info-box').addClass(INFO_DATA[type].class + ' active' + extra_classes);
     $('#info-icon').addClass(INFO_DATA[type].icon);
+
+    if (delay) {
+        clearTimeout(delay_info);
+        delay_info = setTimeout(function () {
+            $('#info-box').removeClass('active');
+        }, delay * 1000);
+    }
 }
 
 /* .table-list > (.list-count-container > .list-count + .list-count-text) + (.li-actions)*/
@@ -195,13 +261,29 @@ const roleFunctions = {
 
             setInfo(INFO_PRIMARY, "Sauvegardé avec succès");
         });
-    }
-};
+    },
+    submitDefault: function () {
+        $(this).click(function (e) {
+            e.preventDefault();
+            const form = $(this).closest('form');
+            let data = getFormData(form, getOptions(this), true);
 
+            /* Some input are not valid */
+            if (!data) return;
+
+            $.ajax({
+                method: $(form).attr('method'),
+                url: $(form).attr('action'),
+                data: data,
+                success: ajaxFunctions.submitDefault
+            });
+        });
+    },
+};
 
 const ajaxFunctions = {
     debug: function (res) {
-        if (typeof res === 'string' || res.success) {
+        if (res.success) {
             console.log('success');
             console.log(res);
         } else {
@@ -209,10 +291,20 @@ const ajaxFunctions = {
             console.log(res);
         }
     },
-    errorDefault: function (error) {
-        console.log('An error occured : ', error.responseText);
+    submitDefault: function (res) {
+        if (res.success) {
+            setInfo(INFO_SUCCESS, res.message, 1);
+            if (res.data && res.data.url_next) {
+                redirect(res.data.url_next, 1.5);
+            }
+        } else {
+            if (res.data) {
+                displayErrorFields(res.data);
+            }
+            setInfo(INFO_DANGER, res.message, 4);
+        }
     }
-}
+};
 
 $(document).ready(function () {
     bindRoles();

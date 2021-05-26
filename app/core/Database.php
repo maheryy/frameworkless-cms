@@ -16,15 +16,17 @@ class Database
     private function __construct()
     {
         try {
-            $dsn = DB_DRIVER
-                . ':dbname=' . DB_NAME
-                . ';host=' . DB_HOST;
-
-            self::$pdo_instance = new \PDO($dsn, DB_USER, DB_PWD);
-            self::setPDOAttributes();
+            $opts = $this->getPDOAttributes();
+            self::$pdo_instance = self::connect(DB_HOST, DB_NAME, DB_USER, DB_PWD, 'mysql', $opts);
         } catch (\Exception $e) {
             throw new \Exception('SQL Error: ' . $e->getMessage());
         }
+    }
+
+    public static function connect(string $host, string $database, string $user, string $password, string $driver = 'mysql', array $opts = null)
+    {
+        $dsn = $driver . ':dbname=' . $database . ';host=' . $host;
+        return new \PDO($dsn, $user, $password, $opts);
     }
 
     /**
@@ -42,28 +44,64 @@ class Database
     }
 
     /**
-     * Set PDO Attributes
-     * 
-     * @return void
-     */
-    private static function setPDOAttributes()
-    {
-        $attributes = self::getPDOAttributes();
-        foreach ($attributes as $key => $value) {
-            self::$pdo_instance->setAttribute($key, $value);
-        }
-    }
-
-    /**
      * Get PDO Attributes
      * 
      * @return array
      */
-    private static function getPDOAttributes()
+    private function getPDOAttributes()
     {
         return [
             \PDO::ATTR_ERRMODE => \PDO::ERRMODE_EXCEPTION,
             \PDO::ATTR_DEFAULT_FETCH_MODE => \PDO::FETCH_ASSOC
         ];
+    }
+
+    /**
+     * Execute a prepared statement
+     * 
+     * @param string $sql
+     * @param array $params
+     * 
+     * @return \PDOStatement
+     */
+    public static function execute(string $sql, array $params = null)
+    {
+        
+        $st = self::getInstance()->prepare($sql);
+        $st->execute($params);
+
+        return $st;
+    }
+
+    /**
+     * Shorthand for getInstance()->inTransaction();
+     */
+    public static function inTransaction()
+    {
+        return self::getInstance()->inTransaction();
+    }
+
+    /**
+     * Shorthand for getInstance()->beginTransaction();
+     */
+    public static function beginTransaction()
+    {
+        return self::getInstance()->beginTransaction();
+    }
+
+    /**
+     * Shorthand for getInstance()->commit();
+     */
+    public static function commit()
+    {
+        return self::getInstance()->commit();
+    }
+
+    /**
+     * Shorthand for getInstance()->rollback();
+     */
+    public static function rollback()
+    {
+        return self::getInstance()->rollback();
     }
 }

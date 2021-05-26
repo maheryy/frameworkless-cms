@@ -12,10 +12,9 @@ class Request
     /**
      * Return the defined $_REQUEST[$key] variable, null otherwise
      * $_REQUEST contains $_GET, $_POST, $_COOKIE
-     * 
+     *
      * @param string $key
-     * 
-     * @return string|int|array|null 
+     * @return string|null
      */
     public static function request(string $key)
     {
@@ -23,11 +22,32 @@ class Request
     }
 
     /**
-     * Return the defined $_GET[$key] variable, null otherwise
-     * 
+     * Return the defined $_REQUEST[$key] array variable, null otherwise
+     *
      * @param string $key
-     * 
-     * @return string|int|array|null 
+     * @return array|null
+     */
+    public static function requestArray(string $key)
+    {
+        return isset($_REQUEST[$key]) && is_array($_REQUEST[$key]) ? $_REQUEST[$key] : null;
+    }
+
+    /**
+     * Return an url variable, null otherwise
+     *
+     * @param string $key
+     * @return string|null
+     */
+    public static function getUrl(string $key)
+    {
+        return $_REQUEST[$key] ?? null;
+    }
+
+    /**
+     * Return the defined $_GET[$key] variable, null otherwise
+     *
+     * @param string $key
+     * @return string|null
      */
     public static function get(string $key)
     {
@@ -35,11 +55,21 @@ class Request
     }
 
     /**
-     * Return the defined $_POST[$key] variable, null otherwise
-     * 
+     * Return the defined $_GET[$key] variable, null otherwise
+     *
      * @param string $key
-     * 
-     * @return string|int|array|null 
+     * @return array|null
+     */
+    public static function getArray(string $key)
+    {
+        return isset($_GET[$key]) && is_array($_GET[$key]) ? $_GET[$key] : null;
+    }
+
+    /**
+     * Return the defined $_POST[$key] variable, null otherwise
+     *
+     * @param string $key
+     * @return string|int|array|null
      */
     public static function post(string $key)
     {
@@ -47,11 +77,21 @@ class Request
     }
 
     /**
-     * Return the defined $COOKIE[$key] variable, null otherwise
-     * 
+     * Return the defined $_POST[$key] array variable, null otherwise
+     *
      * @param string $key
-     * 
-     * @return string|int|array|null 
+     * @return array|null
+     */
+    public static function postArray(string $key)
+    {
+        return isset($_POST[$key]) && is_array($_POST[$key]) ? $_POST[$key] : null;
+    }
+
+    /**
+     * Return the defined $COOKIE[$key] variable, null otherwise
+     *
+     * @param string $key
+     * @return string|int|array|null
      */
     public static function getCookie(string $key)
     {
@@ -60,9 +100,8 @@ class Request
 
     /**
      * Delete a cookie
-     * 
+     *
      * @param string $key
-     * 
      * @return void
      */
     public static function deleteCookie(string $key)
@@ -75,15 +114,14 @@ class Request
 
     /**
      * Set a cookie
-     * 
+     *
      * @param string $key
      * @param string $value
-     * @param array $options 
+     * @param array $options
      * Possible options :
      * - int expiration : 0 is default
      * - int expiration_basis : COOKIE_EXPIRATION_DAY|COOKIE_EXPIRATION_HOUR|COOKIE_EXPIRATION_MIN
      * - string path : '/' is default
-     * 
      * @return void
      */
     public static function setCookie(string $key, string $value, array $options = [])
@@ -103,7 +141,7 @@ class Request
                         $expire *= 60 * 60;
                         break;
                     case self::COOKIE_EXPIRATION_MIN:
-                        $expire *=  60;
+                        $expire *= 60;
                         break;
                     default:
                         break;
@@ -117,34 +155,33 @@ class Request
 
     /**
      * Return all GET Variables
-     * 
      * @return array
      */
     public static function allGet()
     {
         return self::all($_GET);
     }
+
     /**
      * Return all POST Variables
-     * 
      * @return array
      */
     public static function allPost()
     {
         return self::all($_POST);
     }
+
     /**
      * Return all REQUEST Variables (GET, POST, COOKIE)
-     * 
      * @return array
      */
     public static function allRequest()
     {
         return self::all($_REQUEST);
     }
+
     /**
      * Return all COOKIE Variables
-     * 
      * @return array
      */
     public static function allCookie()
@@ -154,29 +191,29 @@ class Request
 
     /**
      * Return a COOKIE|POST|GET|REQUEST Variable
-     * 
-     * @param string $key 
+     *
+     * @param string $key
      * @param int $source $_COOKIE|$_POST|$_GET|$_REQUEST
-     * 
      * @return string|int|array|null
      */
     private static function getVariable(string $key, array $source)
     {
-        $var = $source[$key] ?? null;
-        return is_numeric($var) ? (int) $var : (is_string($var) ? htmlspecialchars($var) : $var);
+        return isset($source[$key]) && is_string($source[$key])
+            ? htmlspecialchars(trim($source[$key]))
+            : null;
     }
+
     /**
      * Return all COOKIE|POST|GET|REQUEST Variables
-     * 
+     *
      * @param int $source $_COOKIE|$_POST|$_GET|$_REQUEST
-     * 
      * @return array
      */
     private static function all(array $source)
     {
         $res = [];
         foreach ($source as $key => $value) {
-            $res[$key] = is_numeric($value) ? (int) $value : (is_string($value) ? htmlspecialchars($value) : $value);
+            $res[$key] = is_string($value) ? htmlspecialchars(trim($value)) : $value;
         }
 
         return $res;

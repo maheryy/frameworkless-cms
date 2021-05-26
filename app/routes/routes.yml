@@ -22,12 +22,16 @@
 
 /installer-db:
   controller: Installer
-  method: installerDbView
+  method: installerDatabaseView
 
-/installer-load:
+/installer/load-db:
   controller: Installer
-  method: installerAction
+  method: loadDatabaseAction
 
 /installer/test:
   controller: Installer
-  method: installerAction
+  method: testView
+
+/installer/register-save:
+  controller: Installer
+  method: registerAction
