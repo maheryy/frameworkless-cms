@@ -200,17 +200,17 @@ const roleFunctions = {
 
 
 const ajaxFunctions = {
-    debug: function (data) {
-        if (typeof data === 'string' || data.success) {
+    debug: function (res) {
+        if (typeof res === 'string' || res.success) {
             console.log('success');
-            console.log(data);
+            console.log(res);
         } else {
             console.log('fail');
-            console.log(data);
+            console.log(res);
         }
     },
-    errorDefault: function (data) {
-        console.log('An error occured : ', data.responseText);
+    errorDefault: function (error) {
+        console.log('An error occured : ', error.responseText);
     }
 }
 

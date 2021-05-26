@@ -109,7 +109,7 @@ class Request
                         break;
                 }
             }
-            $expire += time();
+            $expire = time() + $expire;
         }
 
         setcookie($key, $value, $expire, $path);

@@ -8,3 +8,4 @@ docker-compose.*.yaml
 .docker/config/*.*.conf
 
 db_backups
+.idea

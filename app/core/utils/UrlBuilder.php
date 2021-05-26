@@ -16,9 +16,9 @@ class UrlBuilder
      * 
      * @return string
      */
-    public static function getAbsoluteUrl(string $controller, string $method, array $params = [])
+    public static function makeAbsoluteUrl(string $controller, string $method, array $params = [])
     {
-        return $_SERVER['HTTP_HOST'] . self::getUrl($controller, $method, $params);
+        return $_SERVER['HTTP_HOST'] . self::makeUrl($controller, $method, $params);
     }
 
     /**
@@ -30,7 +30,7 @@ class UrlBuilder
      * 
      * @return string
      */
-    public static function getUrl(string $controller, string $method, array $params = [])
+    public static function makeUrl(string $controller, string $method, array $params = [])
     {
         $route = Router::getInstance()->getUriFromMethod($controller, $method);
         $query_string = '';

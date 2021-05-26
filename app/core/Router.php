@@ -223,7 +223,7 @@ class Router
      * 
      * @return void
      */
-    public static function redirect(string $path = '')
+    public function redirect(string $path = '')
     {
         header('Location: http://'. $_SERVER['HTTP_HOST'] . $path);
     }
