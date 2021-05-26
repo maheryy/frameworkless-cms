@@ -1,14 +1,14 @@
 @mixin flex-display($justify, $align: center, $wrap: nowrap) {
-    display: flex;
-    flex-direction: row;
-    justify-content: $justify;
-    align-items: $align;
-    flex-wrap: $wrap;
+  display: flex;
+  flex-direction: row;
+  justify-content: $justify;
+  align-items: $align;
+  flex-wrap: $wrap;
 }
 
 @mixin flex-col-display($justify, $align: center) {
-    display: flex;
-    flex-direction: column;
-    justify-content: $justify;
-    align-items: $align;
+  display: flex;
+  flex-direction: column;
+  justify-content: $justify;
+  align-items: $align;
 }

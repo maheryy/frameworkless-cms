@@ -21,10 +21,7 @@ class User extends Model
     public function setId($id)
     {
         $this->id = $id;
-        $data = $this->getBy(['id' => $id], Database::FETCH_ONE);
-        unset($data['id']);
-
-        $this->populate($data);
+        $this->hydrate();
     }
     public function setLogin($login)
     {

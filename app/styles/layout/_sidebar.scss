@@ -3,81 +3,84 @@ $sublist-width: 150px;
 $sublist-font-sz: 0.875em;
 
 #sidebar {
-    height: calc(100vh - #{$toolbar-height});
-    width: $sidebar-width;
-    padding: 20px 0 5px 0;
-    position: fixed;
-    top: $toolbar-height;
-    z-index: 1;
-    background-color: $bg-primary-dark;
-    font-size: 0.875em;
-    @include flex-col-display(space-between);
+  height: calc(100vh - #{$toolbar-height});
+  width: $sidebar-width;
+  padding: 20px 0 5px 0;
+  position: fixed;
+  top: $toolbar-height;
+  z-index: 1;
+  background-color: $bg-primary-dark;
+  font-size: 0.875em;
+  @include flex-col-display(space-between);
 
-    .sidebar-list {
-        width: 100%;
-        height: 80%;
+  .sidebar-list {
+    width: 100%;
+    height: 80%;
 
-        &.bottom {
-            height: fit-content;
-        }
-        @include flex-col-display(flex-start);
-        .link-icon {
-            margin-left: 1em;
-            padding-right: 1.5em;
-            width: 16px;
-            height: 16px;
-        }
-
-        li {
-            width: 100%;
-            position: relative;
-
-            & > a {
-                display: inline-block;
-                width: 100%;
-                height: $item-height;
-                line-height: $item-height;
-                text-decoration: none;
-                color: $color-primary-dark;
-                &:hover {
-                    background-color: $bg-secondary-dark;
-                    cursor: pointer;
-                }
-            }
-
-            & > .sidebar-sub-list {
-                font-size: $sublist-font-sz;
-                display: none;
-            }
-        }
-
-        & > li.selected {
-            background-color: darken($bg-primary-dark, 5);
-            color: $bg-selected-dark;
-
-            & > .sidebar-sub-list {
-                display: block;
-
-                .label-sub-item {
-                    padding-left: 3em;
-                }
-            }
-        }
-
-        & > li:not(.selected):hover > .sidebar-sub-list {
-            display: block;
-            min-width: $sublist-width;
-            position: absolute;
-            top: 0;
-            left: $sidebar-width - 1px;
-            border-left: none;
-            border-top-right-radius: 0.3em;
-            border-bottom-right-radius: 0.3em;
-            background-color: $bg-primary-dark;
-
-            .label-sub-item {
-                padding-left: 1em;
-            }
-        }
+    &.bottom {
+      height: fit-content;
     }
+
+    @include flex-col-display(flex-start);
+
+    .link-icon {
+      margin-left: 1em;
+      padding-right: 1.5em;
+      width: 16px;
+      height: 16px;
+    }
+
+    li {
+      width: 100%;
+      position: relative;
+
+      & > a {
+        display: inline-block;
+        width: 100%;
+        height: $item-height;
+        line-height: $item-height;
+        text-decoration: none;
+        color: $color-primary-dark;
+
+        &:hover {
+          background-color: $bg-secondary-dark;
+          cursor: pointer;
+        }
+      }
+
+      & > .sidebar-sub-list {
+        font-size: $sublist-font-sz;
+        display: none;
+      }
+    }
+
+    & > li.selected {
+      background-color: darken($bg-primary-dark, 5);
+      color: $bg-selected-dark;
+
+      & > .sidebar-sub-list {
+        display: block;
+
+        .label-sub-item {
+          padding-left: 3em;
+        }
+      }
+    }
+
+    & > li:not(.selected):hover > .sidebar-sub-list {
+      display: block;
+      min-width: $sublist-width;
+      position: absolute;
+      top: 0;
+      left: $sidebar-width - 1px;
+      border-left: none;
+      border-top-right-radius: 0.3em;
+      border-bottom-right-radius: 0.3em;
+      background-color: $bg-primary-dark;
+
+      .label-sub-item {
+        padding-left: 1em;
+      }
+    }
+  }
 }

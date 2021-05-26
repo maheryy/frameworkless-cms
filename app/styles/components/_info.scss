@@ -1,53 +1,55 @@
-
 @mixin base-info($color, $icon) {
-    @include flex-display(space-between);
-    position: relative;
-    padding: 0.5em 10px;
-    margin: .5em;
-    border: 1px solid $color;
-    opacity: 0;
-    border-radius: 0.4em;
-    overflow: hidden;
-    width: 40%;
-    min-width: fit-content;
-    transition: opacity .2s;
+  @include flex-display(space-between);
+  position: relative;
+  padding: 0.5em 10px;
+  margin: .5em;
+  border: 1px solid $color;
+  opacity: 0;
+  border-radius: 0.4em;
+  overflow: hidden;
+  width: 40%;
+  min-width: fit-content;
+  transition: opacity .2s;
 
-    &.active {
-        opacity: 1;
-    }
+  &.active {
+    opacity: 1;
+  }
 
-    &::before {
-        content: "";
-        position: absolute;
-        width: 5px;
-        height: 100%;
-        left: 0;
-        background-color: $color;
-    }
+  &::before {
+    content: "";
+    position: absolute;
+    width: 5px;
+    height: 100%;
+    left: 0;
+    background-color: $color;
+  }
 
-    #info-icon {
-        color: $color;
-    }
+  #info-icon {
+    color: $color;
+  }
 
-    #info-close {
-        color: grey;
-        cursor: pointer;
-    }
+  #info-close {
+    color: grey;
+    cursor: pointer;
+  }
 
-    #info-description {
-        padding: 0 .5em;
-    }
+  #info-description {
+    padding: 0 .5em;
+  }
 }
 
 .info-primary {
-    @include base-info($info-primary, "\f05a");
+  @include base-info($info-primary, "\f05a");
 }
+
 .info-success {
-    @include base-info($info-success, "\f058");
+  @include base-info($info-success, "\f058");
 }
+
 .info-warning {
-    @include base-info($info-warning, "\f071");
+  @include base-info($info-warning, "\f071");
 }
+
 .info-danger {
-    @include base-info($info-danger, "\f06a");
+  @include base-info($info-danger, "\f06a");
 }

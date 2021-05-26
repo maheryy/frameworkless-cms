@@ -18,18 +18,21 @@ $table-border-bg: #1c6ea4;
       font-style: italic;
       color: rgb(99, 97, 97);
     }
+
     & > .list-actions {
       @include flex-display(space-evenly);
 
       #list-add {
         color: $info-success;
       }
+
       #list-remove {
         color: $info-danger;
       }
 
       li {
         margin: 0 0.1em;
+
         a {
           text-decoration: none;
           display: inline-block;
@@ -118,6 +121,7 @@ $table-border-bg: #1c6ea4;
         background-color: $btn-color-primary;
         color: white;
       }
+
       &:hover:not(.active) {
         background-color: #ddd;
       }

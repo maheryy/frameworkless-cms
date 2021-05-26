@@ -76,13 +76,13 @@ abstract class Model
     /**
      * Insert or update query.
      * Update query is triggered if a model has an id. Insert query otherwise
-     * 
+     *
+     * @param int code Database::SAVE_DEFAULT | Database::SAVE_IGNORE_NULL
      * @return array affected rows and last inserted id
      */
-    public function save()
+    public function save(int $code = Database::SAVE_DEFAULT)
     {
-        $data = $this->getModelData();
-        $res = false;
+        $data = $this->getModelData($code);
 
         # Insert query
         if (!$this->hasId()) {
@@ -234,9 +234,10 @@ abstract class Model
      */
     private function insertQuery(array $data)
     {
+        $fields = array_keys($data);
         $sql = 'INSERT INTO ' . $this->table_name
-            . ' (' . implode(',', $this->columns) . ') 
-                    VALUES (:' . implode(', :', $this->columns) . ')';
+                . '(' . implode(',', $fields) . ') '
+                . 'VALUES (:' . implode(', :', $fields) . ')';
 
         $res = $this->execute($sql, $data);
         return $res ? $this->db->lastInsertId() : $res;
@@ -328,7 +329,7 @@ abstract class Model
      * @param string $sql
      * @param array $params
      * 
-     * @return PDOStatement
+     * @return \PDOStatement
      */
     private function execute(string $sql, array $params)
     {
@@ -376,11 +377,14 @@ abstract class Model
      * 
      * @return array
      */
-    private function getModelData()
+    private function getModelData(int $code = Database::SAVE_DEFAULT)
     {
         $res = [];
         foreach ($this->columns as $column) {
             $res[$column] = $this->{$this->toGetter($column)}();
+            if ($code === Database::SAVE_IGNORE_NULL && is_null($res[$column])) {
+                unset($res[$column]);
+            }
         }
 
         return $res;

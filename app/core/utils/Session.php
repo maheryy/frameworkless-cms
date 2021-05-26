@@ -106,9 +106,7 @@ class Session
      */
     public static function start()
     {
-        if (!self::isActive()) {
-            session_start();
-        }
+        session_start();
     }
 
     /**
@@ -118,6 +116,16 @@ class Session
      */
     public static function isActive()
     {
-        return session_status() === PHP_SESSION_ACTIVE;
+        return !is_null($_SESSION);
+    }
+
+    /**
+     * Alias for isActive()
+     *
+     * @return bool
+     */
+    public static function isLoggedIn()
+    {
+        return isset($_SESSION['user_id']);
     }
 }

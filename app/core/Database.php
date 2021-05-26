@@ -9,6 +9,10 @@ class Database
     const FETCH_ONE = 1;
     const FETCH_ALL = 2;
 
+    const SAVE_DEFAULT = 0;
+    const SAVE_IGNORE_NULL = 1;
+
+
     private function __construct()
     {
         try {
@@ -26,7 +30,7 @@ class Database
     /**
      * Database singleton
      * 
-     * @return PDO
+     * @return \PDO
      */
     public static function getInstance()
     {
