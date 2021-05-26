@@ -16,9 +16,13 @@
 
 # installer
 
-/installer:
+/installer-register:
   controller: Installer
-  method: installerView
+  method: installerRegisterView
+
+/installer-db:
+  controller: Installer
+  method: installerDbView
 
 /installer-load:
   controller: Installer

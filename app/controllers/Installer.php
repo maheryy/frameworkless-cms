@@ -12,13 +12,22 @@ class Installer extends Controller
         parent::__construct();
     }
 
-    # /installer
-    public function installerView()
+    # /installer-register
+    public function installerRegisterView()
     {
         $this->setData([
 
         ]);
-        $this->render('installer', 'installer');
+        $this->render('installer_register', 'installer');
+    }
+
+    # /installer-db
+    public function installerDbView()
+    {
+        $this->setData([
+
+        ]);
+        $this->render('installer_db', 'installer');
     }
 
     # /installer-load
