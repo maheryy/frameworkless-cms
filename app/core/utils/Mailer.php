@@ -2,10 +2,10 @@
 
 namespace App\Core\Utils;
 
-use App\Models\User;
 use App\Vendor\PHPMailer\PHPMailer\Src\PHPMailer;
 use App\Vendor\PHPMailer\PHPMailer\Src\SMTP;
 use App\Vendor\PHPMailer\PHPMailer\Src\Exception;
+use App\Core\Utils\Repository;
 
 class Mailer
 {
@@ -44,11 +44,11 @@ class Mailer
             $mailer->Subject = $data['subject'];
             $mailer->Body = $data['content'];
 
+            $user_repository = Repository::user();
             foreach ($data['cc'] as $uid) {
                 if (is_numeric($uid)) {
-                    $user = new User();
-                    $user->setId($uid);
-                    $mailer->addCC($user->getEmail());
+                    $email = $user_repository->find($uid)['email'];
+                    $mailer->addCC($email);
                 } else {
                     $mailer->addCC($uid);
                 }
@@ -56,9 +56,8 @@ class Mailer
 
             foreach ($data['bcc'] as $uid) {
                 if (is_numeric($uid)) {
-                    $user = new User();
-                    $user->setId($uid);
-                    $mailer->addBCC($user->getEmail());
+                    $email = $user_repository->find($uid)['email'];
+                    $mailer->addBCC($email);
                 } else {
                     $mailer->addBCC($uid);
                 }
@@ -70,9 +69,8 @@ class Mailer
 
             foreach ($data['to'] as $index => $uid) {
                 if (is_numeric($uid)) {
-                    $user = new User();
-                    $user->setId($uid);
-                    $mailer->addAddress($user->getEmail());
+                    $email = $user_repository->find($uid)['email'];
+                    $mailer->addAddress($email);
                 } else {
                     $mailer->addAddress($uid);
                 }
@@ -80,7 +78,7 @@ class Mailer
                 if ($data['multiple']) {
                     $mailer->send();
 
-                    if (!isset($data['to'][$index+1])) {
+                    if (!isset($data['to'][$index + 1])) {
                         $res = [
                             'success' => true,
                             'message' => "Email envoyé avec succès"
@@ -99,8 +97,8 @@ class Mailer
             }
         } catch (Exception $e) {
             $res = [
-              'success' => false,
-              'message' => "L'envoi a échoué : {$mailer->ErrorInfo}"
+                'success' => false,
+                'message' => "L'envoi a échoué : {$mailer->ErrorInfo}"
             ];
         }
 
