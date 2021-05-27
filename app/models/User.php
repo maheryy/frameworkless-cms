@@ -13,8 +13,8 @@ class User extends Model
     protected $email;
     protected $role;
     protected $status;
-    protected $createdAt;
-    protected $updatedAt;
+    protected $created_at;
+    protected $updated_at;
 
 
     public function __construct()
@@ -28,66 +28,123 @@ class User extends Model
         $this->hydrate();
     }
 
-    public function setPassword($password)
-    {
-        $this->password = $password;
-    }
-    public function setUsername($username)
-    {
-        $this->username = $username;
-    }
-    public function setEmail($email)
-    {
-        $this->email = $email;
-    }
-    public function setRole($role)
-    {
-        $this->role = $role;
-    }
-    public function setStatus($status)
-    {
-        $this->status = $status;
-    }
-    public function setCreatedAt($createdAt)
-    {
-        $this->createdAt = $createdAt;
-    }
-    public function setUpdatedAt($updatedAt)
-    {
-        $this->updatedAt = $updatedAt;
-    }
-
     public function getId()
     {
         return $this->id;
     }
-    public function getPassword()
+
+    /**
+     * @param mixed $username
+     */
+    public function setUsername($username): void
     {
-        return $this->password;
+        $this->username = $username;
     }
+
+    /**
+     * @return mixed
+     */
     public function getUsername()
     {
         return $this->username;
     }
+
+    /**
+     * @param mixed $password
+     */
+    public function setPassword($password): void
+    {
+        $this->password = $password;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getPassword()
+    {
+        return $this->password;
+    }
+
+    /**
+     * @param mixed $email
+     */
+    public function setEmail($email): void
+    {
+        $this->email = $email;
+    }
+
+    /**
+     * @return mixed
+     */
     public function getEmail()
     {
         return $this->email;
     }
+
+    /**
+     * @param mixed $role
+     */
+    public function setRole($role): void
+    {
+        $this->role = $role;
+    }
+
+    /**
+     * @return mixed
+     */
     public function getRole()
     {
         return $this->role;
     }
+
+    /**
+     * @param mixed $status
+     */
+    public function setStatus($status): void
+    {
+        $this->status = $status;
+    }
+
+    /**
+     * @return mixed
+     */
     public function getStatus()
     {
         return $this->status;
     }
+
+    /**
+     * @param mixed $created_at
+     */
+    public function setCreatedAt($created_at): void
+    {
+        $this->created_at = $created_at;
+    }
+
+    /**
+     * @return mixed
+     */
     public function getCreatedAt()
     {
-        return $this->createdAt;
+        return $this->created_at;
     }
+
+    /**
+     * @param mixed $updated_at
+     */
+    public function setUpdatedAt($updated_at): void
+    {
+        $this->updated_at = $updated_at;
+    }
+
+    /**
+     * @return mixed
+     */
     public function getUpdatedAt()
     {
-        return $this->updatedAt;
+        return $this->updated_at;
     }
+
+
 
 }

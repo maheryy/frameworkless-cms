@@ -4,7 +4,7 @@ namespace App\Core\Utils;
 
 use App\Core\Exceptions\NotFoundException;
 
-abstract class ConstantManager
+class ConstantManager
 {
 
     public static $env_path = '../config/.env';

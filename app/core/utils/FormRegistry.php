@@ -37,4 +37,32 @@ class FormRegistry
             ],
         ];
     }
+
+    public static function getPasswordRecovery()
+    {
+        return [
+            'email' => [
+                'type' => Validator::TYPE_EMAIL,
+                'required' => true,
+                'error_message' => Validator::ERROR_EMAIL_DEFAULT,
+            ],
+        ];
+    }
+
+    public static function getPasswordReset()
+    {
+        return [
+            'password' => [
+                'type' => Validator::TYPE_PASSWORD,
+                'required' => true,
+                'error_message' => Validator::ERROR_PASSWORD_DEFAULT,
+            ],
+            'password_confirm' => [
+                'type' => Validator::TYPE_TEXT,
+                'required' => true,
+                'clone_of' => 'password',
+                'error_message' => 'Les mots de passe ne correspondent pas',
+            ],
+        ];
+    }
 }

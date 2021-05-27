@@ -6,9 +6,9 @@ use App\Core\Exceptions\NotFoundException;
 
 class View
 {
-    private $view;
-    private $template;
-    private $data;
+    private string $view;
+    private string $template;
+    private array $data;
 
     public function __construct(string $view, string $template, array $data = [])
     {
@@ -19,7 +19,7 @@ class View
 
     /**
      * @param string $view
-     * 
+     *
      * @return void
      */
     public function setView(string $view)
@@ -33,7 +33,7 @@ class View
 
     /**
      * @param string $template
-     * 
+     *
      * @return void
      */
     public function setTemplate(string $template)
@@ -47,7 +47,7 @@ class View
 
     /**
      * @param array $data
-     * 
+     *
      * @return void
      */
     public function setData(array $data)
@@ -59,5 +59,22 @@ class View
     {
         extract($this->data);
         include $this->template;
+    }
+
+    public static function getHtml(string $template, array $data)
+    {
+        $template_path = PATH_TEMPLATES . $template . '.html';
+        if (!file_exists($template_path)) {
+            throw new NotFoundException('Le template HTML ' . $template . ' n\'existe pas');
+        }
+
+        $html = file_get_contents($template_path);
+
+        return !$html ? false
+            : str_replace(
+                array_map(fn($key) => "%{$key}%", array_keys($data)),
+                array_values($data),
+                $html
+            );
     }
 }

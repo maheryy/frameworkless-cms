@@ -13,12 +13,12 @@ use Exception;
  */
 class Error extends Controller
 {
-    private $error_template;
-    private $debug;
+    private string $error_template;
+    private bool $debug;
 
-    public function __construct()
+    public function __construct(array $options = [])
     {
-        parent::__construct();
+        parent::__construct($options);
         $this->error_template = 'error_default';
         $this->debug = defined('APP_DEBUG') ? APP_DEBUG : false;
         $this->setLayoutParams();

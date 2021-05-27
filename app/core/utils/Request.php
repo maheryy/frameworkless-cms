@@ -38,9 +38,9 @@ class Request
      * @param string $key
      * @return string|null
      */
-    public static function getUrl(string $key)
+    public static function url(string $key)
     {
-        return $_REQUEST[$key] ?? null;
+        return Formatter::decodeUrlQuery($_REQUEST[$key] ?? '');
     }
 
     /**
@@ -154,6 +154,17 @@ class Request
     }
 
     /**
+     * Return a request header
+     *
+     * @param string $key
+     * @return string|null
+     */
+    public static function header(string $key)
+    {
+        return getallheaders()[$key] ?? null;
+    }
+
+    /**
      * Return all GET Variables
      * @return array
      */
@@ -199,7 +210,7 @@ class Request
     private static function getVariable(string $key, array $source)
     {
         return isset($source[$key]) && is_string($source[$key])
-            ? htmlspecialchars(trim($source[$key]))
+            ? Formatter::sanitizeInput($source[$key])
             : null;
     }
 
@@ -213,7 +224,7 @@ class Request
     {
         $res = [];
         foreach ($source as $key => $value) {
-            $res[$key] = is_string($value) ? htmlspecialchars(trim($value)) : $value;
+            $res[$key] = is_string($value) ? Formatter::sanitizeInput($value) : $value;
         }
 
         return $res;

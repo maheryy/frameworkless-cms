@@ -6,10 +6,9 @@ use App\Core\Controller;
 
 class Home extends Controller
 {
-
-    public function __construct()
+    public function __construct(array $options = [])
     {
-        parent::__construct();
+        parent::__construct($options);
         $this->setLayoutParams();
     }
 
@@ -21,21 +20,9 @@ class Home extends Controller
             'name' => 'John',
             'age' => 25,
             'test' => '25/12/2015',
-            'test2' => PHP_INT_MAX   
-         
+            'test2' => PHP_INT_MAX
         ]);
         $this->render('default', 'default');
     }
 
-    public function loginAction()
-    {
-    }
-
-    public function logoutAction()
-    {
-    }
-
-    public function registerView()
-    {
-    }
 }

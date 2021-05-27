@@ -9,7 +9,7 @@
   overflow: hidden;
   width: 40%;
   min-width: fit-content;
-  transition: opacity .2s;
+  transition: opacity .1s linear;
 
   &.active {
     opacity: 1;

@@ -13,9 +13,14 @@
                </li> -->
             </ul>
         </nav>
-        <a id="profile" href="#">
-            <i class="link-icon fas fa-user"></i>
-            <span class="label-item"></span>
-        </a>
+        <nav>
+            <a id="profile" href="#">
+                <i class="link-icon fas fa-user"></i>
+                <span class="label-item"></span>
+            </a>
+            <a id="logout" href="<?= $link_logout ?>">
+                <i class="link-icon fas fa-sign-out-alt"></i>
+            </a>
+        </nav>
     </div>
 </header>

@@ -116,6 +116,7 @@ function setInfo(type, text, delay = null) {
 
     $('#info-box').removeClass();
     $('#info-icon').removeClass();
+    $('#info-description').html('');
     $('#info-description').html(text);
 
     $('#info-box').addClass(INFO_DATA[type].class + ' active' + extra_classes);
@@ -273,14 +274,30 @@ const roleFunctions = {
 
             $.ajax({
                 method: $(form).attr('method'),
+                headers: $('meta[name="csrf-token"]').length ?  {'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')} : null,
                 url: $(form).attr('action'),
                 data: data,
                 success: ajaxFunctions.submitDefault
             });
         });
     },
+    sendData: function () {
+        $(this).click(function (e) {
+            e.preventDefault();
+            const form = $(this).closest('form');
+
+            $.ajax({
+                method: $(form).attr('method'),
+                url: $(form).attr('action'),
+                data: $(form).serialize(),
+                success: ajaxFunctions.loginSuccessful,
+                error: ajaxFunctions.loginError,
+            });
+        });
+    }
 };
 
+let delay_function;
 const ajaxFunctions = {
     debug: function (res) {
         if (res.success) {
@@ -295,7 +312,7 @@ const ajaxFunctions = {
         if (res.success) {
             setInfo(INFO_SUCCESS, res.message, 1);
             if (res.data && res.data.url_next) {
-                redirect(res.data.url_next, 1.5);
+                redirect(res.data.url_next, res.data.delay_url_next ?? 1.5);
             }
         } else {
             if (res.data) {
@@ -303,6 +320,26 @@ const ajaxFunctions = {
             }
             setInfo(INFO_DANGER, res.message, 4);
         }
+    },
+    errorDefault: function (error) {
+        console.log('An error occured : ', error.responseText);
+    },
+    loginSuccessful: function (res) {
+        setInfo(INFO_SUCCESS, res.message);
+        setTimeout(function() {
+            $('#info-box').removeClass('active');
+
+            if (res.data.url_next) {
+                window.location.href = res.data.url_next;
+            }
+        }, 1000);
+    },
+    loginError: function (error) {
+        setInfo(INFO_DANGER, error.responseText);
+        clearTimeout(delay_function);
+        delay_function = setTimeout(function() {
+            $('#info-box').removeClass('active');
+        }, 5000);
     }
 };
 

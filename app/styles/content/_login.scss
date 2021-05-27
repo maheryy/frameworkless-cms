@@ -1,0 +1,54 @@
+
+#login-content {
+  background-color: #f6f7f7;
+  width: 100vw;
+  height: 100vh;
+
+  .reset-box {
+    height: 100px;
+  }
+
+  .login-container {
+    width: 400px;
+    position: relative;
+    top: 50vh;
+    transform: translateY(-60%);
+    margin: auto;
+
+    #info-box {
+      margin: auto;
+      font-size: .85em;
+    }
+
+    .card {
+      width: 100%;
+      padding: .5em 0;
+      margin-top: 1em;
+
+      input {
+        height: 35px;
+      }
+
+      form.form-default {
+        width: 75%;
+
+        .form-action > .submit-btn {
+          width: 150px;
+          height: 40px;
+          font-size: 1em;
+        }
+      }
+
+      .link-forgotten-password > a, .link-back > a {
+        text-decoration: none;
+        color: #5c5e5f;
+        font-size: .9em;
+
+        &:hover {
+          color: #116dff;
+        }
+      }
+    }
+  }
+}
+

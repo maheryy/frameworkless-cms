@@ -4,7 +4,7 @@ namespace App\Core;
 
 class Database
 {
-    private static $pdo_instance = null;
+    private static \PDO $pdo_instance;
 
     const FETCH_ONE = 1;
     const FETCH_ALL = 2;
@@ -36,7 +36,7 @@ class Database
      */
     public static function getInstance()
     {
-        if (is_null(self::$pdo_instance)) {
+        if (!isset(self::$pdo_instance)) {
             new Database();
         }
 

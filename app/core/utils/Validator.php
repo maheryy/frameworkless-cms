@@ -4,8 +4,8 @@ namespace App\Core\Utils;
 
 class Validator
 {
-    private $errors;
-    private $form;
+    private array $errors;
+    private array $form;
 
     const TYPE_TEXT = 1;
     const TYPE_NUMBER = 2;

@@ -1,21 +1,14 @@
 /:
   controller: Home
   method: defaultView
+  require_auth: True
 
-/login:
+/dashboard:
   controller: Home
-  method: loginAction
-
-/logout:
-  controller: Home
-  method: logoutAction
-
-/register:
-  controller: Home
-  method: registerView
+  method: defaultView
+  require_auth: True
 
 # installer
-
 /installer-register:
   controller: Installer
   method: installerRegisterView
@@ -35,3 +28,36 @@
 /installer/register-save:
   controller: Installer
   method: registerAction
+
+# Authentification
+/login:
+  controller: Auth
+  method: loginView
+
+/login-send:
+  controller: Auth
+  method: loginAction
+
+/logout:
+  controller: Auth
+  method: logoutAction
+
+/recover-password:
+  controller: Auth
+  method: passwordRecoveryView
+
+/recover-password-send:
+  controller: Auth
+  method: passwordRecoveryAction
+
+/reset-password:
+  controller: Auth
+  method: passwordResetView
+
+/reset-password-send:
+  controller: Auth
+  method: passwordResetAction
+
+/auth/test:
+  controller: Auth
+  method: test
