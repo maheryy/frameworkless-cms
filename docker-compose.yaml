@@ -26,13 +26,3 @@ services:
     volumes:
       - ./.db_data:/var/lib/mysql
     restart: always
-
-  phpmyadmin_cms:
-    image: phpmyadmin/phpmyadmin:5.0
-    container_name: cms_phpmyadmin
-    depends_on:
-      - database_cms
-    ports:
-      - "${PHP_ADMIN_PORT}:80"
-    environment:
-      - PMA_ARBITRARY=1

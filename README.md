@@ -12,22 +12,17 @@ First, you need to copy **.env.dist into a .env file** in the root directory
 Run with :
 
 ```bash
-docker-compose up -d
+make start
 ```
 
 Stop with :
 
 ```bash
-docker-compose down
+make stop
 ```
-
-#### You can create another docker-compose file with the following format :
-
-*docker-compose.[custom_format].yaml* - (ignored by git)
 
 #### Run with custom docker-compose :
 
-*file 'docker-compose.dev.yaml' (without phpMyAdmin container)*
-```bash
-docker-compose -f "docker-compose.dev.yaml" up -d
-```
+You can create another docker-compose file, *docker-compose.[custom_format].yaml*
+
+Then, change the DOCKER_COMPOSE_FILE variable to work with the new custom file
