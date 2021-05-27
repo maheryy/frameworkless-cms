@@ -3,10 +3,8 @@
 namespace App\Controllers;
 
 use App\Core\Controller;
-use App\Core\Database;
-use App\Core\Router;
+use App\Core\Utils\Repository;
 use App\Core\Utils\Constants;
-use App\Core\Utils\Expr;
 use App\Core\Utils\Formatter;
 use App\Core\Utils\FormRegistry;
 use App\Core\Utils\Mailer;
@@ -16,8 +14,6 @@ use App\Core\Utils\Token;
 use App\Core\Utils\UrlBuilder;
 use App\Core\Utils\Validator;
 use App\Core\View;
-use App\Models\User;
-use App\Models\ValidationToken;
 
 class Auth extends Controller
 {
@@ -72,7 +68,7 @@ class Auth extends Controller
             }
 
             # Verify user by email field
-            $user = (new User())->getBy([Expr::like('email', $email)], Database::FETCH_ONE);
+            $user = Repository::user()->findByEmail($email);
             if (!$user) {
                 $this->sendError('Aucun compte n\'est associé à cette adresse email ');
             }
@@ -80,16 +76,19 @@ class Auth extends Controller
             # Create token
             $token_reference = (new Token())->generate(8)->encode();
             $token = (new Token())->generate();
-            # Store the token with expiration
 
-            $validation_token = new ValidationToken();
-            $validation_token->setUserId($user['id']);
-            $validation_token->setType(2);
-            $validation_token->setToken($token->getHash());
-            $validation_token->setReference($token_reference);
-            $validation_token->setCreatedAt(Formatter::getDateTime());
-            $validation_token->setExpiresAt(Formatter::getModifiedDateTime('+ ' . Constants::RESET_PASSWORD_TIMEOUT . ' minutes'));
-            $validation_token->save(Database::SAVE_IGNORE_NULL);
+            $validation_token_repository = Repository::validationToken();
+            $validation_token_repository->removeTokenByUser($user['id'], Constants::TOKEN_RESET_PASSWORD);
+
+            # Store the token with expiration
+            $validation_token_repository->create([
+                'user_id' => $user['id'],
+                'type' => Constants::TOKEN_RESET_PASSWORD,
+                'token' => $token->getHash(),
+                'reference' => $token_reference,
+                'created_at' => Formatter::getDateTime(),
+                'expires_at' => Formatter::getModifiedDateTime('+ ' . Constants::RESET_PASSWORD_TIMEOUT . ' minutes'),
+            ]);
 
             # Send confirmation email
             $mail = Mailer::send([
@@ -119,7 +118,7 @@ class Auth extends Controller
     {
         $token_reference = Request::get('ref');
         $token = Request::get('token');
-        $validation_token = (new ValidationToken())->getBy([Expr::like('reference', $token_reference)], Database::FETCH_ONE);
+        $validation_token = Repository::validationToken()->findByReference($token_reference);
 
         if (!$validation_token) {
             $view_data = ['is_token_valid' => false];
@@ -156,25 +155,20 @@ class Auth extends Controller
             if (!$validator->validate($data)) {
                 $this->sendError('Veuillez vérifier les champs', $validator->getErrors());
             }
+            $validation_token_repository = Repository::validationToken();
 
             # Verify token
-            $validation_token = (new ValidationToken())->getBy([Expr::like('reference', Request::post('reference'))], Database::FETCH_ONE);
+            $validation_token = $validation_token_repository->findByReference(Request::post('reference'));
             $token = (new Token(Request::post('token')))->decode();
             if (!$validation_token || !$token->equals($validation_token['token'])) {
                 $this->sendError("Une erreur est survenue");
             }
 
             # Update user password
-            $user = new User();
-            $user->setId($validation_token['user_id']);
-            $user->setPassword(password_hash($data['password'], PASSWORD_DEFAULT));
-            $user->setUpdatedAt(Formatter::getDateTime());
-            $user->save();
+            Repository::user()->updatePassword($validation_token['user_id'], password_hash($data['password'], PASSWORD_DEFAULT));
 
             # Delete token
-            $validation_token_tmp = new ValidationToken();
-            $validation_token_tmp->setId($validation_token['id']);
-            $validation_token_tmp->deleteForever();
+            $validation_token_repository->remove($validation_token['id']);
 
             $this->sendSuccess("Votre mot de passe a été réinitialisé", [
                 'url_next' => UrlBuilder::makeUrl('Auth', 'loginView'),
@@ -196,7 +190,7 @@ class Auth extends Controller
             $this->sendError('Veuillez vérifier les champs', $validator->getErrors());
         }
 
-        $user = (new User())->getBy([Expr::like('username', $data['login'])], Database::FETCH_ONE);
+        $user = Repository::user()->findByLogin($data['login']);
         if (!$user || !password_verify($data['password'], $user['password'])) {
             $this->sendError('Nom d\'utilisateur ou mot de passe incorrect');
         }
@@ -221,13 +215,18 @@ class Auth extends Controller
     # /auth/test
     public function test()
     {
-        $mail = Mailer::send([
-            'to' => 1,
-            'subject' => 'Testing SMTP',
-            'content' => View::getHtml('email/test_email', ['var1' => "HELLO", 'var2' => "WORLD"]),
-        ]);
+        $user_repo = Repository::user();
+        $token_repo = Repository::validationToken();
 
-        echo $mail['message'];
+        var_dump('create', $user_repo->create([
+            'username' => "nfgbvx",
+            'email' => 'testr',
+            'password' => 'sfeadzdzas',
+            'role' => Constants::ROLE_ADMIN,
+        ]));
+        var_dump('all', $user_repo->findAll());
+        var_dump('upd', $user_repo->updatePassword(2, "abracadbra"));
+
     }
 
     private function createSessionData(array $user_data)

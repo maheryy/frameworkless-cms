@@ -28,13 +28,23 @@ abstract class Model
         ));
     }
 
+    public function getTableName()
+    {
+        return $this->table_name;
+    }
+
+    public function getColumns()
+    {
+        return $this->columns;
+    }
+
     /* --------- Main actions ---------- */
 
 
     /**
      * Fetch all rows in the model table.
      * Archived rows (status = -1) are not fetched
-     * 
+     *
      * @return array
      */
     public function getAll()
@@ -48,10 +58,10 @@ abstract class Model
     /**
      * Fetch all fields by specific $conditions.
      * - ex: ['id' => 2, 'name' => 'bob] : WHERE id = 2 AND name = 'bob'
-     * 
-     * @param array $conditions 
+     *
+     * @param array $conditions
      * @param int $type_fetch FETCH_ALL|FETCH_ONE
-     * 
+     *
      * @return array
      */
     public function getBy(array $conditions = [], int $type_fetch = Database::FETCH_ALL)
@@ -86,8 +96,7 @@ abstract class Model
         if (!$this->hasId()) {
             $insert = $this->insertQuery($data);
             $res = $insert ? ['inserted_id' => $insert] : false;
-        }
-        # Update query
+        } # Update query
         else {
             $update = $this->updateQuery($data, [Expr::eq('id', $this->getId())]);
             $res = $update ? ['affected_rows' => $update] : false;
@@ -97,7 +106,7 @@ abstract class Model
 
     /**
      * Get model data (property => value)
-     * 
+     *
      * @return array
      */
     public function getData()
@@ -110,9 +119,9 @@ abstract class Model
 
     /**
      * Set all the properties of a given model (usually from the database)
-     * 
+     *
      * @param array $data
-     * 
+     *
      * @return void
      */
     public function populate(array $data)
@@ -130,7 +139,7 @@ abstract class Model
 
     /**
      * Delete the row from the table
-     * 
+     *
      * @return void
      */
     public function deleteForever()
@@ -140,7 +149,7 @@ abstract class Model
 
     /**
      * Set status to -1 if "status" column exist, delete row otherwise
-     * 
+     *
      * @return void
      */
     public function delete()
@@ -154,10 +163,10 @@ abstract class Model
 
     /**
      * Update one or multiple rows
-     * 
+     *
      * @param array $fields
      * @param array $conditions
-     * 
+     *
      * @return int|bool affected rows, false otherwise
      */
     public function update(array $fields, array $conditions = [])
@@ -170,13 +179,13 @@ abstract class Model
 
     /**
      * Get all the result from a prepared query
-     * 
+     *
      * @param QueryBuilder $qb
      * @param bool $debug if true, the query (statement, params) is dumped before executing the query
-     * 
+     *
      * @return array 2D array
      */
-    protected function fetchAll(QueryBuilder $qb, bool $debug = false)
+    public function fetchAll(QueryBuilder $qb, bool $debug = false)
     {
         if ($debug) var_dump($qb->debug());
 
@@ -185,13 +194,13 @@ abstract class Model
 
     /**
      * Get the first result from a prepared query
-     * 
+     *
      * @param QueryBuilder $qb
      * @param bool $debug if true, the query (statement, params) is dumped before executing the query
-     * 
+     *
      * @return array 1D array
      */
-    protected function fetchOne(QueryBuilder $qb, bool $debug = false)
+    public function fetchOne(QueryBuilder $qb, bool $debug = false)
     {
         if ($debug) var_dump($qb->debug());
 
@@ -200,11 +209,11 @@ abstract class Model
 
     /**
      * Fetch a prepared statement
-     * 
+     *
      * @param string $sql
      * @param array $params
      * @param int $type FETCH_ALL|FETCH_ONE
-     * 
+     *
      * @return array
      */
     private function fetch(string $sql, array $params, int $type = Database::FETCH_ALL)
@@ -226,33 +235,49 @@ abstract class Model
 
     /**
      * Insert query
-     * 
+     *
      * @param array $data
-     * 
+     *
      * @return int|bool last inserted id, false otherwise
      */
-    private function insertQuery(array $data)
+    public function insertQuery(array $data)
     {
-        $fields = array_keys($data);
-        $sql = 'INSERT INTO ' . $this->table_name
+        # Check if there is multiple insertion
+        if (array_key_exists(0, $data)) {
+            $fields = array_keys($data[0]);
+            $sql_params = [];
+            $sql = 'INSERT INTO ' . $this->table_name
+                . '(' . implode(',', $fields) . ') VALUES';
+
+            foreach ($data as $key => $value) {
+                $fields = array_map(fn($v) => $v . '_' . $key, array_keys($value));
+                $sql .= "\n(:" . implode(', :', $fields) . "),";
+                $sql_params = array_merge($sql_params, array_combine($fields, array_values($value)));
+            }
+            $sql = rtrim($sql, ',');
+        } else {
+            $sql_params = $data;
+            $fields = array_keys($data);
+            $sql = 'INSERT INTO ' . $this->table_name
                 . '(' . implode(',', $fields) . ') '
                 . 'VALUES (:' . implode(', :', $fields) . ')';
+        }
 
-        $res = $this->execute($sql, $data);
+        $res = $this->execute($sql, $sql_params);
         return $res ? $this->db->lastInsertId() : $res;
     }
 
     /**
      * Update query with multiple conditions
-     * 
+     *
      * @param array $fields
      * @param array $conditions
-     * 
+     *
      * @return int|bool affected rows, false otherwise
      */
-    private function updateQuery(array $fields, array $conditions = [])
+    public function updateQuery(array $fields, array $conditions = [])
     {
-        $update_fields =  $clauses = [];
+        $update_fields = $clauses = [];
         $params = $fields;
 
         foreach ($fields as $column => $value) {
@@ -269,7 +294,7 @@ abstract class Model
             . implode(', ', $update_fields);
 
         if (!empty($clauses)) {
-            $sql .=  ' WHERE '
+            $sql .= ' WHERE '
                 . implode(' AND ', $clauses);
         }
 
@@ -279,12 +304,12 @@ abstract class Model
 
     /**
      * Delete one or more rows from the model table
-     * 
+     *
      * @param array $conditions
-     * 
+     *
      * @return int|bool affected rows, false otherwise
      */
-    private function deleteQuery(array $conditions = [])
+    public function deleteQuery(array $conditions = [])
     {
         $clauses = [];
         $params = [];
@@ -297,7 +322,7 @@ abstract class Model
         $sql = 'DELETE FROM ' . $this->table_name;
 
         if (!empty($clauses)) {
-            $sql .=  ' WHERE '
+            $sql .= ' WHERE '
                 . implode(' AND ', $clauses);
         }
 
@@ -308,7 +333,7 @@ abstract class Model
     /**
      * Fill a model object with a given ID
      * Every model must call this function in getId method
-     * 
+     *
      * @return void
      */
     protected function hydrate()
@@ -324,10 +349,10 @@ abstract class Model
 
     /**
      * Execute a prepared statement
-     * 
+     *
      * @param string $sql
      * @param array $params
-     * 
+     *
      * @return \PDOStatement
      */
     private function execute(string $sql, array $params = null)
@@ -340,7 +365,7 @@ abstract class Model
 
     /**
      * @param string $class
-     * 
+     *
      * @return string
      */
     private function getModelTableName(string $class)
@@ -351,27 +376,27 @@ abstract class Model
 
     /**
      * Check if a model has an id
-     * 
+     *
      * @return bool
      */
-    private function hasId()
+    public function hasId()
     {
         return !is_null($this->getId());
     }
 
     /**
      * Check if a model has status column
-     * 
+     *
      * @return bool
      */
-    private function hasStatus()
+    public function hasStatus()
     {
         return in_array('status', $this->columns);
     }
 
     /**
      * Return all the model properties => values
-     * 
+     *
      * @return array
      */
     private function getModelData(int $code = Database::SAVE_DEFAULT)

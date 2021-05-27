@@ -4,12 +4,13 @@ namespace App\Controllers;
 
 use App\Core\Controller;
 use App\Core\Database;
+use App\Core\Utils\Repository;
 use App\Core\Utils\ConstantManager;
+use App\Core\Utils\Constants;
 use App\Core\Utils\FormRegistry;
 use App\Core\Utils\Request;
 use App\Core\Utils\UrlBuilder;
 use App\Core\Utils\Validator;
-use App\Models\User;
 use Exception;
 
 class Installer extends Controller
@@ -52,12 +53,12 @@ class Installer extends Controller
 
             $form_data['password'] = password_hash($form_data['password'], PASSWORD_DEFAULT);
 
-            $user = new User();
-            $user->setPassword($form_data['password']);
-            $user->setUsername($form_data['username']);
-            $user->setEmail($form_data['email']);
-            $user->setRole(3);
-            $user->save(Database::SAVE_IGNORE_NULL);
+            Repository::user()->create([
+                'username' => $form_data['username'],
+                'email' => $form_data['email'],
+                'password' => $form_data['password'],
+                'role' => Constants::ROLE_SUPER_ADMIN,
+            ]);
 
             $this->sendSuccess('Success', [
                 'url_next' => UrlBuilder::makeUrl('Home', 'defaultView')
