@@ -22,7 +22,7 @@ class Home extends Controller
             'test' => '25/12/2015',
             'test2' => PHP_INT_MAX
         ]);
-        $this->render('default', 'default');
+        $this->render('default');
     }
 
 }

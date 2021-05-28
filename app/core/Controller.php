@@ -27,7 +27,7 @@ abstract class Controller
      * @param string $view
      * @param string $template
      */
-    protected function render(string $view, string $template = 'default_back_office')
+    protected function render(string $view, string $template = 'back_office')
     {
         $this->view = new View($view, $template, $this->view_data);
     }

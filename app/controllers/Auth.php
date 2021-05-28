@@ -41,7 +41,7 @@ class Auth extends Controller
             'url_forgotten_password' => UrlBuilder::makeUrl('Auth', 'passwordRecoveryView'),
         ]);
 
-        $this->render('login', 'login');
+        $this->render('login');
     }
 
     # /recover-password
@@ -52,7 +52,7 @@ class Auth extends Controller
             'url_form_action' => UrlBuilder::makeUrl('Auth', 'passwordRecoveryAction'),
             'url_back' => UrlBuilder::makeUrl('Auth', 'loginView'),
         ]);
-        $this->render('password_recovery', 'login');
+        $this->render('password_recovery');
     }
 
     # /recover-password-send
@@ -138,7 +138,7 @@ class Auth extends Controller
         }
         $view_data['url_back'] = UrlBuilder::makeUrl('Auth', 'loginView');
         $this->setData($view_data);
-        $this->render('password_reset', 'login');
+        $this->render('password_reset');
     }
 
     # /reset-password-send

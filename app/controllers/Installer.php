@@ -31,7 +31,7 @@ class Installer extends Controller
         $this->setData([
             'url_form_action' => UrlBuilder::makeUrl('Installer', 'registerAction')
         ]);
-        $this->render('installer_register', 'installer');
+        $this->render('installer_register');
     }
 
     # /installer/register-save
@@ -86,7 +86,7 @@ class Installer extends Controller
             ]);
         }
 
-        $this->render('installer_db', 'installer');
+        $this->render('installer_db');
     }
 
     # /installer/load-db

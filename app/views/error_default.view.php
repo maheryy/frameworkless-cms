@@ -1,4 +1,2 @@
-<section class="content-body">
-    <h3><?= $error_title ?></h3>
-    <h4><?= $error_message ?></h4>
-</section>
+<h3><?= $error_title ?></h3>
+<h4><?= $error_message ?></h4>
