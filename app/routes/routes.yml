@@ -61,3 +61,39 @@
 /auth/test:
   controller: Auth
   method: test
+
+# User management
+/users:
+  controller: User
+  method: listView
+  require_auth: True
+
+/users-save:
+  controller: User
+  method: listAction
+  require_auth: True
+
+/new-user:
+  controller: User
+  method: createView
+  require_auth: True
+
+/new-user-save:
+  controller: User
+  method: createAction
+  require_auth: True
+
+/user:
+  controller: User
+  method: userView
+  require_auth: True
+
+/user-save:
+  controller: User
+  method: userAction
+  require_auth: True
+
+/delete-user:
+  controller: User
+  method: deleteAction
+  require_auth: True
