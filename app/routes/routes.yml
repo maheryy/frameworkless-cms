@@ -97,3 +97,7 @@
   controller: User
   method: deleteAction
   require_auth: True
+
+/confirm-account:
+  controller: User
+  method: confirmAccountView

@@ -4,13 +4,17 @@ namespace App\Controllers;
 
 use App\Core\Controller;
 use App\Core\Database;
+use App\Core\Utils\Formatter;
+use App\Core\Utils\Mailer;
 use App\Core\Utils\Repository;
 use App\Core\Utils\ConstantManager;
 use App\Core\Utils\Constants;
 use App\Core\Utils\FormRegistry;
 use App\Core\Utils\Request;
+use App\Core\Utils\Token;
 use App\Core\Utils\UrlBuilder;
 use App\Core\Utils\Validator;
+use App\Core\View;
 use Exception;
 
 class Installer extends Controller
@@ -53,18 +57,50 @@ class Installer extends Controller
 
             $form_data['password'] = password_hash($form_data['password'], PASSWORD_DEFAULT);
 
-            Repository::user()->create([
+            $user_id = Repository::user()->create([
                 'username' => $form_data['username'],
                 'email' => $form_data['email'],
                 'password' => $form_data['password'],
-                'role' => Constants::ROLE_SUPER_ADMIN,
+                'status' => Constants::STATUS_INACTIVE,
+                'role' => Constants::ROLE_SUPER_ADMIN
             ]);
 
+            # Create token
+            $token_reference = (new Token())->generate(8)->encode();
+            $token = (new Token())->generate();
+
+            # Store the token with expiration
+            Repository::validationToken()->create([
+                'user_id' => $user_id,
+                'type' => Constants::TOKEN_EMAIL_CONFIRM,
+                'token' => $token->getHash(),
+                'reference' => $token_reference,
+                'created_at' => Formatter::getDateTime(),
+                'expires_at' => Formatter::getModifiedDateTime('+ ' . Constants::EMAIL_CONFIRM_TIMEOUT . ' minutes'),
+            ]);
+
+            # Send confirmation email
+            $mail = Mailer::send([
+                'to' => $form_data['email'],
+                'subject' => 'Confirmation de votre compte',
+                'content' => View::getHtml('email/confirmation_email', [
+                    'email' => $form_data['email'],
+                    'link_confirm' => UrlBuilder::makeAbsoluteUrl('User', 'confirmAccountView', [
+                        'ref' => $token_reference,
+                        'token' => $token->getEncoded()
+                    ]),
+                ]),
+            ]);
+
+            if (!$mail['success']) {
+                $this->sendError($mail['message']);
+            }
+
             $this->sendSuccess('Success', [
-                'url_next' => UrlBuilder::makeUrl('Home', 'defaultView')
+                'url_next' => UrlBuilder::makeUrl('Auth', 'loginView')
             ]);
         } catch (Exception $e) {
-            $this->sendError('Une erreur est survenue durant le traitement :' . $e->getMessage());
+            $this->sendError('Une erreur est survenue :' . $e->getMessage());
         }
     }
 

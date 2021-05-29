@@ -4,12 +4,15 @@ namespace App\Controllers;
 
 use App\Core\Controller;
 use App\Core\Utils\Formatter;
+use App\Core\Utils\Mailer;
 use App\Core\Utils\Repository;
 use App\Core\Utils\Constants;
 use App\Core\Utils\FormRegistry;
 use App\Core\Utils\Request;
+use App\Core\Utils\Token;
 use App\Core\Utils\UrlBuilder;
 use App\Core\Utils\Validator;
+use App\Core\View;
 use App\Vendor\PHPMailer\PHPMailer\Src\Exception;
 
 class User extends Controller
@@ -74,8 +77,39 @@ class User extends Controller
                 'password' => password_hash($form_data['password'], PASSWORD_DEFAULT),
                 'email' => $form_data['email'],
                 'role' => $form_data['role'],
-                'status' => Constants::STATUS_DEFAULT,
+                'status' => Constants::STATUS_INACTIVE,
             ]);
+
+            # Create token
+            $token_reference = (new Token())->generate(8)->encode();
+            $token = (new Token())->generate();
+
+            # Store the token with expiration
+            Repository::validationToken()->create([
+                'user_id' => $user_id,
+                'type' => Constants::TOKEN_EMAIL_CONFIRM,
+                'token' => $token->getHash(),
+                'reference' => $token_reference,
+                'created_at' => Formatter::getDateTime(),
+                'expires_at' => Formatter::getModifiedDateTime('+ ' . Constants::EMAIL_CONFIRM_TIMEOUT . ' minutes'),
+            ]);
+
+            # Send confirmation email
+            $mail = Mailer::send([
+                'to' => $form_data['email'],
+                'subject' => 'Confirmation de votre compte',
+                'content' => View::getHtml('email/confirmation_email', [
+                    'email' => $form_data['email'],
+                    'link_confirm' => UrlBuilder::makeAbsoluteUrl('User', 'confirmAccountView', [
+                        'ref' => $token_reference,
+                        'token' => $token->getEncoded()
+                    ]),
+                ]),
+            ]);
+
+            if (!$mail['success']) {
+                $this->sendError($mail['message']);
+            }
 
             $this->sendSuccess('Utilisateur créé', [
                 'url_next' => UrlBuilder::makeUrl('User', 'userView', ['id' => $user_id])
@@ -126,7 +160,7 @@ class User extends Controller
                 'role' => $form_data['role'],
                 'updated_at' => Formatter::getDateTime()
             ];
-            if(isset($form_data['password'])) {
+            if (isset($form_data['password'])) {
                 $update_fields['password'] = password_hash($form_data['password'], PASSWORD_DEFAULT);
             }
 
@@ -150,6 +184,34 @@ class User extends Controller
                 'url_next' => UrlBuilder::makeUrl('User', 'listView')
             ]);
         }
+    }
+
+    # /confirm-account
+    public function confirmAccountView()
+    {
+        $token_reference = Request::get('ref');
+        $validation_token = Repository::validationToken()->findByReference($token_reference);
+
+        $token = (new Token(Request::get('token')))->decode();
+        if (!$validation_token || !$token->equals($validation_token['token'])) {
+            $view_data = ['is_token_valid' => false];
+        } elseif (Formatter::getTimestampFromDateTime($validation_token['expires_at']) < Formatter::getTimestamp()) {
+            $view_data = [
+                'is_token_valid' => true,
+                'has_expired' => true
+            ];
+        } else {
+            $view_data = [
+                'is_token_valid' => true,
+                'has_expired' => false,
+            ];
+            Repository::validationToken()->remove($validation_token['id']);
+            Repository::user()->update($validation_token['user_id'], ['status' => Constants::STATUS_ACTIVE]);
+        }
+
+        $view_data['url_login'] = UrlBuilder::makeUrl('Auth', 'loginView');
+        $this->setData($view_data);
+        $this->render('account_confirm');
     }
 
     public static function getRoles()

@@ -44,6 +44,33 @@ class Auth extends Controller
         $this->render('login');
     }
 
+    # /login-send
+    public function loginAction()
+    {
+        $data = [
+            'login' => Request::post('login'),
+            'password' => Request::post('password'),
+        ];
+        $validator = new Validator();
+        if (!$validator->validateRequiredOnly($data)) {
+            $this->sendError('Veuillez vérifier les champs', $validator->getErrors());
+        }
+
+        $user = Repository::user()->findByLogin($data['login']);
+        if (!$user || !password_verify($data['password'], $user['password'])) {
+            $this->sendError('Nom d\'utilisateur ou mot de passe incorrect');
+        }
+
+        if ($user['status'] == Constants::STATUS_INACTIVE) {
+            $this->sendError('Votre adresse email doit être vérifiée');
+        }
+
+        $this->createSessionData($user);
+        $this->sendSuccess('Bien joué ! Tu es connecté', [
+            'url_next' => Request::url('redirect') ?? UrlBuilder::makeUrl('Home', 'defaultView'),
+        ]);
+    }
+
     # /recover-password
     public function passwordRecoveryView()
     {
@@ -176,28 +203,6 @@ class Auth extends Controller
         } catch (\Exception $e) {
             $this->sendError("Une erreur est survenu pendant le traitement", [$e->getMessage()]);
         }
-    }
-
-    # /login-send
-    public function loginAction()
-    {
-        $data = [
-            'login' => Request::post('login'),
-            'password' => Request::post('password'),
-        ];
-        $validator = new Validator();
-        if (!$validator->validateRequiredOnly($data)) {
-            $this->sendError('Veuillez vérifier les champs', $validator->getErrors());
-        }
-
-        $user = Repository::user()->findByLogin($data['login']);
-        if (!$user || !password_verify($data['password'], $user['password'])) {
-            $this->sendError('Nom d\'utilisateur ou mot de passe incorrect');
-        }
-        $this->createSessionData($user);
-        $this->sendSuccess('Bien joué ! Tu es connecté', [
-            'url_next' => Request::url('redirect') ?? UrlBuilder::makeUrl('Home', 'defaultView'),
-        ]);
     }
 
     # /logout
