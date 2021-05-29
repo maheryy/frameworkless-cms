@@ -13,6 +13,7 @@ class Constants
 
     # User roles
     const ROLE_DEFAULT = 1;
+    const ROLE_EDITOR = 2;
     const ROLE_ADMIN = 10;
     const ROLE_SUPER_ADMIN = 20;
 

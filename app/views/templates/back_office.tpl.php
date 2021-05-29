@@ -11,7 +11,7 @@
     <script src="/js/datatables.min.js"></script>
     <script src="/js/main.js"></script>
     <?php if (isset($csrf_token)) : ?>
-        <meta name="csrf-token" content="<?= $csrf_token ?>>">
+        <meta name="csrf-token" content="<?= $csrf_token ?>">
     <?php endif; ?>
 </head>
 <body>

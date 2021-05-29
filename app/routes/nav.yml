@@ -25,17 +25,18 @@ sidebar-main:
     label: Pages
     icon: far fa-file
     route:
-    sub-links:
-      list_page:
-        label: Liste page
-        route:
-      add_page:
-        label: Ajouter page
-        route:
   user: 
     label: Utilisateurs
     icon: fas fa-users
-    route:
+    route: /users
+    sub-links:
+      list_user:
+        label: Liste utilisateurs
+        route: /users
+      new_user:
+        label: Ajouter utilisateur
+        route: /new-user
+
 
 # To improve        
 sidebar-bottom:

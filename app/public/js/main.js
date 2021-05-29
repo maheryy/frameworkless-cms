@@ -235,13 +235,14 @@ const roleFunctions = {
         })
 
     },
-
     initInfoBox: function () {
         $('#info-close').click(function () {
             $('#info-box').removeClass('active');
         });
     },
-
+    initDataTable: function () {
+        $(this).DataTable();
+    },
     addData: function () {
         $(this).click(function (e) {
             e.preventDefault();
@@ -274,26 +275,34 @@ const roleFunctions = {
 
             $.ajax({
                 method: $(form).attr('method'),
-                headers: $('meta[name="csrf-token"]').length ?  {'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')} : null,
+                headers: $('meta[name="csrf-token"]').length ? {'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')} : null,
                 url: $(form).attr('action'),
                 data: data,
                 success: ajaxFunctions.submitDefault
             });
         });
     },
-    sendData: function () {
+    deleteItem: function () {
         $(this).click(function (e) {
             e.preventDefault();
-            const form = $(this).closest('form');
-
             $.ajax({
-                method: $(form).attr('method'),
-                url: $(form).attr('action'),
-                data: $(form).serialize(),
-                success: ajaxFunctions.loginSuccessful,
-                error: ajaxFunctions.loginError,
+                method: 'GET',
+                url: getUrl(this),
+                success: ajaxFunctions.submitDefault,
             });
         });
+    },
+    switchPasswordUpdate: function () {
+        $(this).click(function (e) {
+            e.preventDefault();
+            if ($('#change-password').hasClass('hidden')) {
+                $('#change-password').removeClass('hidden');
+                $('#change-password input#password').removeAttr('disabled');
+            } else {
+                $('#change-password').addClass('hidden');
+                $('#change-password input#password').attr('disabled', 'disabled');
+            }
+        })
     }
 };
 
@@ -326,7 +335,7 @@ const ajaxFunctions = {
     },
     loginSuccessful: function (res) {
         setInfo(INFO_SUCCESS, res.message);
-        setTimeout(function() {
+        setTimeout(function () {
             $('#info-box').removeClass('active');
 
             if (res.data.url_next) {
@@ -337,7 +346,7 @@ const ajaxFunctions = {
     loginError: function (error) {
         setInfo(INFO_DANGER, error.responseText);
         clearTimeout(delay_function);
-        delay_function = setTimeout(function() {
+        delay_function = setTimeout(function () {
             $('#info-box').removeClass('active');
         }, 5000);
     }

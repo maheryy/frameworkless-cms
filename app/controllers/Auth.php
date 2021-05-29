@@ -234,7 +234,7 @@ class Auth extends Controller
         Session::load([
             'user_id' => $user_data['id'],
             'user_role' => $user_data['role'],
-            'is_admin' => $user_data['role'] == 3,
+            'is_admin' => $user_data['role'] == Constants::ROLE_ADMIN,
             'csrf_token' => (new Token())->generate()->getEncoded()
         ]);
     }
