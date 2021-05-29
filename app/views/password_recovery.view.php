@@ -7,8 +7,8 @@
             </article>
             <form class="form-default" method="POST" action="<?= $url_form_action ?>">
                 <div class="form-field required">
-                    <input class="form-control" type="email" id="email" name="email" required>
-                    <label for="login">Email</label>
+                    <input class="form-control" type="email" id="login" name="login" required>
+                    <label for="login">Nom d'utilisateur ou email</label>
                 </div>
                 <div class="form-info center">
                     <label class="link-back">

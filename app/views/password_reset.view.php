@@ -23,7 +23,7 @@
                 <form class="form-default" method="POST" action="<?= $url_form_action ?>">
                     <div class="form-field required">
                         <input class="form-control" type="password" id="password" name="password" required>
-                        <label for="login">Nouveau mot de passe</label>
+                        <label for="password">Nouveau mot de passe</label>
                     </div>
                     <div class="form-field required">
                         <input class="form-control" type="password" id="password_confirm" name="password_confirm" required>

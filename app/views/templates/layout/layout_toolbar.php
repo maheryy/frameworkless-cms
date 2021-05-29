@@ -14,7 +14,7 @@
             </ul>
         </nav>
         <nav>
-            <a id="profile" href="#">
+            <a id="profile" href="<?= $link_user ?>">
                 <i class="link-icon fas fa-user"></i>
                 <span class="label-item"></span>
             </a>

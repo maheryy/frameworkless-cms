@@ -36,6 +36,9 @@ sidebar-main:
       new_user:
         label: Ajouter utilisateur
         route: /new-user
+      current_user:
+        label: Mon utilisateur
+        route:
 
 
 # To improve        

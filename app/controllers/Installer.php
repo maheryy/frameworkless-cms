@@ -38,7 +38,7 @@ class Installer extends Controller
         $this->render('installer_register');
     }
 
-    # /installer/register-save
+    # /installer-register-save
     public function registerAction()
     {
         try {
@@ -97,7 +97,7 @@ class Installer extends Controller
             }
 
             $this->sendSuccess('Success', [
-                'url_next' => UrlBuilder::makeUrl('Auth', 'loginView')
+                'url_next' => UrlBuilder::makeUrl('User', 'loginView')
             ]);
         } catch (Exception $e) {
             $this->sendError('Une erreur est survenue :' . $e->getMessage());
@@ -125,7 +125,7 @@ class Installer extends Controller
         $this->render('installer_db');
     }
 
-    # /installer/load-db
+    # /installer-db-save
     public function loadDatabaseAction()
     {
         $data = [
@@ -163,16 +163,6 @@ class Installer extends Controller
             $this->sendError('Une erreur est survenue durant le traitement :' . $e->getMessage());
         }
     }
-
-    # /installer/test
-    public function testView()
-    {
-        $this->setData([
-
-        ]);
-//        $this->render('installer', 'installer');
-    }
-
 
     public function generateConfig(array $data)
     {

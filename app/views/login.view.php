@@ -8,7 +8,7 @@
             <form class="form-default" method="POST" action="<?= $url_form ?>">
                 <div class="form-field required">
                     <input class="form-control" type="text" id="login" name="login" required>
-                    <label for="login">Nom d'utilisateur</label>
+                    <label for="login">Nom d'utilisateur ou email</label>
                 </div>
                 <div class="form-field required">
                     <input class="form-control" type="password" id="password" name="password" required>

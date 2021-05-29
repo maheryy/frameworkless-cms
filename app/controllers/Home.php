@@ -9,7 +9,6 @@ class Home extends Controller
     public function __construct(array $options = [])
     {
         parent::__construct($options);
-        $this->setLayoutParams();
     }
 
     public function defaultView()

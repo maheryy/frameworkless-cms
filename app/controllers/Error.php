@@ -19,7 +19,6 @@ class Error extends Controller
     {
         parent::__construct($options);
         $this->debug = defined('APP_DEBUG') ? APP_DEBUG : false;
-        $this->setLayoutParams();
     }
 
     public function displayErrorDefault(Exception $error)

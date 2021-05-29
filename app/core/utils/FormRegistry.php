@@ -39,17 +39,6 @@ class FormRegistry
         ];
     }
 
-    public static function getPasswordRecovery()
-    {
-        return [
-            'email' => [
-                'type' => Validator::TYPE_EMAIL,
-                'required' => true,
-                'error_message' => Validator::ERROR_EMAIL_DEFAULT,
-            ],
-        ];
-    }
-
     public static function getPasswordReset()
     {
         return [

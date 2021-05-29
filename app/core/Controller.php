@@ -116,10 +116,16 @@ abstract class Controller
     {
         $layout = new LayoutManager();
         $sidebar_links = $layout->getSidebarLinks();
+        $user_link = UrlBuilder::makeUrl('User', 'userView', ['id' => Session::getUserId()]);
+
+        # Set custom link to existing nav-link
+        $sidebar_links['main']['user']['sub-links']['current_user']['route'] = $user_link;
+
         $this->setParam('current_route', $this->router->getUri());
         $this->setParam('sidebar_links', $sidebar_links['main']);
         $this->setParam('link_settings', $sidebar_links['bottom']);
-        $this->setParam('link_logout', UrlBuilder::makeUrl('Auth', 'logoutAction'));
+        $this->setParam('link_logout', UrlBuilder::makeUrl('User', 'logoutAction'));
+        $this->setParam('link_user', $user_link);
         $this->setParam('sidebar', $layout->getSidebarPath());
         $this->setParam('toolbar', $layout->getToolbarPath());
     }
@@ -165,12 +171,12 @@ abstract class Controller
 
         if (!Session::isLoggedIn()) {
             $url_params = $_SERVER['REQUEST_URI'] !== '/' && $this->router->existRoute($_SERVER['REQUEST_URI']) ? ['redirect' => Formatter::encodeUrlQuery($_SERVER['REQUEST_URI'])] : [];
-            $this->router->redirect(UrlBuilder::makeUrl('Auth', 'loginView', $url_params));
+            $this->router->redirect(UrlBuilder::makeUrl('User', 'loginView', $url_params));
         }
 
         # Apply session timeout
         if (Session::hasExpired()) {
-            $this->router->redirect(UrlBuilder::makeUrl('Auth', 'logoutAction', [
+            $this->router->redirect(UrlBuilder::makeUrl('User', 'logoutAction', [
                 'redirect' => $this->router->existRoute($_SERVER['REQUEST_URI']) ? Formatter::encodeUrlQuery($_SERVER['REQUEST_URI']) : '/',
                 'timeout' => true
             ]));
@@ -178,6 +184,8 @@ abstract class Controller
         if (!Session::isDev()) {
             Session::set('LAST_ACTIVE_TIME', time());
         }
+
+        $this->setLayoutParams();
     }
 
     /**
