@@ -1,6 +1,6 @@
 <header id="toolbar">
     <a id="logo" href="/">
-        <span class="logo">Go travel</span>
+        <span class="logo">Munkee</span>
     </a>
     <div id="toolbar__links">
         <nav id="toolbar-links">

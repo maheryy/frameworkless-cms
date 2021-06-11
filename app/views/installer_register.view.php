@@ -1,10 +1,10 @@
 <main id="installer-content">
     <section class="installer-container">
-        <h3 class="text-center">Bienvenue sur Go Travel</h3>
+        <h3 class="text-center">Bienvenue sur Munkee</h3>
         <article id="info-box" class="info-primary center">
             <span id="info-description"></span>
         </article>
-        <p>Veuillez remplir le formulaire ci-dessous pour utiliser toutes les fonctionnalités de Go Travel.</p>
+        <p>Veuillez remplir le formulaire ci-dessous pour utiliser toutes les fonctionnalités de Munkee</p>
         <form class="form-default" method="POST" action="<?= $url_form_action ?>">
             <div class="form-field required">
                 <input type="text" class="form-control" id="website_title" name="website_title">

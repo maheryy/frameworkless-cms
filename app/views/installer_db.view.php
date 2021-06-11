@@ -1,6 +1,6 @@
 <main id="installer-content">
     <section class="installer-container">
-        <h3 class="text-center">Bienvenue sur Go Travel</h3>
+        <h3 class="text-center">Bienvenue sur Munkee</h3>
         <article id="info-box" class="info-primary center">
             <span id="info-description"></span>
         </article>
@@ -8,7 +8,7 @@
         <form class="form-default" method="POST" action="<?= $url_form_action ?>">
             <div class="form-field-inline required">
                 <label for="db_name">Nom de la base de données</label>
-                <input type="text" class="form-control" id="db_name" name="db_name" placeholder="GoTravel-DB" value="<?= $config['db_name'] ?? ''?>">
+                <input type="text" class="form-control" id="db_name" name="db_name" placeholder="Super_BDD" value="<?= $config['db_name'] ?? ''?>">
     <!--            <span>Le nom de la base de données avec laquelle vous souhaitez utilisez Go Travel</span>-->
             </div>
             <div class="form-field-inline required">
