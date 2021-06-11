@@ -9,55 +9,87 @@
   require_auth: True
 
 # installer
-/installer-register:
-  controller: Installer
-  method: installerRegisterView
-
 /installer-db:
   controller: Installer
   method: installerDatabaseView
 
-/installer/load-db:
+/installer-db-save:
   controller: Installer
   method: loadDatabaseAction
 
-/installer/test:
+/installer-register:
   controller: Installer
-  method: testView
+  method: installerRegisterView
 
-/installer/register-save:
+/installer-register-save:
   controller: Installer
   method: registerAction
 
 # Authentification
 /login:
-  controller: Auth
+  controller: User
   method: loginView
 
 /login-send:
-  controller: Auth
+  controller: User
   method: loginAction
 
 /logout:
-  controller: Auth
+  controller: User
   method: logoutAction
 
 /recover-password:
-  controller: Auth
+  controller: User
   method: passwordRecoveryView
 
 /recover-password-send:
-  controller: Auth
+  controller: User
   method: passwordRecoveryAction
 
 /reset-password:
-  controller: Auth
+  controller: User
   method: passwordResetView
 
 /reset-password-send:
-  controller: Auth
+  controller: User
   method: passwordResetAction
 
-/auth/test:
-  controller: Auth
-  method: test
+# User management
+/users:
+  controller: User
+  method: listView
+  require_auth: True
+
+/users-save:
+  controller: User
+  method: listAction
+  require_auth: True
+
+/new-user:
+  controller: User
+  method: createView
+  require_auth: True
+
+/new-user-save:
+  controller: User
+  method: createAction
+  require_auth: True
+
+/user:
+  controller: User
+  method: userView
+  require_auth: True
+
+/user-save:
+  controller: User
+  method: userAction
+  require_auth: True
+
+/delete-user:
+  controller: User
+  method: deleteAction
+  require_auth: True
+
+/confirm-account:
+  controller: User
+  method: confirmAccountView

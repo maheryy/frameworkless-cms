@@ -1,6 +1,6 @@
 <header id="toolbar">
     <a id="logo" href="/">
-        <span class="logo">Go travel</span>
+        <span class="logo">Munkee</span>
     </a>
     <div id="toolbar__links">
         <nav id="toolbar-links">
@@ -14,7 +14,7 @@
             </ul>
         </nav>
         <nav>
-            <a id="profile" href="#">
+            <a id="profile" href="<?= $link_user ?>">
                 <i class="link-icon fas fa-user"></i>
                 <span class="label-item"></span>
             </a>

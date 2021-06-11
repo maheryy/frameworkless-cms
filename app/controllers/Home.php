@@ -9,7 +9,6 @@ class Home extends Controller
     public function __construct(array $options = [])
     {
         parent::__construct($options);
-        $this->setLayoutParams();
     }
 
     public function defaultView()
@@ -22,7 +21,7 @@ class Home extends Controller
             'test' => '25/12/2015',
             'test2' => PHP_INT_MAX
         ]);
-        $this->render('default', 'default');
+        $this->render('default');
     }
 
 }

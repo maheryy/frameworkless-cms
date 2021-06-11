@@ -28,6 +28,9 @@ class Validator
     public function validate(array $data)
     {
         foreach ($this->form as $name => $field) {
+            if (isset($field['optional']) && !isset($data[$name])) {
+                continue;
+            }
             if (!isset($data[$name])) {
                 throw new \Exception('Le champs ' . $name . ' n\'est pas trouvé');
             }
