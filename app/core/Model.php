@@ -371,7 +371,7 @@ abstract class Model
     private function getModelTableName(string $class)
     {
         $class_exploded = explode("\\", $class);
-        return DB_PREFIX . '_' . Formatter::camelToSnakeCase($class_exploded[array_key_last($class_exploded)]);
+        return Formatter::getTableName(Formatter::camelToSnakeCase($class_exploded[array_key_last($class_exploded)]));
     }
 
     /**

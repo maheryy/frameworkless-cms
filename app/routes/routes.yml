@@ -93,3 +93,39 @@
 /confirm-account:
   controller: User
   method: confirmAccountView
+
+# Page management
+/pages:
+  controller: Page
+  method: listView
+  require_auth: True
+
+/pages-save:
+  controller: Page
+  method: listAction
+  require_auth: True
+
+/new-page:
+  controller: Page
+  method: createView
+  require_auth: True
+
+/new-page-save:
+  controller: Page
+  method: createAction
+  require_auth: True
+
+/page:
+  controller: Page
+  method: pageView
+  require_auth: True
+
+/page-save:
+  controller: Page
+  method: pageAction
+  require_auth: True
+
+/delete-page:
+  controller: Page
+  method: deleteAction
+  require_auth: True

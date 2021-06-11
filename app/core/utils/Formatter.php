@@ -73,6 +73,11 @@ class Formatter
         return 'set' . ucfirst(self::snakeToCamelCase($s));
     }
 
+    public static function getTableName(string $table)
+    {
+        return DB_PREFIX . '_' . $table;
+    }
+
     public static function getDateTimeObject()
     {
         return new DateTime('now', new DateTimeZone(self::DATE_TIME_ZONE));

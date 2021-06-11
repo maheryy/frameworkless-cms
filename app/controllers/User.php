@@ -14,7 +14,6 @@ use App\Core\Utils\Token;
 use App\Core\Utils\UrlBuilder;
 use App\Core\Utils\Validator;
 use App\Core\View;
-use App\Vendor\PHPMailer\PHPMailer\Src\Exception;
 
 class User extends Controller
 {
@@ -318,12 +317,12 @@ class User extends Controller
     {
         $user_id = Request::get('id');
         if (!$user_id) {
-            throw new Exception('Cet utilisateur n\'existe pas');
+            throw new \Exception('Cet utilisateur n\'existe pas');
         }
 
         $user = Repository::user()->find($user_id);
         if (!$user) {
-            throw new Exception('Cet utilisateur n\'existe pas');
+            throw new \Exception('Cet utilisateur n\'existe pas');
         }
 
         $this->setContentTitle($user['username']);
@@ -375,7 +374,8 @@ class User extends Controller
         if ($user_id) {
             Repository::user()->remove($user_id);
             $this->sendSuccess('Utilisateur supprimé', [
-                'url_next' => UrlBuilder::makeUrl('User', 'listView')
+                'url_next' => UrlBuilder::makeUrl('User', 'listView'),
+                'delay_url_next' => 0,
             ]);
         }
     }

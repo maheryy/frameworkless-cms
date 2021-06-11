@@ -4,13 +4,15 @@ namespace App\Models;
 
 use App\Core\Model;
 
-class User extends Model
+class Post extends Model
 {
     private $id;
-    protected $username;
-    protected $password;
-    protected $email;
-    protected $role;
+    protected $author_id;
+    protected $title;
+    protected $content;
+    protected $type;
+    protected $visibility;
+    protected $allow_comment;
     protected $status;
     protected $created_at;
     protected $updated_at;
@@ -33,67 +35,99 @@ class User extends Model
     }
 
     /**
-     * @param mixed $username
+     * @param mixed $author_id
      */
-    public function setUsername($username): void
+    public function setAuthorId($author_id): void
     {
-        $this->username = $username;
+        $this->author_id = $author_id;
     }
 
     /**
      * @return mixed
      */
-    public function getUsername()
+    public function getAuthorId()
     {
-        return $this->username;
+        return $this->author_id;
     }
 
     /**
-     * @param mixed $password
+     * @param mixed $title
      */
-    public function setPassword($password): void
+    public function setTitle($title): void
     {
-        $this->password = $password;
-    }
-
-    /**
-     * @return mixed
-     */
-    public function getPassword()
-    {
-        return $this->password;
-    }
-
-    /**
-     * @param mixed $email
-     */
-    public function setEmail($email): void
-    {
-        $this->email = $email;
+        $this->title = $title;
     }
 
     /**
      * @return mixed
      */
-    public function getEmail()
+    public function getTitle()
     {
-        return $this->email;
+        return $this->title;
     }
 
     /**
-     * @param mixed $role
+     * @param mixed $content
      */
-    public function setRole($role): void
+    public function setContent($content): void
     {
-        $this->role = $role;
+        $this->content = $content;
     }
 
     /**
      * @return mixed
      */
-    public function getRole()
+    public function getContent()
     {
-        return $this->role;
+        return $this->content;
+    }
+
+    /**
+     * @param mixed $type
+     */
+    public function setType($type): void
+    {
+        $this->type = $type;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getType()
+    {
+        return $this->type;
+    }
+
+    /**
+     * @param mixed $visibility
+     */
+    public function setVisibility($visibility): void
+    {
+        $this->visibility = $visibility;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getVisibility()
+    {
+        return $this->visibility;
+    }
+
+    /**
+     * @param mixed $allow_comment
+     */
+    public function setAllowComment($allow_comment): void
+    {
+        $this->allow_comment = $allow_comment;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getAllowComment()
+    {
+        return $this->allow_comment;
     }
 
     /**

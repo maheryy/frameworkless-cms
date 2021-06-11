@@ -8,9 +8,15 @@ namespace App\Core\Utils;
 class Constants
 {
     # Global statuses
-    const STATUS_ACTIVE = 1;
-    const STATUS_INACTIVE = -1;
     const STATUS_DELETED = -2;
+    const STATUS_INACTIVE = -1;
+    const STATUS_ACTIVE = 1;
+    const STATUS_DRAFT = 2;
+    const STATUS_PUBLISHED = 3;
+
+    # Post types
+    const POST_TYPE_PAGE = 1;
+    const POST_TYPE_POST = 2;
 
     # User roles
     const ROLE_DEFAULT = 1;

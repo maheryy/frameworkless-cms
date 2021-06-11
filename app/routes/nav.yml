@@ -24,7 +24,14 @@ sidebar-main:
   page: 
     label: Pages
     icon: far fa-file
-    route:
+    route: /pages
+    sub-links:
+      list_page:
+        label: Liste pages
+        route: /pages
+      new_page:
+        label: Ajouter page
+        route: /new-page
   user: 
     label: Utilisateurs
     icon: fas fa-users
