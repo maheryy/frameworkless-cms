@@ -44,7 +44,7 @@ class Mailer
             $mailer->Subject = $data['subject'];
             $mailer->Body = $data['content'];
 
-            $user_repository = Repository::user();
+            $user_repository = (new Repository)->user;
             foreach ($data['cc'] as $uid) {
                 if (is_numeric($uid)) {
                     $email = $user_repository->find($uid)['email'];

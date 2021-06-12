@@ -11,8 +11,6 @@ class Post extends Model
     protected $title;
     protected $content;
     protected $type;
-    protected $visibility;
-    protected $allow_comment;
     protected $status;
     protected $created_at;
     protected $updated_at;
@@ -96,38 +94,6 @@ class Post extends Model
     public function getType()
     {
         return $this->type;
-    }
-
-    /**
-     * @param mixed $visibility
-     */
-    public function setVisibility($visibility): void
-    {
-        $this->visibility = $visibility;
-    }
-
-    /**
-     * @return mixed
-     */
-    public function getVisibility()
-    {
-        return $this->visibility;
-    }
-
-    /**
-     * @param mixed $allow_comment
-     */
-    public function setAllowComment($allow_comment): void
-    {
-        $this->allow_comment = $allow_comment;
-    }
-
-    /**
-     * @return mixed
-     */
-    public function getAllowComment()
-    {
-        return $this->allow_comment;
     }
 
     /**

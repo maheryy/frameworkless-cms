@@ -20,7 +20,7 @@
                 <article id="info-box" class="info-primary">
                     <span id="info-description"></span>
                 </article>
-                <form class="form-default" method="POST" action="<?= $url_form_action ?>">
+                <form class="form-default" method="POST" action="<?= $url_form ?>">
                     <div class="form-field required">
                         <input class="form-control" type="password" id="password" name="password" required>
                         <label for="password">Nouveau mot de passe</label>

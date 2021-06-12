@@ -4,32 +4,42 @@ namespace App\Core;
 
 use App\Core\Utils\Formatter;
 use App\Core\Utils\LayoutManager;
+use App\Core\Utils\Repository;
 use App\Core\Utils\Request;
 use App\Core\Utils\Session;
 use App\Core\Utils\UrlBuilder;
 
 abstract class Controller
 {
-    protected array $view_data;
     protected Router $router;
+    protected Request $request;
+    protected Repository $repository;
+    protected Session $session;
 
     protected function __construct(array $options)
     {
-        $this->view_data = [];
         $this->router = Router::getInstance();
-
-        $this->initSession($options['require_auth'] ?? false);
+        $this->request = new Request();
+        $this->repository = new Repository();
+        $this->session = new Session($options['require_auth'] ?? false);
+        if ($this->session->init()) {
+            $this->setLayoutParams();
+        }
     }
 
     /**
      * Render a view from any controller
      *
      * @param string $view
+     * @param array $data
      * @param string $template
      */
-    protected function render(string $view, string $template = 'back_office')
+    protected function render(string $view, array $data = [], string $template = 'back_office')
     {
-        $this->view = new View($view, $template, $this->view_data);
+        if (!empty($this->view_data)) {
+           $data = !empty($data) ? array_merge($this->view_data, $data) : $this->view_data;
+        }
+        return new View($view, $template, $data);
     }
 
     /**
@@ -116,7 +126,7 @@ abstract class Controller
     {
         $layout = new LayoutManager();
         $sidebar_links = $layout->getSidebarLinks();
-        $user_link = UrlBuilder::makeUrl('User', 'userView', ['id' => Session::getUserId()]);
+        $user_link = UrlBuilder::makeUrl('User', 'userView', ['id' => $this->session->getUserId()]);
 
         # Set custom link to existing nav-link
         $sidebar_links['main']['user']['sub-links']['current_user']['route'] = $user_link;
@@ -155,12 +165,12 @@ abstract class Controller
      */
     protected function setCSRFToken()
     {
-        $this->setParam('csrf_token', Session::getCSRFToken());
+        $this->setParam('csrf_token', $this->session->getCSRFToken());
     }
 
     /**
      * Start session and check if user is logged in
-     */
+
     protected function initSession(bool $require_auth)
     {
         if (!Session::isActive()) {
@@ -187,14 +197,15 @@ abstract class Controller
 
         $this->setLayoutParams();
     }
+     */
 
     /**
      * Validate CSRF Token for every form that requires user authentification
      */
     protected function validateCSRF()
     {
-        $token = Request::header('X-CSRF-TOKEN');
-        if (!$token || Session::getCSRFToken() !== $token) {
+        $token = $this->request->header('X-CSRF-TOKEN');
+        if (!$token || $this->session->getCSRFToken() !== $token) {
            $this->sendError('Accès refusé');
         }
         return true;

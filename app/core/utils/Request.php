@@ -8,6 +8,24 @@ class Request
     const COOKIE_EXPIRATION_HOUR = 1;
     const COOKIE_EXPIRATION_DAY = 2;
 
+    private array $dataPost;
+    private array $dataGet;
+
+    public function __construct()
+    {
+        $this->dataGet = $this->all($_GET);
+        $this->dataPost = !empty($_POST) ? $this->all($_POST) : [];
+    }
+
+    public function __get($name)
+    {
+        if (!isset($_REQUEST[$name])) return null;
+
+        return is_string($_REQUEST[$name])
+            ? Formatter::sanitizeInput($_REQUEST[$name])
+            : $_REQUEST[$name];
+    }
+
 
     /**
      * Return the defined $_REQUEST[$key] variable, null otherwise
@@ -16,9 +34,9 @@ class Request
      * @param string $key
      * @return string|null
      */
-    public static function request(string $key)
+    public function request(string $key)
     {
-        return self::getVariable($key, $_REQUEST);
+        return $this->getVariable($key, $_REQUEST);
     }
 
     /**
@@ -27,7 +45,7 @@ class Request
      * @param string $key
      * @return array|null
      */
-    public static function requestArray(string $key)
+    public function requestArray(string $key)
     {
         return isset($_REQUEST[$key]) && is_array($_REQUEST[$key]) ? $_REQUEST[$key] : null;
     }
@@ -38,7 +56,7 @@ class Request
      * @param string $key
      * @return string|null
      */
-    public static function url(string $key)
+    public function url(string $key)
     {
         return Formatter::decodeUrlQuery($_REQUEST[$key] ?? '');
     }
@@ -49,9 +67,9 @@ class Request
      * @param string $key
      * @return string|null
      */
-    public static function get(string $key)
+    public function get(string $key)
     {
-        return self::getVariable($key, $_GET);
+        return $this->dataGet[$key] ?? null;
     }
 
     /**
@@ -59,11 +77,12 @@ class Request
      *
      * @param string $key
      * @return array|null
-     */
-    public static function getArray(string $key)
+
+    public function getArray(string $key)
     {
         return isset($_GET[$key]) && is_array($_GET[$key]) ? $_GET[$key] : null;
     }
+     */
 
     /**
      * Return the defined $_POST[$key] variable, null otherwise
@@ -71,9 +90,9 @@ class Request
      * @param string $key
      * @return string|int|array|null
      */
-    public static function post(string $key)
+    public function post(string $key)
     {
-        return self::getVariable($key, $_POST);
+        return $this->dataPost[$key] ?? null;
     }
 
     /**
@@ -81,10 +100,22 @@ class Request
      *
      * @param string $key
      * @return array|null
-     */
-    public static function postArray(string $key)
+
+    public function postArray(string $key)
     {
         return isset($_POST[$key]) && is_array($_POST[$key]) ? $_POST[$key] : null;
+    }
+     */
+
+    /**
+     * Return the defined $_DELETE[$key] variable, null otherwise
+     *
+     * @param string $key
+     * @return string|null
+     */
+    public function delete(string $key)
+    {
+        return $this->getVariable($key, $_REQUEST);
     }
 
     /**
@@ -93,9 +124,9 @@ class Request
      * @param string $key
      * @return string|int|array|null
      */
-    public static function getCookie(string $key)
+    public function getCookie(string $key)
     {
-        return self::getVariable($key, $_COOKIE);
+        return $this->getVariable($key, $_COOKIE);
     }
 
     /**
@@ -104,9 +135,9 @@ class Request
      * @param string $key
      * @return void
      */
-    public static function deleteCookie(string $key)
+    public function deleteCookie(string $key)
     {
-        self::setCookie($key, '', [
+        $this->setCookie($key, '', [
             'expiration' => -1,
             'expiration_basis' => self::COOKIE_EXPIRATION_HOUR,
         ]);
@@ -124,7 +155,7 @@ class Request
      * - string path : '/' is default
      * @return void
      */
-    public static function setCookie(string $key, string $value, array $options = [])
+    public function setCookie(string $key, string $value, array $options = [])
     {
         $path = '/';
         $expire = 0;
@@ -159,7 +190,7 @@ class Request
      * @param string $key
      * @return string|null
      */
-    public static function header(string $key)
+    public function header(string $key)
     {
         return getallheaders()[$key] ?? null;
     }
@@ -168,36 +199,36 @@ class Request
      * Return all GET Variables
      * @return array
      */
-    public static function allGet()
+    public function allGet()
     {
-        return self::all($_GET);
+        return $this->dataGet;
     }
 
     /**
      * Return all POST Variables
      * @return array
      */
-    public static function allPost()
+    public function allPost()
     {
-        return self::all($_POST);
+        return $this->dataPost;
     }
 
     /**
      * Return all REQUEST Variables (GET, POST, COOKIE)
      * @return array
      */
-    public static function allRequest()
+    public function allRequest()
     {
-        return self::all($_REQUEST);
+        return $this->all($_REQUEST);
     }
 
     /**
      * Return all COOKIE Variables
      * @return array
      */
-    public static function allCookie()
+    public function allCookie()
     {
-        return self::all($_COOKIE);
+        return $this->all($_COOKIE);
     }
 
     /**
@@ -207,7 +238,7 @@ class Request
      * @param int $source $_COOKIE|$_POST|$_GET|$_REQUEST
      * @return string|int|array|null
      */
-    private static function getVariable(string $key, array $source)
+    private function getVariable(string $key, array $source)
     {
         return isset($source[$key]) && is_string($source[$key])
             ? Formatter::sanitizeInput($source[$key])
@@ -220,7 +251,7 @@ class Request
      * @param int $source $_COOKIE|$_POST|$_GET|$_REQUEST
      * @return array
      */
-    private static function all(array $source)
+    public function all(array $source)
     {
         $res = [];
         foreach ($source as $key => $value) {
@@ -229,4 +260,38 @@ class Request
 
         return $res;
     }
+
+    /*
+     * Determine if the request method is POST
+     */
+    public static function isPost()
+    {
+        return $_SERVER['REQUEST_METHOD'] === 'POST';
+    }
+
+    /*
+     * Anonymous class to isolate post variables using request->post->variable_name
+     *
+    private function postClass() {
+        return new class {
+            public function __get($name)
+            {
+                if (!isset($_POST[$name])) return null;
+
+                return is_string($_POST[$name])
+                    ? Formatter::sanitizeInput($_POST[$name])
+                    : $_POST[$name];
+            }
+
+            public function all() {
+                $res = [];
+                foreach ($_POST as $key => $value) {
+                    $res[$key] = is_string($value) ? Formatter::sanitizeInput($value) : $value;
+                }
+
+                return $res;
+            }
+        };
+    }
+    */
 }

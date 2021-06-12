@@ -5,7 +5,7 @@
             <article id="info-box" class="info-primary">
                 <span id="info-description"></span>
             </article>
-            <form class="form-default" method="POST" action="<?= $url_form_action ?>">
+            <form class="form-default" method="POST" action="<?= $url_form ?>">
                 <div class="form-field required">
                     <input class="form-control" type="email" id="login" name="login" required>
                     <label for="login">Nom d'utilisateur ou email</label>

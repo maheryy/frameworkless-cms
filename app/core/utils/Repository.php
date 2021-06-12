@@ -2,27 +2,32 @@
 
 namespace App\Core\Utils;
 
-use App\Models\Post;
-use App\Models\User;
-use App\Models\ValidationToken;
-use App\Repositories\PostRepository;
-use App\Repositories\UserRepository;
-use App\Repositories\ValidationTokenRepository;
+use App\Core\BaseRepository;
+use App\Core\Exceptions\NotFoundException;
 
 class Repository
 {
-    public static function user(User $model = null)
+    public function __get($name)
     {
-        return new UserRepository($model ?? new User());
+        $class = "\App\Models\\" . $name;
+        $repository = "\App\Repositories\\" . $name . "Repository";
+        if (!class_exists($class) || !class_exists($repository)) {
+            throw new NotFoundException("$class or $repository not found");
+        }
+
+        return new $repository(new $class());
     }
 
-    public static function validationToken(ValidationToken $model = null)
+    public function __call($method, $args)
     {
-        return new ValidationTokenRepository($model ?? new ValidationToken());
-    }
+        $method = ucfirst($method);
+        $class = "\App\Models\\" . $method;
+        $repository = "\App\Repositories\\" . $method . "Repository";
 
-    public static function post(Post $model = null)
-    {
-        return new PostRepository($model ?? new Post());
+        if (!class_exists($repository)) {
+            throw new NotFoundException("$repository not found");
+        }
+
+        return new $repository($args[0] ?? new $class());
     }
 }

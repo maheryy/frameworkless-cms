@@ -5,7 +5,7 @@
             <span id="info-description"></span>
         </article>
         <p class="info-text">Veuillez remplir ci-dessous les détails de connexion à votre base de données.</p>
-        <form class="form-default" method="POST" action="<?= $url_form_action ?>">
+        <form class="form-default" method="POST" action="<?= $url_form ?>">
             <div class="form-field-inline required">
                 <label for="db_name">Nom de la base de données</label>
                 <input type="text" class="form-control" id="db_name" name="db_name" placeholder="Super_BDD" value="<?= $config['db_name'] ?? ''?>">
