@@ -25,6 +25,10 @@ abstract class Controller
         if ($this->session->init()) {
             $this->setLayoutParams();
         }
+
+        if(isset($options['title'])) {
+            $this->setContentTitle($options['title']);
+        }
     }
 
     /**
@@ -167,37 +171,6 @@ abstract class Controller
     {
         $this->setParam('csrf_token', $this->session->getCSRFToken());
     }
-
-    /**
-     * Start session and check if user is logged in
-
-    protected function initSession(bool $require_auth)
-    {
-        if (!Session::isActive()) {
-            Session::start();
-        }
-
-        if (!$require_auth) return;
-
-        if (!Session::isLoggedIn()) {
-            $url_params = $_SERVER['REQUEST_URI'] !== '/' && $this->router->existRoute($_SERVER['REQUEST_URI']) ? ['redirect' => Formatter::encodeUrlQuery($_SERVER['REQUEST_URI'])] : [];
-            $this->router->redirect(UrlBuilder::makeUrl('User', 'loginView', $url_params));
-        }
-
-        # Apply session timeout
-        if (Session::hasExpired()) {
-            $this->router->redirect(UrlBuilder::makeUrl('User', 'logoutAction', [
-                'redirect' => $this->router->existRoute($_SERVER['REQUEST_URI']) ? Formatter::encodeUrlQuery($_SERVER['REQUEST_URI']) : '/',
-                'timeout' => true
-            ]));
-        }
-        if (!Session::isDev()) {
-            Session::set('LAST_ACTIVE_TIME', time());
-        }
-
-        $this->setLayoutParams();
-    }
-     */
 
     /**
      * Validate CSRF Token for every form that requires user authentification

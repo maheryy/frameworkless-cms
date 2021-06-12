@@ -22,7 +22,6 @@ class Page extends Controller
     # /pages
     public function listView()
     {
-        $this->setContentTitle('Liste des pages');
         $pages = $this->repository->post->findAllPages();
         $statuses = Page::getPostStatuses();
         foreach ($pages as $key => $page) {
@@ -46,7 +45,6 @@ class Page extends Controller
     # /new-page
     public function createView()
     {
-        $this->setContentTitle('Ajouter une page');
         $this->setCSRFToken();
         $view_data = [
             'url_form' => UrlBuilder::makeUrl('Page', 'createAction')

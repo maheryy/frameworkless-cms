@@ -217,7 +217,6 @@ class User extends Controller
     # /users
     public function listView()
     {
-        $this->setContentTitle('Liste des utilisateurs');
         $users = $this->repository->user->findAll();
         $roles = self::getRoles();
 
@@ -242,7 +241,6 @@ class User extends Controller
     # /new-user
     public function createView()
     {
-        $this->setContentTitle('Ajouter un utilisateur');
         $this->setCSRFToken();
         $view_data = [
             'roles' => self::getRoles(),

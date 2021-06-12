@@ -13,8 +13,6 @@ class Home extends Controller
 
     public function defaultView()
     {
-        $this->setPageTitle('Super CMS');
-        $this->setContentTitle('CMS');
         $view_data = [
             'name' => 'John',
             'age' => 25,
