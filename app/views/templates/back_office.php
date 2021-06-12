@@ -16,8 +16,7 @@
     <?php endif; ?>
 </head>
 <body>
-    <?php if (isset($toolbar, $sidebar)) : ?>
-        <?php include $toolbar; ?>
+    <?php if (isset($sidebar)) : ?>
         <?php include $sidebar; ?>
         <main class="content">
             <?php if (isset($content_title)) : ?>

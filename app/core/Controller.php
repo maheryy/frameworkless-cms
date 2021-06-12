@@ -123,7 +123,7 @@ abstract class Controller
     }
 
     /**
-     * Set main parameters for toolbar/sidebar
+     * Set main parameters for sidebar
      *
      */
     protected function setLayoutParams()
@@ -135,13 +135,13 @@ abstract class Controller
         # Set custom link to existing nav-link
         $sidebar_links['main']['user']['sub-links']['current_user']['route'] = $user_link;
 
-        $this->setParam('current_route', $this->router->getUri());
+        $this->setParam('current_route', $_SERVER['REQUEST_URI']);
         $this->setParam('sidebar_links', $sidebar_links['main']);
-        $this->setParam('link_settings', $sidebar_links['bottom']);
+        $this->setParam('link_settings', $sidebar_links['bottom']['settings']);
+        $this->setParam('link_home', UrlBuilder::makeUrl('Home', 'defaultView'));
         $this->setParam('link_logout', UrlBuilder::makeUrl('User', 'logoutAction'));
         $this->setParam('link_user', $user_link);
         $this->setParam('sidebar', $layout->getSidebarPath());
-        $this->setParam('toolbar', $layout->getToolbarPath());
     }
 
     /**

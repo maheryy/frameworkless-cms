@@ -3,13 +3,6 @@ sidebar-main:
     label: Tableau de bord
     icon: fas fa-columns
     route: /dashboard
-    sub-links:
-      stats:
-        label: Statistiques
-        route:
-      customize:
-        label: Personnalisez votre site
-        route:
   article: 
     label: Articles
     icon: fas fa-newspaper
@@ -47,10 +40,8 @@ sidebar-main:
         label: Mon utilisateur
         route:
 
-
-# To improve        
 sidebar-bottom:
   settings:
-  label: Paramètres
-  icon: fas fa-cog
-  route:
+    label: Paramètres
+    icon: fas fa-cog
+    route:
