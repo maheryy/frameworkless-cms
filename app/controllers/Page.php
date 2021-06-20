@@ -3,6 +3,7 @@
 namespace App\Controllers;
 
 use App\Core\Controller;
+use App\Core\Database;
 use App\Core\Exceptions\NotFoundException;
 use App\Core\Utils\Constants;
 use App\Core\Utils\Formatter;
@@ -64,6 +65,8 @@ class Page extends Controller
             if (!$validator->validateRequiredOnly(['title' => $this->request->post('title')])) {
                 $this->sendError('Le titre est obligatoire');
             }
+
+            Database::beginTransaction();
             $page_id = $this->repository->post->create([
                 'author_id' => $this->session->getUserId(),
                 'title' => $this->request->post('title'),
@@ -81,10 +84,12 @@ class Page extends Controller
                 'seo_status' => $this->request->post('display_search_engine') ? 1 : 0,
             ]);
 
+            Database::commit();
             $this->sendSuccess('Page créée', [
                 'url_next' => UrlBuilder::makeUrl('Page', 'pageView', ['id' => $page_id])
             ]);
         } catch (\Exception $e) {
+            Database::rollback();
             $this->sendError("Une erreur est survenu", [$e->getMessage()]);
         }
     }
@@ -145,11 +150,14 @@ class Page extends Controller
                 'visibility' => $this->request->post('visibility'),
             ];
 
+            Database::beginTransaction();
             $this->repository->post->update($this->request->get('id'), $post_fields);
             $this->repository->pageExtra->update($this->request->get('id'), $page_fields);
+            Database::commit();
 
             $this->sendSuccess('Informations sauvegardées');
         } catch (\Exception $e) {
+            Database::rollback();
             $this->sendError("Une erreur est survenue", [$e->getMessage()]);
         }
     }

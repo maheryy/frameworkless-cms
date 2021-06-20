@@ -55,6 +55,7 @@ class Installer extends Controller
 
             $form_data['password'] = password_hash($form_data['password'], PASSWORD_DEFAULT);
 
+            Database::beginTransaction();
             $user_id = $this->repository->user->create([
                 'username' => $form_data['username'],
                 'email' => $form_data['email'],
@@ -94,10 +95,12 @@ class Installer extends Controller
                 $this->sendError($mail['message']);
             }
 
+            Database::commit();
             $this->sendSuccess('Utilisateur créé', [
                 'url_next' => UrlBuilder::makeUrl('User', 'loginView')
             ]);
         } catch (Exception $e) {
+            Database::rollback();
             $this->sendError('Une erreur est survenue :' . $e->getMessage());
         }
     }

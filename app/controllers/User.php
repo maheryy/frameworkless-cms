@@ -3,6 +3,7 @@
 namespace App\Controllers;
 
 use App\Core\Controller;
+use App\Core\Database;
 use App\Core\Exceptions\NotFoundException;
 use App\Core\Utils\Formatter;
 use App\Core\Utils\Mailer;
@@ -188,16 +189,19 @@ class User extends Controller
                 $this->sendError("Une erreur est survenue");
             }
 
+            Database::beginTransaction();
             # Update user password
             $this->repository->user->updatePassword($validation_token['user_id'], password_hash($data['password'], PASSWORD_DEFAULT));
 
             # Delete token
             $validation_token_repository->remove($validation_token['id']);
+            Database::commit();
 
             $this->sendSuccess("Votre mot de passe a été réinitialisé", [
                 'url_next' => UrlBuilder::makeUrl('User', 'loginView'),
             ]);
         } catch (\Exception $e) {
+            Database::rollback();
             $this->sendError("Une erreur est survenu pendant le traitement", [$e->getMessage()]);
         }
     }
@@ -260,6 +264,7 @@ class User extends Controller
                 $this->sendError('Veuillez vérifier les champs', $validator->getErrors());
             }
 
+            Database::beginTransaction();
             $user_id = $this->repository->user->create([
                 'username' => $form_data['username'],
                 'password' => password_hash($form_data['password'], PASSWORD_DEFAULT),
@@ -299,10 +304,12 @@ class User extends Controller
                 $this->sendError($mail['message']);
             }
 
+            Database::commit();
             $this->sendSuccess('Utilisateur créé', [
                 'url_next' => UrlBuilder::makeUrl('User', 'userView', ['id' => $user_id])
             ]);
         } catch (\Exception $e) {
+            Database::rollback();
             $this->sendError("Une erreur est survenu", [$e->getMessage()]);
         }
     }
