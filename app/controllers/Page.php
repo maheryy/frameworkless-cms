@@ -7,7 +7,6 @@ use App\Core\Exceptions\NotFoundException;
 use App\Core\Utils\Constants;
 use App\Core\Utils\Formatter;
 use App\Core\Utils\FormRegistry;
-use App\Core\Utils\Session;
 use App\Core\Utils\UrlBuilder;
 use App\Core\Utils\Validator;
 
@@ -23,7 +22,7 @@ class Page extends Controller
     public function listView()
     {
         $pages = $this->repository->post->findAllPages();
-        $statuses = Page::getPostStatuses();
+        $statuses = Constants::getPostStatuses();
         foreach ($pages as $key => $page) {
             $pages[$key]['url_detail'] = UrlBuilder::makeUrl('Page', 'pageView', ['id' => $page['id']]);
             $pages[$key]['url_delete'] = UrlBuilder::makeUrl('Page', 'deleteAction', ['id' => $page['id']]);
@@ -46,7 +45,11 @@ class Page extends Controller
     public function createView()
     {
         $this->setCSRFToken();
+        $users = $this->repository->user->findAll();
         $view_data = [
+            'users' => $users,
+            'current_user_id' => $this->session->getUserId(),
+            'visibility_types' => Constants::getVisibilityTypes(),
             'url_form' => UrlBuilder::makeUrl('Page', 'createAction')
         ];
         $this->render('page_new', $view_data);
@@ -57,17 +60,25 @@ class Page extends Controller
     {
         $this->validateCSRF();
         try {
-            $form_data = $this->request->allPost();
-            //$validator = new Validator(FormRegistry::getUserNew());
-            //if (!$validator->validate($form_data)) {
-            //    $this->sendError('Veuillez vérifier les champs', $validator->getErrors());
-            //}
+            $validator = new Validator();
+            if (!$validator->validateRequiredOnly(['title' => $this->request->post('title')])) {
+                $this->sendError('Le titre est obligatoire');
+            }
             $page_id = $this->repository->post->create([
                 'author_id' => $this->session->getUserId(),
-                'title' => 'Test',
+                'title' => $this->request->post('title'),
                 'content' => $_POST['post_content'],
                 'type' => Constants::POST_TYPE_PAGE,
                 'status' => Constants::STATUS_DRAFT
+            ]);
+            $this->repository->pageExtra->create([
+                'post_id' => $page_id,
+                'slug' => $this->request->post('slug'),
+                'visibility' => $this->request->post('visibility'),
+                'allow_comments' => $this->request->post('allow_comments') ? 1 : 0,
+                'seo_title' => $this->request->post('meta_title'),
+                'seo_description' => $this->request->post('meta_description'),
+                'seo_status' => $this->request->post('display_search_engine') ? 1 : 0,
             ]);
 
             $this->sendSuccess('Page créée', [
@@ -84,16 +95,22 @@ class Page extends Controller
         if (!$this->request->get('id')) {
             throw new \Exception('Cette page n\'existe pas');
         }
-        $page = $this->repository->post->find($this->request->get('id'));
+        $page = $this->repository->post->findPage($this->request->get('id'));
         if (!$page) {
             throw new NotFoundException('Cette page n\'est pas trouvé');
         }
 
+        if (!empty($page['published_at'])) {
+            $page['published_at'] = Formatter::getDateTime($page['published_at'], Formatter::DATE_FORMAT);
+        }
+        $users = $this->repository->user->findAll();
         $this->setContentTitle($page['title']);
         $this->setCSRFToken();
         $view_data = [
             'page' => $page,
-            'url_form' => UrlBuilder::makeUrl('Page', 'pageAction'),
+            'users' => $users,
+            'visibility_types' => Constants::getVisibilityTypes(),
+            'url_form' => UrlBuilder::makeUrl('Page', 'pageAction', ['id' => $page['id']]),
             'url_delete' => UrlBuilder::makeUrl('Page', 'deleteAction', ['id' => $page['id']]),
         ];
         $this->render('page_detail', $view_data);
@@ -104,20 +121,32 @@ class Page extends Controller
     {
         $this->validateCSRF();
         try {
-
-            $form_data = $this->request->allPost();
-            //$validator = new Validator(FormRegistry::getUserDetail());
-            //if (!$validator->validate($form_data)) {
-            //    $this->sendError('Veuillez vérifier les champs', $validator->getErrors());
-            //}
-            //
-            $update_fields = [
+            $validator = new Validator();
+            if (!$validator->validateRequiredOnly(['title' => $this->request->post('title')])) {
+                $this->sendError('Le titre est obligatoire');
+            }
+            $post_fields = [
+                'title' => $this->request->post('title'),
+                'author_id' => $this->request->post('author'),
                 'content' => $_POST['post_content'],
-                'title' => 'Updated',
                 'updated_at' => Formatter::getDateTime()
             ];
 
-            $this->repository->post->update($form_data['page_id'], $update_fields);
+            if($this->request->post('published_at')) {
+                $form_data['published_at'] = Formatter::getDateTime($this->request->post('published_at'), Formatter::DATE_TIME_FORMAT);
+            }
+
+            $page_fields = [
+                'slug' => $this->request->post('slug'),
+                'seo_title' => $this->request->post('meta_title'),
+                'seo_description' => $this->request->post('meta_description'),
+                'allow_comments' => $this->request->post('allow_comments') ? 1 : 0,
+                'seo_status' => $this->request->post('display_search_engine') ? 1 : 0,
+                'visibility' => $this->request->post('visibility'),
+            ];
+
+            $this->repository->post->update($this->request->get('id'), $post_fields);
+            $this->repository->pageExtra->update($this->request->get('id'), $page_fields);
 
             $this->sendSuccess('Informations sauvegardées');
         } catch (\Exception $e) {
@@ -136,14 +165,5 @@ class Page extends Controller
             'url_next' => UrlBuilder::makeUrl('Page', 'listView'),
             'delay_url_next' => 0,
         ]);
-    }
-
-
-    public static function getPostStatuses()
-    {
-        return [
-            Constants::STATUS_DRAFT => 'Brouillon',
-            Constants::STATUS_PUBLISHED => 'Publié',
-        ];
     }
 }

@@ -35,4 +35,36 @@ class Constants
     const RESET_PASSWORD_TIMEOUT = 1440;
     # Account confirmation -> 7j
     const EMAIL_CONFIRM_TIMEOUT = 10080;
+
+
+    # Visibility types
+    const VISIBILITY_PUBLIC = 1;
+    const VISIBILITY_PRIVATE = 2;
+
+
+    public static function getRoles()
+    {
+        return [
+            self::ROLE_DEFAULT => 'Normal',
+            self::ROLE_EDITOR => 'Editeur',
+            self::ROLE_ADMIN => 'Administrateur',
+            self::ROLE_SUPER_ADMIN => 'Super Administrateur',
+        ];
+    }
+
+    public static function getPostStatuses()
+    {
+        return [
+            self::STATUS_DRAFT => 'Brouillon',
+            self::STATUS_PUBLISHED => 'Publié',
+        ];
+    }
+
+    public static function getVisibilityTypes()
+    {
+        return [
+            self::VISIBILITY_PUBLIC => 'Publique',
+            self::VISIBILITY_PRIVATE => 'Privé',
+        ];
+    }
 }

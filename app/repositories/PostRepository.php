@@ -16,6 +16,23 @@ class PostRepository extends BaseRepository
         parent::__construct($model);
     }
 
+    public function findPage(int $id)
+    {
+        $details_table = Formatter::getTableName('page_extra');
+
+        $qb = (new QueryBuilder())
+            ->select([
+                "$details_table" => ['*'],
+                "$this->table" => ['*'],
+            ])
+            ->from($this->table)
+            ->joinLeft($details_table, "$this->table.id = $details_table.post_id")
+            ->where(Expr::eq("$this->table.id", $id))
+            ->where(Expr::neq("$this->table.status", Constants::STATUS_DELETED));
+
+        return $this->model->fetchOne($qb);
+
+    }
 
     public function findPageByTitle(string $title)
     {

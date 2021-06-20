@@ -218,7 +218,7 @@ class User extends Controller
     public function listView()
     {
         $users = $this->repository->user->findAll();
-        $roles = self::getRoles();
+        $roles = Constants::getRoles();
 
         foreach ($users as $key => $user) {
             $users[$key]['url_detail'] = UrlBuilder::makeUrl('User', 'userView', ['id' => $user['id']]);
@@ -243,7 +243,7 @@ class User extends Controller
     {
         $this->setCSRFToken();
         $view_data = [
-            'roles' => self::getRoles(),
+            'roles' => Constants::getRoles(),
             'url_form' => UrlBuilder::makeUrl('User', 'createAction')
         ];
         $this->render('user_new', $view_data);
@@ -320,7 +320,7 @@ class User extends Controller
         $this->setContentTitle($user['username']);
         $this->setCSRFToken();
         $view_data = [
-            'roles' => self::getRoles(),
+            'roles' => Constants::getRoles(),
             'user' => $user,
             'url_form' => UrlBuilder::makeUrl('User', 'userAction'),
             'url_delete' => UrlBuilder::makeUrl('User', 'deleteAction', ['id' => $user['id']]),
@@ -409,15 +409,5 @@ class User extends Controller
             'is_admin' => $user_data['role'] == Constants::ROLE_ADMIN,
             'csrf_token' => (new Token())->generate()->getEncoded()
         ]);
-    }
-
-    public static function getRoles()
-    {
-        return [
-            Constants::ROLE_DEFAULT => 'Normal',
-            Constants::ROLE_EDITOR => 'Editeur',
-            Constants::ROLE_ADMIN => 'Administrateur',
-            Constants::ROLE_SUPER_ADMIN => 'Super Administrateur',
-        ];
     }
 }

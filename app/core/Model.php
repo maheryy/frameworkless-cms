@@ -92,7 +92,11 @@ abstract class Model
      */
     public function fetchAll(QueryBuilder $qb, bool $debug = false)
     {
-        if ($debug) var_dump($qb->debug());
+        if ($debug) {
+            echo '<pre>';
+            print_r($qb->debug());
+            echo '</pre>';
+        }
 
         return $this->fetch($qb->buildQuery(), $qb->getParams());
     }
@@ -107,7 +111,11 @@ abstract class Model
      */
     public function fetchOne(QueryBuilder $qb, bool $debug = false)
     {
-        if ($debug) var_dump($qb->debug());
+        if ($debug) {
+            echo '<pre>';
+            print_r($qb->debug());
+            echo '</pre>';
+        }
 
         return $this->fetch($qb->buildQuery(), $qb->getParams(), Database::FETCH_ONE);
     }

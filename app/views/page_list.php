@@ -1,4 +1,4 @@
-<div class="container">
+<div class="card rounded">
     <table data-role="initDataTable">
         <thead>
         <tr>

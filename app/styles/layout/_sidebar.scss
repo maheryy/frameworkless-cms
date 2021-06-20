@@ -7,7 +7,7 @@ $sublist-font-sz: 0.875em;
   width: $sidebar-width;
   position: fixed;
   left: 0;
-  z-index: 1;
+  z-index: 2;
   background-color: $bg-primary-dark;
   font-size: 0.875em;
   @include flex-col-display(space-between);

@@ -15,7 +15,7 @@ class Validator
     const TYPE_TEL = 6;
 
     const ERROR_EMAIL_DEFAULT = "L'adresse email n'est pas valide";
-    const ERROR_REQUIRED = "Ce champs est obligatoire";
+    const ERROR_REQUIRED = "Ce champ est obligatoire";
     const ERROR_DATE_DEFAULT = "La date n'est pas valide";
     const ERROR_PASSWORD_DEFAULT = "Le mot de passe doit contenir entre 8 et 20 caractères dont au moins 1 minuscule, 1 majuscule, 1 chiffre, et un caractère spécial [?!@#$%^&]";
 
@@ -32,7 +32,7 @@ class Validator
                 continue;
             }
             if (!isset($data[$name])) {
-                throw new \Exception('Le champs ' . $name . ' n\'est pas trouvé');
+                throw new \Exception('Le champ ' . $name . ' n\'est pas trouvé');
             }
 
             if (!empty($field['required']) && !self::isValid($data[$name])) {

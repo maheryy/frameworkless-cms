@@ -12,6 +12,7 @@ class Post extends Model
     protected $content;
     protected $type;
     protected $status;
+    protected $published_at;
     protected $created_at;
     protected $updated_at;
 
@@ -110,6 +111,22 @@ class Post extends Model
     public function getStatus()
     {
         return $this->status;
+    }
+
+    /**
+     * @param mixed $published_at
+     */
+    public function setPublishedAt($published_at): void
+    {
+        $this->published_at = $published_at;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getPublishedAt()
+    {
+        return $this->published_at;
     }
 
     /**

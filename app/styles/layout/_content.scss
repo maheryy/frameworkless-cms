@@ -2,7 +2,7 @@ main.content {
   background-color: $bg-primary;
   margin-left: $sidebar-width;
   padding: 0 1em;
-  height: 1200px;
+  min-height: 100vh;
 
   section.content-header {
     padding: 1em 1.5rem;
@@ -17,8 +17,5 @@ main.content {
 
   section.content-body {
     margin-top: 2em;
-    padding: 2em 1.5rem;
-    background-color: $bg-secondary;
-    border: 1px solid #dddddd;
   }
 }

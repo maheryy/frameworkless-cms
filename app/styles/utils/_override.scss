@@ -5,7 +5,87 @@
 .flex-col-center {
   @include flex-col-display(space-between);
 }
-
 .hidden {
   display: none;
 }
+
+.d-flex {
+  display: flex;
+}
+
+.d-flex-col {
+  display: flex;
+  flex-direction: column;
+}
+
+.justify-between {
+  justify-content: space-between;
+}
+
+.justify-around {
+  justify-content: space-around;
+}
+
+.justify-evenly {
+  justify-content: space-evenly;
+}
+
+.justify-start {
+  justify-content: flex-start;
+}
+
+.justify-end {
+  justify-content: flex-end;
+}
+
+.flex-align-center {
+  align-items: center;
+}
+
+.flex-align-start {
+  align-items: flex-start;
+}
+
+.flex-align-end {
+  align-items: flex-end;
+}
+
+
+/* Padding & margin | pixel unit | (0 * 5)px to (10 * 5)px */
+@for $i from 0 through 10 {
+  $value : $i * 5;
+  .p-#{$value} {
+    padding: #{$value}px;
+  }
+  .py-#{$value} {
+    padding-top: #{$value}px;
+    padding-bottom: #{$value}px;
+  }
+  .px-#{$value} {
+    padding-left: #{$value}px;
+    padding-right: #{$value}px;
+  }
+  .m-#{$value} {
+    margin: #{$value}px;
+  }
+  .my-#{$value} {
+    margin-top: #{$value}px;
+    margin-bottom: #{$value}px;
+  }
+  .mx-#{$value} {
+    margin-left: #{$value}px;
+    margin-right: #{$value}px;
+  }
+}
+
+/* width & height | percentage unit */
+@for $i from 1 through 20 {
+  $value : $i * 5;
+  .w-#{$value} {
+    width: #{$value}#{"%"};
+  }
+  .h-#{$value} {
+    height: #{$value}#{"%"};
+  }
+}
+
