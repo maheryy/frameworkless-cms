@@ -8,7 +8,6 @@ class LayoutManager
 {
     private $nav_path = '../routes/nav.yml';
     private $sidebar_links;
-    private $toolbar_links;
 
     public function __construct()
     {
@@ -26,13 +25,10 @@ class LayoutManager
 
         $nav_data = yaml_parse_file($this->nav_path);
 
-
         $this->sidebar_links = [
             'main' => $nav_data['sidebar-main'],
             'bottom' => $nav_data['sidebar-bottom']
         ];
-
-        $this->toolbar_links = [];
     }
 
     /**
@@ -44,26 +40,10 @@ class LayoutManager
     }
 
     /**
-     * @return string
-     */
-    public function getToolbarPath()
-    {
-        return PATH_TEMPLATES . 'layout/layout_toolbar.php';
-    }
-
-    /**
      * @return array
      */
     public function getSidebarLinks()
     {
         return $this->sidebar_links;
-    }
-
-    /**
-     * @return array
-     */
-    public function getToolbarinks()
-    {
-        return $this->toolbar_links;
     }
 }

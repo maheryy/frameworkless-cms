@@ -15,7 +15,7 @@ class Formatter
 
     public static function sanitizeInput(string $s)
     {
-        return htmlspecialchars(trim($s));
+        return !empty($s = trim($s)) ? htmlspecialchars($s) : null;
     }
 
     public static function encodeUrlQuery(string $s)
@@ -73,14 +73,19 @@ class Formatter
         return 'set' . ucfirst(self::snakeToCamelCase($s));
     }
 
+    public static function getTableName(string $table)
+    {
+        return DB_PREFIX . '_' . $table;
+    }
+
     public static function getDateTimeObject()
     {
         return new DateTime('now', new DateTimeZone(self::DATE_TIME_ZONE));
     }
 
-    public static function getDateTime(string $format = self::DATE_TIME_FORMAT)
+    public static function getDateTime(string $datetime = null, string $format = self::DATE_TIME_FORMAT)
     {
-        return (new DateTime('now', new DateTimeZone(self::DATE_TIME_ZONE)))->format($format);
+        return (new DateTime($datetime ?? 'now', new DateTimeZone(self::DATE_TIME_ZONE)))->format($format);
     }
 
     public static function getDateTimeFromTimestamp(int $timestamp, string $format = self::DATE_TIME_FORMAT)

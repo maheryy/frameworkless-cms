@@ -1,15 +1,17 @@
 main.content {
-  padding-left: $sidebar-width + 10px;
-  padding-top: $toolbar-height + 5px;
   background-color: $bg-primary;
-  height: 1200px;
+  margin-left: $sidebar-width;
+  padding: 0 1em;
+  min-height: 100vh;
 
   section.content-header {
-    padding: 5px 15px;
-    @include flex-col-display(flex-start, flex-start);
+    padding: 1em 1.5rem;
+    margin: 0 -1em;
+    border-bottom: 1px solid #dddddd;
+    background-color: $bg-secondary;
 
-    #info-box {
-      align-self: center;
+    h2 {
+      font-weight: 350;
     }
   }
 

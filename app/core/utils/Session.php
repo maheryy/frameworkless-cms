@@ -2,39 +2,78 @@
 
 namespace App\Core\Utils;
 
+use App\Core\Router;
+
 class Session
 {
+    private bool $require_auth;
 
-    /**
-     * @return int
-     */
-    public static function getUserId()
+    public function __construct(bool $require_auth)
     {
-        return (int) self::get('user_id');
+        if (!$this->isActive()) {
+            $this->start();
+        }
+
+        $this->require_auth = $require_auth;
+    }
+
+    public function init()
+    {
+        if (!$this->require_auth) {
+            return false;
+        }
+
+        if (!$this->isLoggedIn()) {
+            $router = Router::getInstance();
+            $url_params = $_SERVER['REQUEST_URI'] !== '/' && $router->existRoute($_SERVER['REQUEST_URI']) ? ['redirect' => Formatter::encodeUrlQuery($_SERVER['REQUEST_URI'])] : [];
+            $router->redirect(UrlBuilder::makeUrl('User', 'loginView', $url_params));
+        }
+
+        # Apply session timeout
+        if ($this->hasExpired()) {
+            $router = Router::getInstance();
+            $router->redirect(UrlBuilder::makeUrl('User', 'logoutAction', [
+                'redirect' => $router->existRoute($_SERVER['REQUEST_URI']) ? Formatter::encodeUrlQuery($_SERVER['REQUEST_URI']) : '/',
+                'timeout' => true
+            ]));
+        }
+        if (!$this->isDev()) {
+            $this->set('LAST_ACTIVE_TIME', time());
+        }
+
+        return true;
     }
 
     /**
      * @return int
      */
-    public static function getRole()
+    public function getUserId()
     {
-        return (int) self::get('user_role');
+        return (int) $this->get('user_id');
+    }
+
+    /**
+     * @return int
+     */
+    public function getRole()
+    {
+        return (int) $this->get('user_role');
     }
 
     /**
      * @return bool
      */
-    public static function isAdmin()
+    public function isAdmin()
     {
-        return (bool) self::get('is_admin');
+        return (bool) $this->get('is_admin');
     }
 
     /**
      * @return string
      */
-    public static function getCSRFToken()
+    public function getCSRFToken()
     {
-        return self::get('csrf_token');
+        return $this->get('csrf_token');
     }
 
     /**
@@ -42,10 +81,10 @@ class Session
      * 
      * @param array $data
      */
-    public static function load(array $data)
+    public function setData(array $data)
     {
         foreach ($data as $key => $value) {
-            self::set($key, $value);
+            $this->set($key, $value);
         }
     }
 
@@ -54,7 +93,7 @@ class Session
      * @param int|string $value
      * 
      */
-    public static function set(string $key, $value)
+    public function set(string $key, $value)
     {
         $_SESSION[$key] = $value;
     }
@@ -64,7 +103,7 @@ class Session
      * 
      * @return string|null
      */
-    public static function get(string $key)
+    public function get(string $key)
     {
         return $_SESSION[$key] ?? null;
     }
@@ -72,7 +111,7 @@ class Session
     /**
      * Get all session variables
      */
-    public static function getAll()
+    public function getAll()
     {
         return $_SESSION;
     }
@@ -82,7 +121,7 @@ class Session
      * 
      * @param string $key
      */
-    public static function delete(string $key)
+    public function delete(string $key)
     {
         if (isset($_SESSION[$key])) {
             unset($_SESSION[$key]);
@@ -92,9 +131,9 @@ class Session
     /**
      * Destroy an active session
      */
-    public static function stop()
+    public function stop()
     {
-        if (self::isActive()) {
+        if ($this->isActive()) {
             session_destroy();
         }
     }
@@ -102,7 +141,7 @@ class Session
     /**
      * Start or resume a session
      */
-    public static function start()
+    public function start()
     {
         session_start();
     }
@@ -112,7 +151,7 @@ class Session
      * 
      * @return bool
      */
-    public static function isActive()
+    public function isActive()
     {
         return session_status() === PHP_SESSION_ACTIVE;
     }
@@ -122,7 +161,7 @@ class Session
      *
      * @return bool
      */
-    public static function isLoggedIn()
+    public function isLoggedIn()
     {
         return isset($_SESSION['user_id']);
     }
@@ -132,7 +171,7 @@ class Session
      *
      * @return bool
      */
-    public static function isDev()
+    public function isDev()
     {
         return defined('APP_DEV') && APP_DEV;
     }
@@ -143,9 +182,9 @@ class Session
      *
      * @return bool
      */
-    public static function hasExpired()
+    public function hasExpired()
     {
-        return  !self::isDev() && self::get('LAST_ACTIVE_TIME')
-                && time() - self::get('LAST_ACTIVE_TIME') > Constants::SESSION_TIMEOUT * 60;
+        return  !$this->isDev() && $this->get('LAST_ACTIVE_TIME')
+                && time() - $this->get('LAST_ACTIVE_TIME') > Constants::SESSION_TIMEOUT * 60;
     }
 }

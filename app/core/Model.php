@@ -38,49 +38,6 @@ abstract class Model
         return $this->columns;
     }
 
-    /* --------- Main actions ---------- */
-
-
-    /**
-     * Fetch all rows in the model table.
-     * Archived rows (status = -1) are not fetched
-     *
-     * @return array
-     */
-    public function getAll()
-    {
-        return $this->hasStatus()
-            ? $this->getBy([Expr::neq('status', Constants::STATUS_DELETED)])
-            : $this->getBy();
-    }
-
-
-    /**
-     * Fetch all fields by specific $conditions.
-     * - ex: ['id' => 2, 'name' => 'bob] : WHERE id = 2 AND name = 'bob'
-     *
-     * @param array $conditions
-     * @param int $type_fetch FETCH_ALL|FETCH_ONE
-     *
-     * @return array
-     */
-    public function getBy(array $conditions = [], int $type_fetch = Database::FETCH_ALL)
-    {
-        $qb = (new QueryBuilder())->from($this->table_name);
-        foreach ($conditions as $key => $value) {
-            if (Expr::isExpr($value)) {
-                $qb->where($value);
-            } else {
-                $qb->where(Expr::eq($key, $value));
-            }
-        }
-
-        if ($type_fetch === Database::FETCH_ONE)
-            return $this->fetchOne($qb);
-
-        return $this->fetchAll($qb);
-    }
-
     /**
      * Insert or update query.
      * Update query is triggered if a model has an id. Insert query otherwise
@@ -104,18 +61,6 @@ abstract class Model
         return $res;
     }
 
-    /**
-     * Get model data (property => value)
-     *
-     * @return array
-     */
-    public function getData()
-    {
-        $data = $this->getModelData();
-        $data['id'] = $this->getId();
-
-        return $data;
-    }
 
     /**
      * Set all the properties of a given model (usually from the database)
@@ -138,46 +83,6 @@ abstract class Model
 
 
     /**
-     * Delete the row from the table
-     *
-     * @return void
-     */
-    public function deleteForever()
-    {
-        $this->deleteQuery([Expr::eq('id', $this->getId())]);
-    }
-
-    /**
-     * Set status to -1 if "status" column exist, delete row otherwise
-     *
-     * @return void
-     */
-    public function delete()
-    {
-        if ($this->hasStatus()) {
-            $this->updateQuery(['status' => Constants::STATUS_DELETED], [Expr::eq('id', $this->getId())]);
-        } else {
-            $this->deleteForever();
-        }
-    }
-
-    /**
-     * Update one or multiple rows
-     *
-     * @param array $fields
-     * @param array $conditions
-     *
-     * @return int|bool affected rows, false otherwise
-     */
-    public function update(array $fields, array $conditions = [])
-    {
-        return $this->updateQuery($fields, $conditions);
-    }
-
-
-    /* --------- Utilities ---------- */
-
-    /**
      * Get all the result from a prepared query
      *
      * @param QueryBuilder $qb
@@ -187,7 +92,11 @@ abstract class Model
      */
     public function fetchAll(QueryBuilder $qb, bool $debug = false)
     {
-        if ($debug) var_dump($qb->debug());
+        if ($debug) {
+            echo '<pre>';
+            print_r($qb->debug());
+            echo '</pre>';
+        }
 
         return $this->fetch($qb->buildQuery(), $qb->getParams());
     }
@@ -202,7 +111,11 @@ abstract class Model
      */
     public function fetchOne(QueryBuilder $qb, bool $debug = false)
     {
-        if ($debug) var_dump($qb->debug());
+        if ($debug) {
+            echo '<pre>';
+            print_r($qb->debug());
+            echo '</pre>';
+        }
 
         return $this->fetch($qb->buildQuery(), $qb->getParams(), Database::FETCH_ONE);
     }
@@ -338,9 +251,10 @@ abstract class Model
      */
     protected function hydrate()
     {
-        $data = $this->getBy(['id' => $this->getId()], Database::FETCH_ONE);
+        $qb = (new QueryBuilder())->from($this->table_name)->where(Expr::eq('id', $this->getId()));
+        $data = $this->fetchOne($qb);
         if (empty($data)) {
-            throw new NotFoundException("l'id " . $this->getId() . " n'existe pas");
+            throw new NotFoundException('l\'id ' . $this->getId() . ' n\'existe pas');
         }
 
         unset($data['id']);
@@ -371,7 +285,7 @@ abstract class Model
     private function getModelTableName(string $class)
     {
         $class_exploded = explode("\\", $class);
-        return DB_PREFIX . '_' . Formatter::camelToSnakeCase($class_exploded[array_key_last($class_exploded)]);
+        return Formatter::getTableName(Formatter::camelToSnakeCase($class_exploded[array_key_last($class_exploded)]));
     }
 
     /**

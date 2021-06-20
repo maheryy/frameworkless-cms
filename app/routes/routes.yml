@@ -1,17 +1,20 @@
 /:
   controller: Home
   method: defaultView
+  title: Tableau de bord
   require_auth: True
 
 /dashboard:
   controller: Home
   method: defaultView
+  title: Tableau de bord
   require_auth: True
 
 # installer
 /installer-db:
   controller: Installer
   method: installerDatabaseView
+  title: Configuration de la base de données
 
 /installer-db-save:
   controller: Installer
@@ -20,6 +23,7 @@
 /installer-register:
   controller: Installer
   method: installerRegisterView
+  title: Inscription
 
 /installer-register-save:
   controller: Installer
@@ -29,6 +33,7 @@
 /login:
   controller: User
   method: loginView
+  title: Connexion
 
 /login-send:
   controller: User
@@ -41,6 +46,7 @@
 /recover-password:
   controller: User
   method: passwordRecoveryView
+  title: Mot de passe oublié
 
 /recover-password-send:
   controller: User
@@ -49,6 +55,7 @@
 /reset-password:
   controller: User
   method: passwordResetView
+  title: Réinitialisation du mot de passe
 
 /reset-password-send:
   controller: User
@@ -58,6 +65,7 @@
 /users:
   controller: User
   method: listView
+  title: Liste des utilisateurs
   require_auth: True
 
 /users-save:
@@ -68,6 +76,7 @@
 /new-user:
   controller: User
   method: createView
+  title: Ajouter un utilisateur
   require_auth: True
 
 /new-user-save:
@@ -78,6 +87,7 @@
 /user:
   controller: User
   method: userView
+  title: Profil
   require_auth: True
 
 /user-save:
@@ -93,3 +103,43 @@
 /confirm-account:
   controller: User
   method: confirmAccountView
+  title: Confirmation du compte
+
+# Page management
+/pages:
+  controller: Page
+  method: listView
+  title: Liste des pages
+  require_auth: True
+
+/pages-save:
+  controller: Page
+  method: listAction
+  require_auth: True
+
+/new-page:
+  controller: Page
+  method: createView
+  title: Ajouter une page
+  require_auth: True
+
+/new-page-save:
+  controller: Page
+  method: createAction
+  require_auth: True
+
+/page:
+  controller: Page
+  method: pageView
+  title: Page
+  require_auth: True
+
+/page-save:
+  controller: Page
+  method: pageAction
+  require_auth: True
+
+/delete-page:
+  controller: Page
+  method: deleteAction
+  require_auth: True

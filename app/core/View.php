@@ -24,7 +24,7 @@ class View
      */
     public function setView(string $view)
     {
-        $view_path = PATH_VIEWS . $view . '.view.php';
+        $view_path = PATH_VIEWS . $view . '.php';
         if (!file_exists($view_path)) {
             throw new NotFoundException('La vue ' . $view_path . ' n\'existe pas');
         }
@@ -38,7 +38,7 @@ class View
      */
     public function setTemplate(string $template)
     {
-        $template_path = PATH_TEMPLATES . $template . '.tpl.php';
+        $template_path = PATH_TEMPLATES . $template . '.php';
         if (!file_exists($template_path)) {
             throw new NotFoundException('La template ' . $template_path . ' n\'existe pas');
         }
@@ -72,7 +72,7 @@ class View
 
         return !$html ? false
             : str_replace(
-                array_map(fn($key) => "%{$key}%", array_keys($data)),
+                array_map(fn($key) => "{{{$key}}}", array_keys($data)),
                 array_values($data),
                 $html
             );

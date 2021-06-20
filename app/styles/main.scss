@@ -26,13 +26,13 @@ body {
 
 // Layout elements
 @import "layout/content";
-@import "layout/toolbar";
 @import "layout/sidebar";
 
 // Extra styles for page content
 @import "content/home";
 @import "content/installer";
 @import "content/login";
+@import "content/page";
 
 // Override all styles above with util classes
 // ex: .hidden | .flex-center ...

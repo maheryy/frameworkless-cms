@@ -9,7 +9,7 @@ use Exception;
 
 /**
  * ErrorController
- * 
+ *
  */
 class Error extends Controller
 {
@@ -23,31 +23,37 @@ class Error extends Controller
 
     public function displayErrorDefault(Exception $error)
     {
-        $this->setParam('error_title', 'Error');
-        $this->setParam('error_message', $error->getMessage());
-        $this->render('error_default');
+        $view_data = [
+            'error_title' => 'Error',
+            'error_message' => $error->getMessage()
+        ];
+        $this->render('error_default', $view_data);
     }
 
     public function displayErrorNotFound(NotFoundException $error)
     {
-        $this->setParam('error_title', 'Not found');
+        $view_data = [
+            'error_title' => 'Not found',
+        ];
         if ($this->debug) {
-            $this->setParam('error_message', $error->getMessageDetails());
+            $view_data['error_message'] = $error->getMessageDetails();
         } else {
-            $this->setParam('error_message', $error);
+            $view_data['error_message'] = $error;
         }
-        $this->render('error_default');
+        $this->render('error_default', $view_data);
     }
 
     public function displayErrorNoAccess(ForbiddenAccessException $error)
     {
-        $this->setParam('error_title', 'No access');
+        $view_data = [
+            'error_title' => 'No access',
+        ];
         if ($this->debug) {
-            $this->setParam('error_message', $error->getMessageDetails());
+            $view_data['error_message'] = $error->getMessageDetails();
         } else {
-            $this->setParam('error_message', $error);
+            $view_data['error_message'] = $error;
         }
-        $this->render('error_default');
+        $this->render('error_default', $view_data);
     }
 
     public function displayError404()

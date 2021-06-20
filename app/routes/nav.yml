@@ -3,13 +3,6 @@ sidebar-main:
     label: Tableau de bord
     icon: fas fa-columns
     route: /dashboard
-    sub-links:
-      stats:
-        label: Statistiques
-        route:
-      customize:
-        label: Personnalisez votre site
-        route:
   article: 
     label: Articles
     icon: fas fa-newspaper
@@ -24,7 +17,14 @@ sidebar-main:
   page: 
     label: Pages
     icon: far fa-file
-    route:
+    route: /pages
+    sub-links:
+      list_page:
+        label: Liste pages
+        route: /pages
+      new_page:
+        label: Ajouter page
+        route: /new-page
   user: 
     label: Utilisateurs
     icon: fas fa-users
@@ -40,10 +40,8 @@ sidebar-main:
         label: Mon utilisateur
         route:
 
-
-# To improve        
 sidebar-bottom:
   settings:
-  label: Paramètres
-  icon: fas fa-cog
-  route:
+    label: Paramètres
+    icon: fas fa-cog
+    route:

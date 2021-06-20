@@ -4,32 +4,46 @@ namespace App\Core;
 
 use App\Core\Utils\Formatter;
 use App\Core\Utils\LayoutManager;
+use App\Core\Utils\Repository;
 use App\Core\Utils\Request;
 use App\Core\Utils\Session;
 use App\Core\Utils\UrlBuilder;
 
 abstract class Controller
 {
-    protected array $view_data;
     protected Router $router;
+    protected Request $request;
+    protected Repository $repository;
+    protected Session $session;
 
     protected function __construct(array $options)
     {
-        $this->view_data = [];
         $this->router = Router::getInstance();
+        $this->request = new Request();
+        $this->repository = new Repository();
+        $this->session = new Session($options['require_auth'] ?? false);
+        if ($this->session->init()) {
+            $this->setLayoutParams();
+        }
 
-        $this->initSession($options['require_auth'] ?? false);
+        if(isset($options['title'])) {
+            $this->setContentTitle($options['title']);
+        }
     }
 
     /**
      * Render a view from any controller
      *
      * @param string $view
+     * @param array $data
      * @param string $template
      */
-    protected function render(string $view, string $template = 'back_office')
+    protected function render(string $view, array $data = [], string $template = 'back_office')
     {
-        $this->view = new View($view, $template, $this->view_data);
+        if (!empty($this->view_data)) {
+           $data = !empty($data) ? array_merge($this->view_data, $data) : $this->view_data;
+        }
+        return new View($view, $template, $data);
     }
 
     /**
@@ -109,25 +123,25 @@ abstract class Controller
     }
 
     /**
-     * Set main parameters for toolbar/sidebar
+     * Set main parameters for sidebar
      *
      */
     protected function setLayoutParams()
     {
         $layout = new LayoutManager();
         $sidebar_links = $layout->getSidebarLinks();
-        $user_link = UrlBuilder::makeUrl('User', 'userView', ['id' => Session::getUserId()]);
+        $user_link = UrlBuilder::makeUrl('User', 'userView', ['id' => $this->session->getUserId()]);
 
         # Set custom link to existing nav-link
         $sidebar_links['main']['user']['sub-links']['current_user']['route'] = $user_link;
 
-        $this->setParam('current_route', $this->router->getUri());
+        $this->setParam('current_route', $_SERVER['REQUEST_URI']);
         $this->setParam('sidebar_links', $sidebar_links['main']);
-        $this->setParam('link_settings', $sidebar_links['bottom']);
+        $this->setParam('link_settings', $sidebar_links['bottom']['settings']);
+        $this->setParam('link_home', UrlBuilder::makeUrl('Home', 'defaultView'));
         $this->setParam('link_logout', UrlBuilder::makeUrl('User', 'logoutAction'));
         $this->setParam('link_user', $user_link);
         $this->setParam('sidebar', $layout->getSidebarPath());
-        $this->setParam('toolbar', $layout->getToolbarPath());
     }
 
     /**
@@ -155,37 +169,7 @@ abstract class Controller
      */
     protected function setCSRFToken()
     {
-        $this->setParam('csrf_token', Session::getCSRFToken());
-    }
-
-    /**
-     * Start session and check if user is logged in
-     */
-    protected function initSession(bool $require_auth)
-    {
-        if (!Session::isActive()) {
-            Session::start();
-        }
-
-        if (!$require_auth) return;
-
-        if (!Session::isLoggedIn()) {
-            $url_params = $_SERVER['REQUEST_URI'] !== '/' && $this->router->existRoute($_SERVER['REQUEST_URI']) ? ['redirect' => Formatter::encodeUrlQuery($_SERVER['REQUEST_URI'])] : [];
-            $this->router->redirect(UrlBuilder::makeUrl('User', 'loginView', $url_params));
-        }
-
-        # Apply session timeout
-        if (Session::hasExpired()) {
-            $this->router->redirect(UrlBuilder::makeUrl('User', 'logoutAction', [
-                'redirect' => $this->router->existRoute($_SERVER['REQUEST_URI']) ? Formatter::encodeUrlQuery($_SERVER['REQUEST_URI']) : '/',
-                'timeout' => true
-            ]));
-        }
-        if (!Session::isDev()) {
-            Session::set('LAST_ACTIVE_TIME', time());
-        }
-
-        $this->setLayoutParams();
+        $this->setParam('csrf_token', $this->session->getCSRFToken());
     }
 
     /**
@@ -193,8 +177,8 @@ abstract class Controller
      */
     protected function validateCSRF()
     {
-        $token = Request::header('X-CSRF-TOKEN');
-        if (!$token || Session::getCSRFToken() !== $token) {
+        $token = $this->request->header('X-CSRF-TOKEN');
+        if (!$token || $this->session->getCSRFToken() !== $token) {
            $this->sendError('Accès refusé');
         }
         return true;

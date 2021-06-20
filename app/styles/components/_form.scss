@@ -8,6 +8,25 @@ $border-hover: #275efe;
 $border-active: #245dff;
 $transition-duration: 0.25s;
 
+form {
+  .form-action, .form-info {
+    padding: 0.5em 5px;
+    align-self: flex-start;
+
+    &.right {
+      align-self: flex-end;
+    }
+
+    &.center {
+      align-self: center;
+    }
+  }
+
+  .form-info {
+    padding: 1em 5px;
+  }
+}
+
 form.form-default {
   width: $form-width;
   padding: 20px 10px;
@@ -30,22 +49,6 @@ form.form-default {
     & > .form-field, & > .form-field-inline {
       flex: 1;
     }
-  }
-
-  .form-action, .form-info {
-    padding: 0.5em 5px;
-    align-self: flex-start;
-
-    &.right {
-      align-self: flex-end;
-    }
-
-    &.center {
-      align-self: center;
-    }
-  }
-  .form-info {
-    padding: 1em 5px;
   }
 }
 
@@ -186,6 +189,7 @@ input {
       outline: none;
     }
   }
+
 
   // &.form-control-check {
   // }

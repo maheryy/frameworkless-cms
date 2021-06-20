@@ -149,8 +149,7 @@ class Router
      */
     private function getRouteData()
     {
-        $route = $this->routes[$this->uri];
-        if (empty($route)) {
+        if (!($route = $this->routes[$this->uri] ?? null)) {
             throw new HttpNotFoundException($this->uri);
         }
         $controller = trim($route['controller']);
