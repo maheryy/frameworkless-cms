@@ -25,17 +25,18 @@ class Session
 
         if (!$this->isLoggedIn()) {
             $router = Router::getInstance();
-            $url_params = $_SERVER['REQUEST_URI'] !== '/' && $router->existRoute($_SERVER['REQUEST_URI']) ? ['redirect' => Formatter::encodeUrlQuery($_SERVER['REQUEST_URI'])] : [];
+            $url_params = $router->getUri() !== '/' && $router->existRoute($router->getUri()) ? ['redirect' => Formatter::encodeUrlQuery($router->getFullUri())] : [];
             $router->redirect(UrlBuilder::makeUrl('User', 'loginView', $url_params));
         }
 
         # Apply session timeout
         if ($this->hasExpired()) {
             $router = Router::getInstance();
-            $router->redirect(UrlBuilder::makeUrl('User', 'logoutAction', [
-                'redirect' => $router->existRoute($_SERVER['REQUEST_URI']) ? Formatter::encodeUrlQuery($_SERVER['REQUEST_URI']) : '/',
-                'timeout' => true
-            ]));
+            $url_params = ['timeout' => true];
+            if ($router->getUri() !== '/' && $router->existRoute($router->getUri())) {
+                $url_params['redirect'] = Formatter::encodeUrlQuery($router->getFullUri());
+            }
+            $router->redirect(UrlBuilder::makeUrl('User', 'logoutAction', $url_params));
         }
         if (!$this->isDev()) {
             $this->set('LAST_ACTIVE_TIME', time());
@@ -184,7 +185,7 @@ class Session
      */
     public function hasExpired()
     {
-        return  !$this->isDev() && $this->get('LAST_ACTIVE_TIME')
-                && time() - $this->get('LAST_ACTIVE_TIME') > Constants::SESSION_TIMEOUT * 60;
+        return !$this->isDev() && $this->get('LAST_ACTIVE_TIME')
+            && time() - $this->get('LAST_ACTIVE_TIME') > Constants::SESSION_TIMEOUT * 60;
     }
 }

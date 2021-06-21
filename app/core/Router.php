@@ -12,6 +12,7 @@ class Router
 {
     private static Router $instance;
     private string $uri;
+    private string $fullUri;
     private string $routesPath;
     private string $controller;
     private string $method;
@@ -21,6 +22,7 @@ class Router
     private function __construct()
     {
         $this->routesPath = '../routes/routes.yml';
+        $this->fullUri = $_SERVER['REQUEST_URI'];
     }
 
     /**
@@ -42,18 +44,26 @@ class Router
      */
     public function run()
     {
-        try {
-            $this->loadRoutes();
-            $this->execute();
-        } catch (NotFoundException $e) {
-            (new Error())->displayErrorNotFound($e);
-        } catch (ForbiddenAccessException $e) {
-            (new Error())->displayErrorNoAccess($e);
-        } catch (HttpNotFoundException $e) {
-            (new Error())->displayError404();
-        } catch (Exception $e) {
-            (new Error())->displayErrorDefault($e);
+        $uri = explode('?', $_SERVER['REQUEST_URI'])[0];
+        if ($this->isBackOfficeUri($uri)) {
+            $this->setUri($this->getBackOfficeUri($uri));
+            try {
+                $this->loadRoutes();
+                $this->execute();
+            } catch (NotFoundException $e) {
+                (new Error())->displayErrorNotFound($e);
+            } catch (ForbiddenAccessException $e) {
+                (new Error())->displayErrorNoAccess($e);
+            } catch (HttpNotFoundException $e) {
+                (new Error())->displayError404();
+            } catch (Exception $e) {
+                (new Error())->displayErrorDefault($e);
+            }
+            return;
         }
+
+        $this->setUri($uri);
+        $this->accessWebsite();
     }
 
     /**
@@ -121,6 +131,11 @@ class Router
         return $this->uri;
     }
 
+    public function getFullUri()
+    {
+        return $this->fullUri;
+    }
+
     public function getRoutes()
     {
         return $this->routes;
@@ -184,7 +199,7 @@ class Router
      *
      * @return void
      */
-    private function callMethod(string $class_name, string $method_name, array $options)
+    private function callMethod(string $class_name, string $method_name, array $options = [])
     {
         $class_path = PATH_CONTROLLERS . $this->controller . '.php';
         if (file_exists($class_path)) {
@@ -212,9 +227,6 @@ class Router
      */
     private function execute()
     {
-        $uri = explode('?', $_SERVER['REQUEST_URI'])[0];
-        $this->setUri($uri);
-
         $route = $this->getRouteData();
         $this->setController($route['controller']);
         $this->setMethod($route['method']);
@@ -225,10 +237,39 @@ class Router
         $this->callMethod($class_name, $method, $route['options']);
     }
 
+    private function accessWebsite()
+    {
+        $this->setController('Website');
+        switch ($this->uri) {
+            case '/redirect' :
+                # Website redirects
+
+                break;
+            case '/send-action' :
+                # Website form actions
+
+                break;
+            default :
+                # Go to user-defined page slug
+                $this->callMethod($this->getControllerNamespace(), 'display');
+                break;
+        }
+    }
+
+    private function isBackOfficeUri(string $uri)
+    {
+        return preg_match("/^\/admin$|^\/admin\//", $uri);
+    }
+
+
+    private function getBackOfficeUri(string $uri)
+    {
+        return !empty($uri = substr($uri, 6)) ? $uri : '/' . $uri;
+    }
 
     public function existRoute(string $uri)
     {
-        $uri = explode('?', $_SERVER['REQUEST_URI'])[0];
+        //$uri = explode('?', $_SERVER['REQUEST_URI'])[0];
         return isset($this->routes[$uri]);
     }
 
