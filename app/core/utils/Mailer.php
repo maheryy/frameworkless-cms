@@ -2,9 +2,9 @@
 
 namespace App\Core\Utils;
 
-use App\Vendor\PHPMailer\PHPMailer\Src\PHPMailer;
-use App\Vendor\PHPMailer\PHPMailer\Src\SMTP;
-use App\Vendor\PHPMailer\PHPMailer\Src\Exception;
+use App\Lib\Vendor\PHPMailer\PHPMailer\Src\PHPMailer;
+use App\Lib\Vendor\PHPMailer\PHPMailer\Src\SMTP;
+use App\Lib\Vendor\PHPMailer\PHPMailer\Src\Exception;
 use App\Core\Utils\Repository;
 
 class Mailer
