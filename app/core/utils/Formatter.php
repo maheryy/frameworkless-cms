@@ -25,7 +25,7 @@ class Formatter
 
     public static function decodeUrlQuery(string $s)
     {
-        return json_decode($s)->uri ?? null;
+        return json_decode(urldecode($s))->uri ?? null;
     }
 
     public static function camelToSnakeCase(string $s)

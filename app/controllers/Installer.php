@@ -85,7 +85,7 @@ class Installer extends Controller
                 'content' => View::getHtml('email/confirmation_email', [
                     'email' => $form_data['email'],
                     'link_confirm' => UrlBuilder::makeAbsoluteUrl('User', 'confirmAccountView', [
-                        'ref' => $token_reference,
+                        'ref' => $token_reference->get(),
                         'token' => $token->getEncoded()
                     ]),
                 ]),

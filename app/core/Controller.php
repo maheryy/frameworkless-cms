@@ -135,7 +135,7 @@ abstract class Controller
         # Set custom link to existing nav-link
         $sidebar_links['main']['user']['sub-links']['current_user']['route'] = $user_link;
 
-        $this->setParam('current_route', $_SERVER['REQUEST_URI']);
+        $this->setParam('current_route', $this->router->getFullUri());
         $this->setParam('sidebar_links', $sidebar_links['main']);
         $this->setParam('link_settings', $sidebar_links['bottom']['settings']);
         $this->setParam('link_home', UrlBuilder::makeUrl('Home', 'defaultView'));

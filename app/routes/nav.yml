@@ -2,7 +2,7 @@ sidebar-main:
   dashboard:
     label: Tableau de bord
     icon: fas fa-columns
-    route: /dashboard
+    route: /admin/dashboard
   article: 
     label: Articles
     icon: fas fa-newspaper
@@ -17,25 +17,25 @@ sidebar-main:
   page: 
     label: Pages
     icon: far fa-file
-    route: /pages
+    route: /admin/pages
     sub-links:
       list_page:
         label: Liste pages
-        route: /pages
+        route: /admin/pages
       new_page:
         label: Ajouter page
-        route: /new-page
+        route: /admin/new-page
   user: 
     label: Utilisateurs
     icon: fas fa-users
-    route: /users
+    route: /admin/users
     sub-links:
       list_user:
         label: Liste utilisateurs
-        route: /users
+        route: /admin/users
       new_user:
         label: Ajouter utilisateur
-        route: /new-user
+        route: /admin/new-user
       current_user:
         label: Mon utilisateur
         route:

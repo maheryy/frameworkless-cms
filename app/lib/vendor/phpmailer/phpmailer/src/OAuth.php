@@ -19,7 +19,7 @@
  * FITNESS FOR A PARTICULAR PURPOSE.
  */
 
-namespace App\Vendor\PHPMailer\PHPMailer\Src;
+namespace App\Lib\Vendor\PHPMailer\PHPMailer\Src;
 
 use League\OAuth2\Client\Grant\RefreshToken;
 use League\OAuth2\Client\Provider\AbstractProvider;

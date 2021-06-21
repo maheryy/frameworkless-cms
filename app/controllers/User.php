@@ -123,7 +123,7 @@ class User extends Controller
                 'content' => View::getHtml('email/password_reset_email', [
                     'username' => $user['username'],
                     'link_reset_password' => UrlBuilder::makeAbsoluteUrl('User', 'passwordResetView', [
-                        'ref' => $token_reference,
+                        'ref' => $token_reference->get(),
                         'token' => $token->getEncoded()
                     ]),
                 ]),
@@ -294,7 +294,7 @@ class User extends Controller
                 'content' => View::getHtml('email/confirmation_email', [
                     'email' => $form_data['email'],
                     'link_confirm' => UrlBuilder::makeAbsoluteUrl('User', 'confirmAccountView', [
-                        'ref' => $token_reference,
+                        'ref' => $token_reference->get(),
                         'token' => $token->getEncoded()
                     ]),
                 ]),

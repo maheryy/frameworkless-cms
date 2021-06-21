@@ -33,15 +33,7 @@ class UrlBuilder
     public static function makeUrl(string $controller, string $method, array $params = [])
     {
         $route = Router::getInstance()->getUriFromMethod($controller, $method);
-        $query_string = '';
 
-        if (!empty($params)) {
-            foreach ($params as $key => $value) {
-                $query_string .= "$key=$value&";
-            }
-            $query_string = '?' . rtrim($query_string, '&');
-        }
-
-        return $route . $query_string;
+        return '/admin' . $route . (!empty($params) ? '?' . http_build_query($params) : '');
     }
 }
