@@ -1,12 +1,12 @@
 include .env
 
-## Build the dockerfile project
-build:
-	@$(DOCKER_COMPOSE) -f $(DOCKER_COMPOSE_FILE) build
-
 ## Run all docker services
 start:
 	@$(DOCKER_COMPOSE) -f $(DOCKER_COMPOSE_FILE) up -d --build
+
+## Build the dockerfile project
+build:
+	@$(DOCKER_COMPOSE) -f $(DOCKER_COMPOSE_FILE) build
 
 ## Stop all docker services
 stop:
