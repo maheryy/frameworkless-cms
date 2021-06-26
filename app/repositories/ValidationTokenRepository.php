@@ -16,11 +16,9 @@ class ValidationTokenRepository extends BaseRepository
 
     public function findByReference(string $reference)
     {
-        $qb = (new QueryBuilder())
-            ->from($this->table)
-            ->where(Expr::like('reference', $reference));
+        $this->queryBuilder->where(Expr::like('reference', $reference));
 
-        return $this->model->fetchOne($qb);
+        return $this->model->fetchOne($this->queryBuilder);
     }
 
     public function removeTokenByUser(int $user_id, int $type_token)

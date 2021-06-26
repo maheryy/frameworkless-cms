@@ -10,31 +10,29 @@ abstract class BaseRepository
 {
     protected Model $model;
     protected string $table;
+    protected QueryBuilder $queryBuilder;
 
     protected function __construct(Model $model)
     {
         $this->model = $model;
         $this->table = $this->model->getTableName();
+        $this->queryBuilder = (new QueryBuilder())->from($this->table);
     }
 
     public function find(int $id)
     {
-        $qb = (new QueryBuilder())
-            ->from($this->table)
-            ->where(Expr::eq('id', $id));
+        $this->queryBuilder->where(Expr::eq('id', $id));
 
-        return $this->model->fetchOne($qb);
+        return $this->model->fetchOne($this->queryBuilder);
     }
 
     public function findAll()
     {
-        $qb = (new QueryBuilder())->from($this->table);
-
         if ($this->model->hasStatus()) {
-            $qb->where(Expr::neq('status', Constants::STATUS_DELETED));
+            $this->queryBuilder->where(Expr::neq('status', Constants::STATUS_DELETED));
         }
 
-        return $this->model->fetchAll($qb);
+        return $this->model->fetchAll($this->queryBuilder);
     }
 
     public function create(array $data)
