@@ -7,8 +7,8 @@
             <div class="row">
                 <div class="col-12 d-flex justify-end">
                     <article>
-                        <input type="submit" class="btn-primary" data-role="submitTextEditor" value="Enregistrer">
-                        <input type="submit" class="btn-success" data-role="submitTextEditor" value="Publier">
+                        <input type="submit" class="btn-primary" value="Enregistrer" data-role="submitTextEditor">
+                        <input type="submit" class="btn-success" value="Publier" data-role="submitTextEditor" data-options=<?= json_encode(['add_data' => ['action_publish' => 1]]) ?>>
                     </article>
                 </div>
             </div>

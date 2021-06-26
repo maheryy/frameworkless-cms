@@ -15,6 +15,7 @@ abstract class Controller
     protected Request $request;
     protected Repository $repository;
     protected Session $session;
+    protected string $template;
 
     protected function __construct(array $options)
     {
@@ -22,6 +23,10 @@ abstract class Controller
         $this->request = new Request();
         $this->repository = new Repository();
         $this->session = new Session($options['require_auth'] ?? false);
+
+        # Default back office template
+        $this->setTemplate('back_office');
+
         if ($this->session->init()) {
             $this->setLayoutParams();
         }
@@ -38,12 +43,12 @@ abstract class Controller
      * @param array $data
      * @param string $template
      */
-    protected function render(string $view, array $data = [], string $template = 'back_office')
+    protected function render(string $view, array $data = [])
     {
         if (!empty($this->view_data)) {
            $data = !empty($data) ? array_merge($this->view_data, $data) : $this->view_data;
         }
-        return new View($view, $template, $data);
+        return new View($view, $this->template, $data);
     }
 
     /**
@@ -55,6 +60,16 @@ abstract class Controller
     protected function setParam(string $key, $value)
     {
         $this->view_data[$key] = $value;
+    }
+
+    /**
+     * Set a the main application template
+     *
+     * @param string $template
+     */
+    protected function setTemplate(string $template)
+    {
+        $this->template = $template;
     }
 
     /**

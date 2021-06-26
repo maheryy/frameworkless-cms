@@ -36,7 +36,7 @@ class LayoutManager
      */
     public function getSidebarPath()
     {
-        return PATH_TEMPLATES . 'layout/layout_sidebar.php';
+        return PATH_TEMPLATES . 'layout/back_office_sidebar.php';
     }
 
     /**

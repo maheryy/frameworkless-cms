@@ -241,7 +241,11 @@ const roleFunctions = {
         });
     },
     initDataTable: function () {
-        $(this).DataTable();
+        $(this).DataTable({
+            columnDefs: [
+                { className: 'text-center', targets: '_all' }
+            ]
+        });
     },
     initTinyMCE: function () {
         tinymce.init({

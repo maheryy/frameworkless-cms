@@ -8,7 +8,9 @@
                 <div class="col-12 d-flex justify-end">
                     <article>
                         <input type="submit" class="btn-primary" data-role="submitTextEditor" value="Enregistrer">
-                        <input type="submit" class="btn-success" data-role="submitTextEditor" value="Publier">
+                        <?php if ($page['status'] != \App\Core\Utils\Constants::STATUS_PUBLISHED) :?>
+                            <input type="submit" class="btn-success" value="Publier" data-role="submitTextEditor" data-options=<?= json_encode(['add_data' => ['action_publish' => 1]]) ?>>
+                        <?php endif;?>
                         <button class="btn-danger" data-url="<?= $url_delete ?>" data-role="deleteItem">Supprimer</button>
                     </article>
                 </div>
@@ -60,11 +62,11 @@
                     <h3 class="py-10">Paramètres de référencement</h3>
                     <article class="card rounded">
                         <div class="form-field">
-                            <input type="text" class="form-control" name="meta_title" id="meta_title" value="<?= $page['seo_title'] ?? ''?>">
+                            <input type="text" class="form-control" name="meta_title" id="meta_title" value="<?= $page['meta_title'] ?? ''?>">
                             <label for="meta_title">Titre</label>
                         </div>
                         <div class="form-field">
-                            <textarea class="form-control" name="meta_description" id="meta_description"><?= $page['seo_description'] ?? ''?></textarea>
+                            <textarea class="form-control" name="meta_description" id="meta_description"><?= $page['meta_description'] ?? ''?></textarea>
                             <label for="meta_description">Description</label>
                         </div>
                         <div class="form-field">
@@ -73,7 +75,7 @@
                         </div>
                         <div class="form-field-inline">
                             <input type="checkbox" class="form-control-check" name="display_search_engine" id="display_search_engine"
-                                <?= isset($page['seo_status']) && $page['seo_status'] ? 'checked=checked' : ''?>>
+                                <?= $page['meta_indexable'] ? 'checked=checked' : ''?>>
                             <label for="display_search_engine">Afficher dans les résultats de recherches</label>
                         </div>
                     </article>
