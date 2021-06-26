@@ -177,7 +177,7 @@ abstract class Controller
      */
     protected function validateCSRF()
     {
-        $token = $this->request->header('X-CSRF-TOKEN');
+        $token = $this->request->header('X-Csrf-Token');
         if (!$token || $this->session->getCSRFToken() !== $token) {
            $this->sendError('Accès refusé');
         }

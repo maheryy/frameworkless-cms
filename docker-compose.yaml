@@ -1,27 +1,28 @@
 version: '3'
 services:
-  server_cms:
-    build: .docker
+  server:
+    build: .docker/nginx
     container_name: cms_server
-    ports :
-     - "${SERVER_PORT}:80"
+    ports:
+      - "${SERVER_PORT}:80"
     volumes:
-     - ./app:/var/www/html/
-     - ./.docker/config/000-default.conf:/etc/apache2/sites-available/000-default.conf
-     - ./.docker/config/apache2.conf:/etc/apache2/apache2.conf
-     - ./.docker/config/php.ini:/usr/local/etc/php/php.ini
+      - "./app/:/usr/share/nginx/html"
     depends_on:
-     - database_cms
-
-  database_cms:
-    image: mysql:5.7
+      - php-fpm
+  php-fpm:
+    build: .docker/php
+    container_name: cms_php
+    volumes:
+      - "./app/:/usr/share/nginx/html"
+  database:
+    image: mysql:8
     container_name: cms_database
-    ports :
+    ports:
       - "${DB_PORT}:3306"
     environment:
-      MYSQL_ROOT_PASSWORD: "${DB_ROOT_PWD}"
-      MYSQL_USER: "${DB_USER}"
-      MYSQL_PASSWORD: "${DB_PWD}"
-      MYSQL_DATABASE: "${DB_NAME}"
+      MYSQL_ROOT_PASSWORD: ${DB_ROOT_PWD}
+      MYSQL_USER: ${DB_USER}
+      MYSQL_PASSWORD: ${DB_PWD}
+      MYSQL_DATABASE: ${DB_NAME}
     volumes:
       - ./.db_data:/var/lib/mysql
