@@ -180,4 +180,23 @@ class Page extends Controller
             'delay_url_next' => 0,
         ]);
     }
+
+    # /page-link-list
+    public function getPageLinkList()
+    {
+        $pages = $this->repository->post->findPublishedPages();
+        $links = [];
+        foreach ($pages as $page) {
+            $links[] = [
+                'title' => $page['title'],
+                'value' => '/' . $page['slug']
+            ];
+        }
+
+        if (!empty($links)) {
+            $this->sendJSON($links);
+        }
+
+        echo null;
+    }
 }

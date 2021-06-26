@@ -16,6 +16,39 @@ class PostRepository extends BaseRepository
         parent::__construct($model);
     }
 
+    public function findAllPages()
+    {
+        $user_table = Formatter::getTableName('user');
+        $details_table = Formatter::getTableName('page_extra');
+        $this->queryBuilder
+            ->select([
+                "$user_table" => ['author' => 'username'],
+                "$details_table.*",
+                "$this->table.*",
+            ])
+            ->joinInner($user_table, "$this->table.author_id = $user_table.id")
+            ->joinInner($details_table, "$this->table.id = $details_table.post_id")
+            ->where(Expr::eq("$this->table.type", Constants::POST_TYPE_PAGE))
+            ->where(Expr::neq("$this->table.status", Constants::STATUS_DELETED));
+
+        return $this->model->fetchAll($this->queryBuilder);
+    }
+
+    public function findPublishedPages()
+    {
+        $details_table = Formatter::getTableName('page_extra');
+        $this->queryBuilder
+            ->select([
+                "$details_table.*",
+                "$this->table.*",
+            ])
+            ->joinInner($details_table, "$this->table.id = $details_table.post_id")
+            ->where(Expr::eq("$this->table.type", Constants::POST_TYPE_PAGE))
+            ->where(Expr::eq("$this->table.status", Constants::STATUS_PUBLISHED));
+
+        return $this->model->fetchAll($this->queryBuilder);
+    }
+
     public function findPage(int $id)
     {
         $details_table = Formatter::getTableName('page_extra');
@@ -48,24 +81,6 @@ class PostRepository extends BaseRepository
             ->where(Expr::eq('type', Constants::POST_TYPE_PAGE))
             ->where(Expr::eq('author_id', $user_id))
             ->where(Expr::neq('status', Constants::STATUS_DELETED));
-
-        return $this->model->fetchAll($this->queryBuilder);
-    }
-
-    public function findAllPages()
-    {
-        $user_table = Formatter::getTableName('user');
-        $details_table = Formatter::getTableName('page_extra');
-        $this->queryBuilder
-            ->select([
-                "$user_table" => ['author' => 'username'],
-                "$details_table.*",
-                "$this->table.*",
-            ])
-            ->joinInner($user_table, "$this->table.author_id = $user_table.id")
-            ->joinInner($details_table, "$this->table.id = $details_table.post_id")
-            ->where(Expr::eq("$this->table.type", Constants::POST_TYPE_PAGE))
-            ->where(Expr::neq("$this->table.status", Constants::STATUS_DELETED));
 
         return $this->model->fetchAll($this->queryBuilder);
     }
