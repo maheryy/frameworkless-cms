@@ -6,7 +6,7 @@ build:
 
 ## Run all docker services
 start:
-	@$(DOCKER_COMPOSE) -f $(DOCKER_COMPOSE_FILE) up -d
+	@$(DOCKER_COMPOSE) -f $(DOCKER_COMPOSE_FILE) up -d --build
 
 ## Stop all docker services
 stop:
