@@ -11,9 +11,9 @@ class PageExtra extends Model
     protected $slug;
     protected $visibility;
     protected $allow_comments;
-    protected $seo_title;
-    protected $seo_description;
-    protected $seo_status;
+    protected $meta_title;
+    protected $meta_description;
+    protected $meta_indexable;
 
 
     public function __construct()
@@ -97,55 +97,51 @@ class PageExtra extends Model
     }
 
     /**
-     * @param mixed $seo_title
+     * @param mixed $meta_title
      */
-    public function setSeoTitle($seo_title): void
+    public function setMetaTitle($meta_title): void
     {
-        $this->seo_title = $seo_title;
+        $this->meta_title = $meta_title;
     }
 
     /**
      * @return mixed
      */
-    public function getSeoTitle()
+    public function getMetaTitle()
     {
-        return $this->seo_title;
+        return $this->meta_title;
     }
 
     /**
-     * @param mixed $seo_description
+     * @param mixed $meta_description
      */
-    public function setSeoDescription($seo_description): void
+    public function setMetaDescription($meta_description): void
     {
-        $this->seo_description = $seo_description;
-    }
-
-    /**
-     * @return mixed
-     */
-    public function getSeoDescription()
-    {
-        return $this->seo_description;
-    }
-
-    /**
-     * @param mixed $seo_status
-     */
-    public function setSeoStatus($seo_status): void
-    {
-        $this->seo_status = $seo_status;
+        $this->meta_description = $meta_description;
     }
 
     /**
      * @return mixed
      */
-    public function getSeoStatus()
+    public function getMetaDescription()
     {
-        return $this->seo_status;
+        return $this->meta_description;
     }
 
+    /**
+     * @param mixed $meta_indexable
+     */
+    public function setMetaIndexable($meta_indexable): void
+    {
+        $this->meta_indexable = $meta_indexable;
+    }
 
-
-
+    /**
+     * @return mixed
+     */
+    public function getMetaIndexable()
+    {
+        return $this->meta_indexable;
+    }
 
 }

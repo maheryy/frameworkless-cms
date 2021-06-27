@@ -17,20 +17,19 @@ class UserRepository extends BaseRepository
 
     public function findByLogin(string $login)
     {
-        $qb = (new QueryBuilder())
-            ->from($this->table)
+        $this->queryBuilder
             ->where(
                 Expr::like('username', $login),
                 Expr::like('email', $login)
             );
 
-        return $this->model->fetchOne($qb);
+        return $this->model->fetchOne($this->queryBuilder);
     }
 
     public function findByEmail(string $email)
     {
-        $qb = (new QueryBuilder())->from($this->table)->where(Expr::like('email', $email));
-        return $this->model->fetchOne($qb);
+        $this->queryBuilder->where(Expr::like('email', $email));
+        return $this->model->fetchOne($this->queryBuilder);
     }
 
     public function updatePassword(int $id, string $password)

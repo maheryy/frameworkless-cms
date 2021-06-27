@@ -143,3 +143,7 @@
   controller: Page
   method: deleteAction
   require_auth: True
+
+/page-link-list:
+  controller: Page
+  method: getPageLinkList

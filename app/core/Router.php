@@ -45,25 +45,25 @@ class Router
     public function run()
     {
         $uri = explode('?', $_SERVER['REQUEST_URI'])[0];
-        if ($this->isBackOfficeUri($uri)) {
-            $this->setUri($this->getBackOfficeUri($uri));
-            try {
+        try {
+            if ($this->isBackOfficeUri($uri)) {
+                $this->setUri($this->getBackOfficeUri($uri));
                 $this->loadRoutes();
                 $this->execute();
-            } catch (NotFoundException $e) {
-                (new Error())->displayErrorNotFound($e);
-            } catch (ForbiddenAccessException $e) {
-                (new Error())->displayErrorNoAccess($e);
-            } catch (HttpNotFoundException $e) {
-                (new Error())->displayError404();
-            } catch (Exception $e) {
-                (new Error())->displayErrorDefault($e);
+            } else {
+                $this->setUri($uri);
+                $this->accessWebsite();
             }
-            return;
+        } catch (NotFoundException $e) {
+            (new Error())->displayErrorNotFound($e);
+        } catch (ForbiddenAccessException $e) {
+            (new Error())->displayErrorNoAccess($e);
+        } catch (HttpNotFoundException $e) {
+            (new Error())->displayError404();
+        } catch (Exception $e) {
+            (new Error())->displayErrorDefault($e);
         }
 
-        $this->setUri($uri);
-        $this->accessWebsite();
     }
 
     /**
@@ -192,7 +192,7 @@ class Router
     }
 
     /**
-     * Calls $method_name of a specified $class_name
+     * Calls $method_name of a specified $class_name then terminates the script
      *
      * @param string $class_name
      * @param string $method_name
@@ -219,6 +219,8 @@ class Router
         } else {
             throw new NotFoundException("Le fichier " . $class_path . " n'existe pas");
         }
+
+        exit;
     }
 
     /**

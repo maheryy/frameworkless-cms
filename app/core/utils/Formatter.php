@@ -28,6 +28,20 @@ class Formatter
         return json_decode(urldecode($s))->uri ?? null;
     }
 
+    public static function slugify(string $s)
+    {
+        $s = preg_replace(
+            '~&([a-z]{1,2})(?:acute|cedil|circ|grave|lig|orn|ring|slash|th|tilde|uml);~i',
+            '$1',
+            htmlentities($s, ENT_QUOTES, 'UTF-8')
+        );
+        return strtolower(trim(preg_replace(
+            '~[^0-9a-z]+~i',
+            '-',
+            html_entity_decode($s, ENT_QUOTES, 'UTF-8')
+        ), '-'));
+    }
+
     public static function camelToSnakeCase(string $s)
     {
         $s = lcfirst($s);

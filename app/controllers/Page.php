@@ -27,7 +27,7 @@ class Page extends Controller
         foreach ($pages as $key => $page) {
             $pages[$key]['url_detail'] = UrlBuilder::makeUrl('Page', 'pageView', ['id' => $page['id']]);
             $pages[$key]['url_delete'] = UrlBuilder::makeUrl('Page', 'deleteAction', ['id' => $page['id']]);
-            $pages[$key]['status'] = $statuses[$page['status']];
+            $pages[$key]['status_label'] = $statuses[$page['status']];
         }
 
         $view_data = [
@@ -72,16 +72,17 @@ class Page extends Controller
                 'title' => $this->request->post('title'),
                 'content' => $_POST['post_content'],
                 'type' => Constants::POST_TYPE_PAGE,
-                'status' => Constants::STATUS_DRAFT
+                'status' => $this->request->post('action_publish') ? Constants::STATUS_PUBLISHED : Constants::STATUS_DRAFT,
+                'published_at' => $this->request->post('action_publish') ? Formatter::getDateTime(null, Formatter::DATE_TIME_FORMAT) : null
             ]);
             $this->repository->pageExtra->create([
                 'post_id' => $page_id,
-                'slug' => $this->request->post('slug'),
+                'slug' => $this->request->post('slug') ?? Formatter::slugify($this->request->post('title')),
                 'visibility' => $this->request->post('visibility'),
                 'allow_comments' => $this->request->post('allow_comments') ? 1 : 0,
-                'seo_title' => $this->request->post('meta_title'),
-                'seo_description' => $this->request->post('meta_description'),
-                'seo_status' => $this->request->post('display_search_engine') ? 1 : 0,
+                'meta_title' => $this->request->post('meta_title') ?? $this->request->post('title'),
+                'meta_description' => $this->request->post('meta_description'),
+                'meta_indexable' => $this->request->post('display_search_engine') ? 1 : 0,
             ]);
 
             Database::commit();
@@ -137,16 +138,21 @@ class Page extends Controller
                 'updated_at' => Formatter::getDateTime()
             ];
 
+            if($this->request->post('action_publish')) {
+                $post_fields['status'] = Constants::STATUS_PUBLISHED;
+                $post_fields['published_at'] = Formatter::getDateTime($this->request->post('published_at'), Formatter::DATE_TIME_FORMAT);
+            }
+
             if($this->request->post('published_at')) {
-                $form_data['published_at'] = Formatter::getDateTime($this->request->post('published_at'), Formatter::DATE_TIME_FORMAT);
+                $post_fields['published_at'] = Formatter::getDateTime($this->request->post('published_at'), Formatter::DATE_TIME_FORMAT);
             }
 
             $page_fields = [
                 'slug' => $this->request->post('slug'),
-                'seo_title' => $this->request->post('meta_title'),
-                'seo_description' => $this->request->post('meta_description'),
+                'meta_title' => $this->request->post('meta_title'),
+                'meta_description' => $this->request->post('meta_description'),
                 'allow_comments' => $this->request->post('allow_comments') ? 1 : 0,
-                'seo_status' => $this->request->post('display_search_engine') ? 1 : 0,
+                'meta_indexable' => $this->request->post('display_search_engine') ? 1 : 0,
                 'visibility' => $this->request->post('visibility'),
             ];
 
@@ -173,5 +179,24 @@ class Page extends Controller
             'url_next' => UrlBuilder::makeUrl('Page', 'listView'),
             'delay_url_next' => 0,
         ]);
+    }
+
+    # /page-link-list
+    public function getPageLinkList()
+    {
+        $pages = $this->repository->post->findPublishedPages();
+        $links = [];
+        foreach ($pages as $page) {
+            $links[] = [
+                'title' => $page['title'],
+                'value' => '/' . $page['slug']
+            ];
+        }
+
+        if (!empty($links)) {
+            $this->sendJSON($links);
+        }
+
+        echo null;
     }
 }

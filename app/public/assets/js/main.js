@@ -2,6 +2,7 @@ const INFO_PRIMARY = 0;
 const INFO_SUCCESS = 1;
 const INFO_WARNING = 2;
 const INFO_DANGER = 3;
+const URI_PAGE_LINK_LIST = '/admin/page-link-list';
 
 const INFO_DATA = [
     {
@@ -241,7 +242,11 @@ const roleFunctions = {
         });
     },
     initDataTable: function () {
-        $(this).DataTable();
+        $(this).DataTable({
+            columnDefs: [
+                { className: 'text-center', targets: '_all' }
+            ]
+        });
     },
     initTinyMCE: function () {
         tinymce.init({
@@ -253,6 +258,8 @@ const roleFunctions = {
                 "searchreplace wordcount visualblocks visualchars code fullscreen insertdatetime media nonbreaking",
                 "save table directionality template paste"
             ],
+            link_list: URI_PAGE_LINK_LIST,
+            link_title: false,
             toolbar: "styleselect | bold italic forecolor | bullist numlist alignment | link image | fullscreen preview media",
             toolbar_groups: {
                 alignment: {
@@ -260,38 +267,7 @@ const roleFunctions = {
                     tooltip: 'Alignement',
                     items: 'alignleft aligncenter alignright alignjustify'
                 }
-            },
-            style_formats: [
-                {
-                    title: "Headers", items: [
-                        {title: "Header 1", format: "h1"},
-                        {title: "Header 2", format: "h2"},
-                        {title: "Header 3", format: "h3"},
-                        {title: "Header 4", format: "h4"},
-                        {title: "Header 5", format: "h5"},
-                        {title: "Header 6", format: "h6"}
-                    ]
-                },
-                {
-                    title: "Inline", items: [
-                        {title: "Bold", icon: "bold", format: "bold"},
-                        {title: "Italic", icon: "italic", format: "italic"},
-                        {title: "Underline", icon: "underline", format: "underline"},
-                        {title: "Strikethrough", icon: "strikethrough", format: "strikethrough"},
-                        {title: "Superscript", icon: "superscript", format: "superscript"},
-                        {title: "Subscript", icon: "subscript", format: "subscript"},
-                        {title: "Code", icon: "code", format: "code"}
-                    ]
-                },
-                {
-                    title: "Blocks", items: [
-                        {title: "Paragraph", format: "p"},
-                        {title: "Blockquote", format: "blockquote"},
-                        {title: "Div", format: "div"},
-                        {title: "Pre", format: "pre"}
-                    ]
-                },
-            ]
+            }
         });
     },
     submitDefault: function () {
