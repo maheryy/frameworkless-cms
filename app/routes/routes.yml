@@ -169,3 +169,55 @@
   controller: Role
   method: roleAction
   require_auth: True
+
+
+# Webpage editor (appearance)
+/themes:
+  controller: Webpage
+  method: themeListView
+  title: Liste des thèmes
+  require_auth: True
+
+/import-theme:
+  controller: Webpage
+  method: importThemeView
+  title: Importer un thème
+  require_auth: True
+
+/import-theme-save:
+  controller: Webpage
+  method: importThemeAction
+  require_auth: True
+
+/navigations:
+  controller: Webpage
+  method: navigationListView
+  title: Liste des navigations
+  require_auth: True
+
+/new-navigation:
+  controller: Webpage
+  method: createNavigationView
+  title: Ajouter une navigation
+  require_auth: True
+
+/new-navigation-save:
+  controller: Webpage
+  method: createNavigationAction
+  require_auth: True
+
+/navigation:
+  controller: Webpage
+  method: navigationView
+  title: Modifier une navigation
+  require_auth: True
+
+/navigation-save:
+  controller: Webpage
+  method: navigationAction
+  require_auth: True
+
+/delete-navigation:
+  controller: Webpage
+  method: deleteNavigationAction
+  require_auth: True
