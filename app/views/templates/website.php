@@ -7,7 +7,7 @@
     <?php if (!empty($meta_description)) : ?>
         <meta name="description" content="<?= $meta_description ?>">
     <?php endif; ?>
-    <?php if ($is_indexable) : ?>
+    <?php if (!$is_indexable) : ?>
         <meta name="robots" content="noindex">
     <?php endif; ?>
     <link rel="stylesheet" href="/assets/vendor/fontawesome/css/fontawesome-all.min.css">
