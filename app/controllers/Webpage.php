@@ -7,7 +7,6 @@ use App\Core\Database;
 use App\Core\Exceptions\NotFoundException;
 use App\Core\Utils\Constants;
 use App\Core\Utils\Formatter;
-use App\Core\Utils\FormRegistry;
 use App\Core\Utils\UrlBuilder;
 use App\Core\Utils\Validator;
 
@@ -17,43 +16,6 @@ class Webpage extends Controller
     public function __construct(array $options = [])
     {
         parent::__construct($options);
-    }
-
-    # /pages
-    public function listView()
-    {
-        $pages = $this->repository->post->findAllPages();
-        $statuses = Constants::getPostStatuses();
-        foreach ($pages as $key => $page) {
-            $pages[$key]['url_detail'] = UrlBuilder::makeUrl('Page', 'pageView', ['id' => $page['id']]);
-            $pages[$key]['url_delete'] = UrlBuilder::makeUrl('Page', 'deleteAction', ['id' => $page['id']]);
-            $pages[$key]['status_label'] = $statuses[$page['status']];
-        }
-
-        $view_data = [
-            'pages' => $pages
-        ];
-        $this->render('page_list', $view_data);
-    }
-
-    # /pages-save
-    public function listAction()
-    {
-
-    }
-
-    # /new-page
-    public function createView()
-    {
-        $this->setCSRFToken();
-        $users = $this->repository->user->findAll();
-        $view_data = [
-            'users' => $users,
-            'current_user_id' => $this->session->getUserId(),
-            'visibility_types' => Constants::getVisibilityTypes(),
-            'url_form' => UrlBuilder::makeUrl('Page', 'createAction')
-        ];
-        $this->render('page_new', $view_data);
     }
 
     # /new-page-save
@@ -95,33 +57,6 @@ class Webpage extends Controller
         }
     }
 
-    # /page
-    public function pageView()
-    {
-        if (!$this->request->get('id')) {
-            throw new \Exception('Cette page n\'existe pas');
-        }
-        $page = $this->repository->post->findPage($this->request->get('id'));
-        if (!$page) {
-            throw new NotFoundException('Cette page n\'est pas trouvé');
-        }
-
-        if (!empty($page['published_at'])) {
-            $page['published_at'] = Formatter::getDateTime($page['published_at'], Formatter::DATE_FORMAT);
-        }
-        $users = $this->repository->user->findAll();
-        $this->setContentTitle($page['title']);
-        $this->setCSRFToken();
-        $view_data = [
-            'page' => $page,
-            'users' => $users,
-            'visibility_types' => Constants::getVisibilityTypes(),
-            'url_form' => UrlBuilder::makeUrl('Page', 'pageAction', ['id' => $page['id']]),
-            'url_delete' => UrlBuilder::makeUrl('Page', 'deleteAction', ['id' => $page['id']]),
-        ];
-        $this->render('page_detail', $view_data);
-    }
-
     # /page-save
     public function pageAction()
     {
@@ -138,12 +73,12 @@ class Webpage extends Controller
                 'updated_at' => Formatter::getDateTime()
             ];
 
-            if($this->request->post('action_publish')) {
+            if ($this->request->post('action_publish')) {
                 $post_fields['status'] = Constants::STATUS_PUBLISHED;
                 $post_fields['published_at'] = Formatter::getDateTime($this->request->post('published_at'), Formatter::DATE_TIME_FORMAT);
             }
 
-            if($this->request->post('published_at')) {
+            if ($this->request->post('published_at')) {
                 $post_fields['published_at'] = Formatter::getDateTime($this->request->post('published_at'), Formatter::DATE_TIME_FORMAT);
             }
 
@@ -168,39 +103,6 @@ class Webpage extends Controller
         }
     }
 
-    # /delete-page
-    public function deleteAction()
-    {
-        if (!$this->request->get('id')) {
-            $this->sendError('Une erreur est survenue');
-        }
-        $this->repository->post->remove($this->request->get('id'));
-        $this->sendSuccess('Page supprimée', [
-            'url_next' => UrlBuilder::makeUrl('Page', 'listView'),
-            'delay_url_next' => 0,
-        ]);
-    }
-
-    # /page-link-list
-    public function getPageLinkList()
-    {
-        $pages = $this->repository->post->findPublishedPages();
-        $links = [];
-        foreach ($pages as $page) {
-            $links[] = [
-                'title' => $page['title'],
-                'value' => '/' . $page['slug']
-            ];
-        }
-
-        if (!empty($links)) {
-            $this->sendJSON($links);
-        }
-
-        echo null;
-    }
-
-
 
     # /themes
     public function themeListView()
@@ -223,13 +125,29 @@ class Webpage extends Controller
     # /navigations
     public function navigationListView()
     {
+        $navs = $this->repository->navigation->findAll();
+        foreach ($navs as $key => $nav) {
+            $pages[$key]['url_detail'] = UrlBuilder::makeUrl('Webpage', 'navigationView', ['id' => $nav['id']]);
+            $pages[$key]['url_delete'] = UrlBuilder::makeUrl('Webpage', 'deleteNavigationAction', ['id' => $nav['id']]);
+        }
 
+        $view_data = [
+            'navigations' => $navs,
+            'new_navigation_link' => UrlBuilder::makeUrl('Webpage', 'createNavigationView')
+        ];
+        $this->render('nav_list', $view_data);
     }
 
     # /new-navigation
     public function createNavigationView()
     {
-
+        $this->setCSRFToken();
+        $view_data = [
+            'pages' => $this->repository->post->findPublishedPages(),
+            'nav_types' => Constants::getNavigationTypes(),
+            'url_form' => UrlBuilder::makeUrl('Webpage', 'createNavigationAction')
+        ];
+        $this->render('nav_new', $view_data);
     }
 
     # /new-navigation-save
@@ -241,7 +159,22 @@ class Webpage extends Controller
     # /navigation
     public function navigationView()
     {
+        if (!$this->request->get('id')) {
+            throw new \Exception('Cette navigation n\'existe pas');
+        }
+        $nav = $this->repository->navigation->findNavigation($this->request->get('id'));
+        if (!$nav) {
+            throw new NotFoundException('Cette navigation n\'est pas trouvé');
+        }
 
+        $this->setContentTitle($nav['title']);
+        $this->setCSRFToken();
+        $view_data = [
+            'navigation' => $nav,
+            'url_form' => UrlBuilder::makeUrl('Webpage', 'navigationAction', ['id' => $nav['id']]),
+            'url_delete' => UrlBuilder::makeUrl('Page', 'deleteNavigationAction', ['id' => $nav['id']]),
+        ];
+        $this->render('nav_detail', $view_data);
     }
 
     # /navigation-save
@@ -253,6 +186,13 @@ class Webpage extends Controller
     # /delete-navigation
     public function deleteNavigationAction()
     {
-
+        if (!$this->request->get('id')) {
+            $this->sendError('Une erreur est survenue');
+        }
+        $this->repository->navigation->remove($this->request->get('id'));
+        $this->sendSuccess('Page supprimée', [
+            'url_next' => UrlBuilder::makeUrl('Webpage', 'navigationListView'),
+            'delay_url_next' => 0,
+        ]);
     }
 }

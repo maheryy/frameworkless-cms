@@ -3,7 +3,7 @@ sidebar-main:
     label: Tableau de bord
     icon: fas fa-columns
     route: /admin/dashboard
-  page: 
+  page:
     label: Pages
     icon: far fa-file
     route: /admin/pages
@@ -14,7 +14,21 @@ sidebar-main:
       new_page:
         label: Ajouter page
         route: /admin/new-page
-  user: 
+  appearance:
+    label: Apparance
+    icon: fas fa-palette
+    route: /admin/navigations
+    sub-links:
+      navigations:
+        label: Navigations
+        route: /admin/navigations
+      new_navigation:
+        label: Ajouter nav
+        route: /admin/new-navigation
+      themes:
+        label: Thèmes
+        route: /admin/themes
+  user:
     label: Utilisateurs
     icon: fas fa-users
     route: /admin/users
