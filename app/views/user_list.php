@@ -1,4 +1,4 @@
-<div class="card">
+<article class="content">
     <table data-role="initDataTable">
         <thead>
         <tr>
@@ -24,4 +24,4 @@
         <?php endforeach; ?>
         </tbody>
     </table>
-</div>
+</article>
