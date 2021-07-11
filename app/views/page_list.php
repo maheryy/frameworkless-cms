@@ -13,7 +13,7 @@
         <?php foreach ($pages as $page) : ?>
             <tr>
                 <td>
-                    <p class="flex-col-center">
+                    <p class="flex-col justify-between items-center">
                         <a href="<?= $page['url_detail'] ?>"><?= $page['title'] ?></a>
                         <?php if ($page['status'] == \App\Core\Utils\Constants::STATUS_PUBLISHED) : ?>
                             <em style="font-size:.75em"><?= '/' . $page['slug'] ?></em>
