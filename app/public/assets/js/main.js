@@ -244,7 +244,7 @@ const roleFunctions = {
     initDataTable: function () {
         $(this).DataTable({
             columnDefs: [
-                { className: 'text-center', targets: '_all' }
+                {className: 'text-center', targets: '_all'}
             ]
         });
     },
@@ -269,6 +269,21 @@ const roleFunctions = {
                 }
             }
         });
+    },
+    initSelectTabs: function () {
+        $(this).change(function () {
+            const options = getOptions(this);
+            if (!options) return;
+
+            $.ajax({
+                method: 'GET',
+                url: options.url_tab_view,
+                data: {ref: $(this).val()},
+                success: function (res) {
+                    $('#' + options.container_id).html(res);
+                }
+            });
+        })
     },
     submitDefault: function () {
         $(this).click(function (e) {

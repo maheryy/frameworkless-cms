@@ -39,7 +39,10 @@ sidebar-main:
       current_user:
         label: Mon utilisateur
         route:
-
+  role:
+    label: Roles
+    icon:
+    route: /admin/roles
 sidebar-bottom:
   settings:
     label: Paramètres
