@@ -101,7 +101,7 @@ $dimensions: (
     .w-#{$i}\/#{$offset} {
       width: percentage($i/$offset);
     }
-    .h-#{$i}-#{$offset} {
+    .h-#{$i}\/#{$offset} {
       height: percentage($i/$offset);
     }
   }
