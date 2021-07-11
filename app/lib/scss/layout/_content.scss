@@ -19,3 +19,18 @@ main.content {
     margin-top: 2em;
   }
 }
+
+article.content {
+  box-shadow: 0 0 0 1px $card-shadow;
+  padding: 1.5em 1em;
+  background-color: $bg-secondary;
+
+  &.transparent {
+    box-shadow: 0 0 0 0;
+    background-color: $bg-primary;
+  }
+
+  &.rounded {
+    border-radius: .4em;
+  }
+}

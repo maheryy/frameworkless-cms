@@ -1,18 +1,17 @@
 @import "layout/theme";
 
 * {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
 }
 
 body {
-    font-family: 'Raleway', sans-serif;
+  font-family: 'Raleway', sans-serif;
 }
 
 // Core elements
 @import "utils/variables";
-@import "utils/utils";
 @import "utils/mixins";
 @import "utils/functions";
 
@@ -29,11 +28,8 @@ body {
 @import "layout/sidebar";
 
 // Extra styles for page content
-@import "content/home";
 @import "content/installer";
 @import "content/login";
-@import "content/page";
 
 // Override all styles above with util classes
-// ex: .hidden | .flex-center ...
-@import "utils/override";
+@import "utils/utils";

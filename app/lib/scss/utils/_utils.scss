@@ -1,7 +1,245 @@
+/* Strongly inspired by Tailwind CSS */
+
 li {
   list-style-type: none;
 }
 
-.text-center {
-  text-align: center;
+.border-default {
+  border: 1px solid $card-shadow;
+}
+
+.hidden {
+  display: none;
+}
+
+/* Text */
+$text-properties: (
+        font-style:(
+                style-italic: italic,
+                style-normal: normal,
+        ),
+        font-size:(
+                text-xs: 0.75rem,
+                text-sm: 0.875rem,
+                text-base: 1rem,
+                text-lg: 1.125rem,
+                text-xl: 1.25em,
+                text-2xl: 1.5rem,
+                text-3xl: 1.875rem,
+                text-4xl: 2.25rem,
+                text-5xl: 3rem,
+        ),
+        font-weight:(
+                font-thin: 100,
+                font-extralight: 200,
+                font-light: 300,
+                font-normal: 400,
+                font-medium: 500,
+                font-semibold: 600,
+                font-bold: 700,
+                font-extrabold: 800,
+        ),
+        text-align : (
+                text-left: left,
+                text-center: center,
+                text-right: right,
+                text-justify: justify,
+        ),
+        text-decoration :(
+                text-underline: underline,
+                text-line-through: line-through,
+                text-decoration-none: none,
+        ),
+        text-transform: (
+                text-uppercase: uppercase,
+                text-lowercase: lowercase,
+                text-capitalize: capitalize,
+        ),
+        line-height: (
+                lh-1\.25: 1.25,
+                lh-1\.5: 1.5,
+                lh-1\.75: 1.75,
+                lh-2: 2,
+                lh-2\.25: 2.25,
+                lh-2\.5: 2.5,
+                lh-2\.75: 2.75,
+                lh-3: 3,
+                lh-3\.5: 3.5,
+                lh-4: 4,
+        )
+);
+
+@each $property, $items in $text-properties {
+  @each $class, $value in $items {
+    .#{$class} {
+      #{$property}: $value;
+    }
+  }
+}
+
+/* Dimension */
+$dimensions: (
+        auto : auto,
+        full : 100%,
+        screen : 100vh,
+        min : min-content,
+        max : max-content,
+);
+
+@each $class, $value in $dimensions {
+  .w-#{$class} {
+    width: $value;
+  }
+  .h-#{$class} {
+    height: $value;
+  }
+}
+
+// Example: w-$i/$offset => w-1/2, w-1/3, w-2/3 ...
+@each $offset in (2, 3, 4, 5, 6, 12) {
+  @for $i from 1 to $offset {
+    .w-#{$i}\/#{$offset} {
+      width: percentage($i/$offset);
+    }
+    .h-#{$i}-#{$offset} {
+      height: percentage($i/$offset);
+    }
+  }
+}
+
+/* Spacing */
+.m-auto {
+  margin: auto;
+}
+
+.mx-auto {
+  margin-left: auto;
+  margin-right: auto;
+}
+
+@each $value in (0, 0.25, 0.5, 0.75, 1, 1.25, 1.5, 1.75, 2, 2.25, 2.5, 2.75, 3, 3.5, 4, 4.5, 5, 5.5, 6, 7, 8, 9, 10, 12, 14, 16, 20, 24, 28, 32) {
+  $escaped-value: $value;
+  @if str-index($value+'', ".") {
+    $escaped-value: str-insert($value+'', '\\', str-index($value+'', "."));
+  }
+
+  .p-#{$escaped-value} {
+    padding: #{$value}rem;
+  }
+  .py-#{$escaped-value} {
+    padding-top: #{$value}rem;
+    padding-bottom: #{$value}rem;
+  }
+  .px-#{$escaped-value} {
+    padding-left: #{$value}rem;
+    padding-right: #{$value}rem;
+  }
+  .pt-#{$escaped-value} {
+    padding-top: #{$value}rem;
+  }
+  .pr-#{$escaped-value} {
+    padding-right: #{$value}rem;
+  }
+  .pb-#{$escaped-value} {
+    padding-bottom: #{$value}rem;
+  }
+  .pl-#{$escaped-value} {
+    padding-left: #{$value}rem;
+  }
+
+  .m-#{$escaped-value} {
+    margin: #{$value}rem;
+  }
+  .my-#{$escaped-value} {
+    margin-top: #{$value}rem;
+    margin-bottom: #{$value}rem;
+  }
+  .mx-#{$escaped-value} {
+    margin-left: #{$value}rem;
+    margin-right: #{$value}rem;
+  }
+  .mt-#{$escaped-value} {
+    margin-top: #{$value}rem;
+  }
+  .mr-#{$escaped-value} {
+    margin-right: #{$value}rem;
+  }
+  .mb-#{$escaped-value} {
+    margin-bottom: #{$value}rem;
+  }
+  .ml-#{$escaped-value} {
+    margin-left: #{$value}rem;
+  }
+
+  .-m-#{$escaped-value} {
+    margin: #{$value*-1}rem;
+  }
+  .-my-#{$escaped-value} {
+    margin-top: #{$value*-1}rem;
+    margin-bottom: #{$value*1}rem;
+  }
+  .-mx-#{$escaped-value} {
+    margin-left: #{$value*-1}rem;
+    margin-right: #{$value*-1}rem;
+  }
+  .-mt-#{$escaped-value} {
+    margin-top: #{$value*-1}rem;
+  }
+  .-mr-#{$escaped-value} {
+    margin-right: #{$value*-1}rem;
+  }
+  .-mb-#{$escaped-value} {
+    margin-bottom: #{$value*-1}rem;
+  }
+  .-ml-#{$escaped-value} {
+    margin-left: #{$value*-1}rem;
+  }
+}
+
+/* Flexbox */
+$flex-properties: (
+        justify-content : (
+                justify-start : flex-start,
+                justify-end : flex-end,
+                justify-center : center,
+                justify-between : space-between,
+                justify-around : space-around,
+                justify-evenly : space-evenly,
+        ),
+        justify-self : (
+                justify-self-auto: auto,
+                justify-self-start : start,
+                justify-self-end : end,
+                justify-self-center : center,
+                justify-self-stretch : stretch,
+        ),
+        align-items : (
+                items-start : flex-start,
+                items-end : flex-end,
+                items-center : center,
+        ),
+        align-self : (
+                self-auto: auto,
+                self-start : flex-start,
+                self-end : flex-end,
+                self-center : center,
+                self-stretch : stretch,
+        ),
+);
+
+.flex {
+  display: flex;
+}
+
+.flex-col {
+  display: flex;
+  flex-direction: column;
+}
+
+@each $property, $items in $flex-properties {
+  @each $class, $value in $items {
+    .#{$class} {
+      #{$property}: $value;
+    }
+  }
 }

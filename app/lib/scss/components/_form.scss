@@ -8,25 +8,6 @@ $border-hover: #275efe;
 $border-active: #245dff;
 $transition-duration: 0.25s;
 
-form {
-  .form-action, .form-info {
-    padding: 0.5em 5px;
-    align-self: flex-start;
-
-    &.right {
-      align-self: flex-end;
-    }
-
-    &.center {
-      align-self: center;
-    }
-  }
-
-  .form-info {
-    padding: 1em 5px;
-  }
-}
-
 form.form-default {
   width: $form-width;
   padding: 20px 10px;
@@ -38,17 +19,33 @@ form.form-default {
     width: 100%;
     border: none;
     padding: 1em 0;
-    // & > h3 {
-    // }
+  }
+}
+
+.form-action,
+.form-info {
+  padding: 0.5em 5px;
+  align-self: flex-start;
+
+  &.right {
+    align-self: flex-end;
   }
 
-  .form-group-inline {
-    width: 100%;
-    @include flex-display(flex-start, center, wrap);
+  &.center {
+    align-self: center;
+  }
+}
 
-    & > .form-field, & > .form-field-inline {
-      flex: 1;
-    }
+.form-info {
+  padding: 1em 5px;
+}
+
+.form-group-inline {
+  width: 100%;
+  @include flex-display(flex-start, center, wrap);
+
+  & > .form-field, & > .form-field-inline {
+    flex: 1;
   }
 }
 
