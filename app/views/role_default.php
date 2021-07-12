@@ -4,10 +4,12 @@
     </article>
     <div class="w-full flex justify-between mb-2">
         <div class="w-4/12">
-            <select id="tab_view" class="form-control w-full text-base" name="tab_view" data-role="initSelectTabs" data-options=<?= json_encode($tab_options) ?>>
+            <select id="tab_view" class="form-control w-full text-base" name="tab_view" data-role="initSelectTabs"
+                    data-options=<?= json_encode($tab_options) ?>>
                 <option value="-1">Ajouter un nouveau rôle</option>
                 <?php foreach ($roles as $role) : ?>
-                    <option <?= $default_tab == $role['id'] ? 'selected=selected' : ''?> value="<?= $role['id'] ?>"><?= $role['name'] ?></option>
+                    <option <?= $default_tab == $role['id'] ? 'selected=selected' : '' ?>
+                            value="<?= $role['id'] ?>"><?= $role['name'] ?></option>
                 <?php endforeach; ?>
             </select>
         </div>

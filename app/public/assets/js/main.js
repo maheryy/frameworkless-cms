@@ -333,10 +333,25 @@ const roleFunctions = {
         $(this).click(function (e) {
             e.preventDefault();
             const form = $(this).closest('form');
-            let data = getFormData(form, getOptions(this), true);
+            let data = getFormData(form, getOptions(this));
 
             /* Some input are not valid */
             if (!data) return;
+
+            $.ajax({
+                method: $(form).attr('method'),
+                headers: $('meta[name="csrf-token"]').length ? {'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')} : null,
+                url: $(form).attr('action'),
+                data: data,
+                success: ajaxFunctions.submitDefault
+            });
+        });
+    },
+    submitPermissions: function () {
+        $(this).click(function (e) {
+            e.preventDefault();
+            const form = $(this).closest('form');
+            let data = getFormData(form, getOptions(this), false);
 
             $.ajax({
                 method: $(form).attr('method'),

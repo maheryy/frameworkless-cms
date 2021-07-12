@@ -33,6 +33,6 @@ class RolePermissionRepository extends BaseRepository
 
     public function deleteAllByRole(int $role_id)
     {
-        return $this->model->deleteQuery(Expr::eq('role_id', $role_id));
+        return $this->model->deleteQuery([Expr::eq('role_id', $role_id)]);
     }
 }

@@ -14,11 +14,11 @@
             </div>
         </article>
         <article class="card w-8/12 px-1.5 py-1">
-            <p class="text-lg font-bold pb-1">
-                <input type="text" class="text-lg font-bold py-0.5 w-full border-none border-bottom-default"
-                       name="role_name" value="<?= $role_name ?>">
-            </p>
             <form class="w-full flex-col" method="POST" action="<?= $url_form ?>">
+                <p class="text-lg font-bold pb-1">
+                    <input type="text" class="text-xl font-extralight py-0.5 w-full border-none border-bottom-default"
+                           name="role_name" placeholder="Nom du rôle" value="<?= $role_name ?>">
+                </p>
                 <div id="transpose-target" class="w-full">
                     <ul class="list-elements py-1">
                         <?php foreach ($role_permissions as $role_permmission) : ?>
@@ -30,8 +30,8 @@
                     </ul>
                 </div>
                 <div class="form-action px-0 right">
-                    <input type="submit" class="btn-success text-base"
-                           value="<?= $referer == -1 ? 'Ajouter' : 'Sauvegarder' ?>" data-role="submitDefault"
+                    <input type="submit" class="<?= $referer == -1 ? 'btn-success' : 'btn-primary' ?> text-base"
+                           value="<?= $referer == -1 ? 'Ajouter' : 'Sauvegarder' ?>" data-role="submitPermissions"
                            data-options=<?= json_encode(['add_data' => ['ref' => $referer]]) ?>>
                 </div>
             </form>
