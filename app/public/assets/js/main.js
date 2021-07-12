@@ -281,7 +281,7 @@ const roleFunctions = {
                 url: options.url_tab_view,
                 data: {ref: getId(this)},
                 success: function (res) {
-                    // Remove all events attached to all of this container elements
+                    // Detach all events of this container childrens
                     $('#' + options.container_id + ' *').off();
                     // Change container html content
                     $('#' + options.container_id).html(res);
@@ -294,19 +294,27 @@ const roleFunctions = {
     initSelectTabs: function () {
         $(this).change(function () {
             const options = getOptions(this);
-
+            const id = $(this).val();
             if (!options.url_tab_view) return;
             $.ajax({
                 method: 'GET',
                 url: options.url_tab_view,
-                data: {ref: $(this).val()},
+                data: {ref: id},
+                beforeSend: function () {
+                    // Update url to keep track of the current tab view id (for reload purpose)
+                    let index = window.location.href.indexOf('?id=');
+                    let current_url = index > 0 ? window.location.href.substr(0, index) : window.location.href;
+                    window.history.replaceState("", "", `${current_url}?id=${id}`);
+                },
                 success: function (res) {
-                    // Remove all events attached to all of this container elements
+                    // Detach all events of this container childrens
                     $('#' + options.container_id + ' *').off();
                     // Change container html content
                     $('#' + options.container_id).html(res);
                     // bind new elements data-roles
                     bindRoles('#' + options.container_id);
+
+
                 }
             });
         })
