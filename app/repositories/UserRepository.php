@@ -3,6 +3,7 @@
 namespace App\Repositories;
 
 use App\Core\BaseRepository;
+use App\Core\Utils\Constants;
 use App\Core\Utils\Expr;
 use App\Core\Utils\Formatter;
 use App\Core\Utils\QueryBuilder;
@@ -20,7 +21,8 @@ class UserRepository extends BaseRepository
         $role_table = Formatter::getTableName('role');
         $this->queryBuilder
             ->select(["$this->table.*", 'role_name' => "$role_table.name"])
-            ->joinInner($role_table, "$this->table.role = $role_table.id");
+            ->joinInner($role_table, "$this->table.role = $role_table.id")
+            ->where(Expr::neq('status', Constants::STATUS_DELETED));
 
         return $this->model->fetchAll($this->queryBuilder);
     }

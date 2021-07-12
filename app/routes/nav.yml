@@ -37,12 +37,11 @@ sidebar-main:
         label: Ajouter utilisateur
         route: /admin/new-user
       current_user:
-        label: Mon utilisateur
+        label: Profil
         route:
-  role:
-    label: Roles
-    icon:
-    route: /admin/roles
+      roles:
+        label: Roles
+        route: /admin/roles
 sidebar-bottom:
   settings:
     label: Paramètres

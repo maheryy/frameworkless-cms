@@ -31,8 +31,8 @@ class Seeds
     public static function role()
     {
         return [
-            Constants::ROLE_SUPER_ADMIN => ['name' => 'Administrateur'],
-            Constants::ROLE_ADMIN => ['name' => 'Super Administrateur'],
+            Constants::ROLE_SUPER_ADMIN => ['name' => 'Super Administrateur'],
+            Constants::ROLE_ADMIN => ['name' => 'Administrateur'],
             Constants::ROLE_EDITOR => ['name' => 'Editeur'],
             Constants::ROLE_TEST => ['name' => 'Test'],
         ];
