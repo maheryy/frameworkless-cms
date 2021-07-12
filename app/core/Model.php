@@ -33,6 +33,12 @@ abstract class Model
         return $this->table_name;
     }
 
+    public function getModelName()
+    {
+        $model_class = explode("\\", $this->model_class_name);
+        return end($model_class);
+    }
+
     public function getColumns()
     {
         return $this->columns;
@@ -155,9 +161,11 @@ abstract class Model
      */
     public function insertQuery(array $data)
     {
+        if(empty($data)) return false;
+
         # Check if there is multiple insertion
-        if (array_key_exists(0, $data)) {
-            $fields = array_keys($data[0]);
+        if (is_int(array_key_first($data))) {
+            $fields = array_keys(array_values($data)[0]);
             $sql_params = [];
             $sql = 'INSERT INTO ' . $this->table_name
                 . '(' . implode(',', $fields) . ') VALUES';
@@ -192,6 +200,8 @@ abstract class Model
     {
         $update_fields = $clauses = [];
         $params = $fields;
+
+        if(empty($fields)) return false;
 
         foreach ($fields as $column => $value) {
             $update_fields[] = $column . " = :" . $column;
@@ -259,6 +269,23 @@ abstract class Model
 
         unset($data['id']);
         $this->populate($data);
+    }
+
+    /**
+     * Truncate table and reset autoincrement
+     */
+    public function truncate()
+    {
+        $this->deleteQuery();
+        $this->resetAutoIncrement();
+    }
+
+    /**
+     * Reset autoincrement value
+     */
+    public function resetAutoIncrement()
+    {
+        $this->execute("ALTER TABLE {$this->table_name} AUTO_INCREMENT = 1");
     }
 
     /**

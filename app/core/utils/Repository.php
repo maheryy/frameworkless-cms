@@ -9,8 +9,9 @@ class Repository
 {
     public function __get($name)
     {
-        $class = "\App\Models\\" . $name;
-        $repository = "\App\Repositories\\" . $name . "Repository";
+        $name = ucfirst($name);
+        $class = NAMESPACE_MODELS . $name;
+        $repository = NAMESPACE_REPOSITORIES . $name . "Repository";
         if (!class_exists($class) || !class_exists($repository)) {
             throw new NotFoundException("$class or $repository not found");
         }
@@ -21,8 +22,8 @@ class Repository
     public function __call($method, $args)
     {
         $method = ucfirst($method);
-        $class = "\App\Models\\" . $method;
-        $repository = "\App\Repositories\\" . $method . "Repository";
+        $class = NAMESPACE_MODELS . $method;
+        $repository = NAMESPACE_REPOSITORIES . $method . "Repository";
 
         if (!class_exists($repository)) {
             throw new NotFoundException("$repository not found");

@@ -7,14 +7,20 @@ use App\Core\Exceptions\NotFoundException;
 class View
 {
     private string $view;
-    private string $template;
+    private ?string $template;
     private array $data;
 
-    public function __construct(string $view, string $template, array $data = [])
+    public function __construct(string $view, ?string $template, array $data = [])
     {
         $this->setView($view);
         $this->setTemplate($template);
         $this->setData($data);
+    }
+
+    public function __destruct()
+    {
+        extract($this->data);
+        include ($this->template ?? $this->view);
     }
 
     /**
@@ -32,12 +38,16 @@ class View
     }
 
     /**
-     * @param string $template
+     * @param string|null $template
      *
      * @return void
      */
-    public function setTemplate(string $template)
+    public function setTemplate(?string $template)
     {
+        if (is_null($template)) {
+            $this->template = null;
+            return;
+        }
         $template_path = PATH_TEMPLATES . $template . '.php';
         if (!file_exists($template_path)) {
             throw new NotFoundException('La template ' . $template_path . ' n\'existe pas');
@@ -55,11 +65,6 @@ class View
         $this->data = $data;
     }
 
-    public function __destruct()
-    {
-        extract($this->data);
-        include $this->template;
-    }
 
     public static function getHtml(string $template, array $data)
     {

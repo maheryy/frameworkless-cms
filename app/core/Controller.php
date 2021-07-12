@@ -31,7 +31,7 @@ abstract class Controller
             $this->setLayoutParams();
         }
 
-        if(isset($options['title'])) {
+        if (isset($options['title'])) {
             $this->setContentTitle($options['title']);
         }
     }
@@ -41,14 +41,27 @@ abstract class Controller
      *
      * @param string $view
      * @param array $data
-     * @param string $template
      */
     protected function render(string $view, array $data = [])
     {
         if (!empty($this->view_data)) {
-           $data = !empty($data) ? array_merge($this->view_data, $data) : $this->view_data;
+            $data = !empty($data) ? array_merge($this->view_data, $data) : $this->view_data;
         }
         return new View($view, $this->template, $data);
+    }
+
+    /**
+     * Render a view without template
+     *
+     * @param string $view
+     * @param array $data
+     */
+    protected function renderViewOnly(string $view, array $data = [])
+    {
+        if (!empty($this->view_data)) {
+            $data = !empty($data) ? array_merge($this->view_data, $data) : $this->view_data;
+        }
+        return new View($view, null, $data);
     }
 
     /**
@@ -194,8 +207,19 @@ abstract class Controller
     {
         $token = $this->request->header('X-Csrf-Token');
         if (!$token || $this->session->getCSRFToken() !== $token) {
-           $this->sendError('Accès refusé');
+            $this->sendError('Accès refusé');
         }
         return true;
+    }
+
+    /**
+     * Check permission
+     *
+     * @param int $permission
+     * @return bool
+     */
+    protected function hasPermission(int $permission)
+    {
+        return in_array($permission, $this->session->get('permissions'));
     }
 }

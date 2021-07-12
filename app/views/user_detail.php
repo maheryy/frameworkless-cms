@@ -14,8 +14,8 @@
         </div>
         <div class="form-field required">
             <select class="form-control" id="role" name="role">
-                <?php foreach ($roles as $key => $role) : ?>
-                    <option <?= $user['role'] == $key ? 'selected' : '' ?> value="<?= $key ?>"><?= $role ?></option>
+                <?php foreach ($roles as $role) : ?>
+                    <option <?= $user['role'] == $role['id'] ? 'selected' : '' ?> value="<?= $role['id'] ?>"><?= $role['name'] ?></option>
                 <?php endforeach; ?>
             </select>
             <label for="role">Role</label>

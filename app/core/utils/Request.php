@@ -13,7 +13,7 @@ class Request
 
     public function __construct()
     {
-        $this->dataGet = $this->all($_GET);
+        $this->dataGet = !empty($_GET) ? $this->all($_GET) : [];
         $this->dataPost = !empty($_POST) ? $this->all($_POST) : [];
     }
 

@@ -2,9 +2,11 @@
 
 namespace App\Core;
 
+use App\Core\Exceptions\NotFoundException;
 use App\Core\Utils\Constants;
 use App\Core\Utils\Expr;
 use App\Core\Utils\QueryBuilder;
+use App\Core\Utils\Seeds;
 
 abstract class BaseRepository
 {
@@ -50,5 +52,20 @@ abstract class BaseRepository
         return $this->model->hasStatus()
             ? $this->model->updateQuery(['status' => Constants::STATUS_DELETED], [Expr::eq('id', $id)])
             : $this->model->deleteQuery([Expr::eq('id', $id)]);
+    }
+
+    /**
+     * Database seeding : Insert initial data (from Seeds::modelName) for a given model
+     *
+     * @return int|bool rows affected or false
+     */
+    public function runSeed()
+    {
+        $callable = [Seeds::class, $this->model->getModelName()];
+        if (!is_callable($callable)) {
+            throw new NotFoundException('Seed data does not exist for ' . $this->model->getModelName());
+        }
+        $this->model->truncate();
+        return $this->create(call_user_func($callable));
     }
 }

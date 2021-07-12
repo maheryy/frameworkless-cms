@@ -45,12 +45,12 @@ function getOptions(el) {
 }
 
 function getId(el) {
-    var id = $(el).data('id');
-    return id != null && id != undefined && id != '' ? id : false;
+    let id = $(el).data('id');
+    return id != null && id != undefined ? id : false;
 }
 
 function getUrl(el) {
-    var url = $(el).data('url');
+    let url = $(el).data('url');
     return url != null && url != undefined && url != '' ? url : false;
 }
 
@@ -244,7 +244,7 @@ const roleFunctions = {
     initDataTable: function () {
         $(this).DataTable({
             columnDefs: [
-                { className: 'text-center', targets: '_all' }
+                {className: 'text-center', targets: '_all'}
             ]
         });
     },
@@ -270,14 +270,88 @@ const roleFunctions = {
             }
         });
     },
+    initTabs: function () {
+        const options = getOptions(this);
+        $('.tabs-container .tab-view').click(function (e) {
+            e.preventDefault();
+            if (!options.url_tab_view) return;
+
+            $.ajax({
+                method: 'GET',
+                url: options.url_tab_view,
+                data: {ref: getId(this)},
+                success: function (res) {
+                    // Remove all events attached to all of this container elements
+                    $('#' + options.container_id + ' *').off();
+                    // Change container html content
+                    $('#' + options.container_id).html(res);
+                    // bind new elements data-roles
+                    bindRoles('#' + options.container_id);
+                }
+            });
+        })
+    },
+    initSelectTabs: function () {
+        $(this).change(function () {
+            const options = getOptions(this);
+
+            if (!options.url_tab_view) return;
+            $.ajax({
+                method: 'GET',
+                url: options.url_tab_view,
+                data: {ref: $(this).val()},
+                success: function (res) {
+                    // Remove all events attached to all of this container elements
+                    $('#' + options.container_id + ' *').off();
+                    // Change container html content
+                    $('#' + options.container_id).html(res);
+                    // bind new elements data-roles
+                    bindRoles('#' + options.container_id);
+                }
+            });
+        })
+    },
+    initTransposable: function () {
+        const container = $(this).attr('id') === 'transposable' ? $(this) : $(this).find('#transposable');
+        const source_list = $(container).find('#transpose-source .list-elements');
+        const target_list = $(container).find('#transpose-target .list-elements');
+
+        const sourceClick = e => {
+            $(e.currentTarget).clone().click(targetClick).appendTo(target_list);
+            $(e.currentTarget).remove();
+        };
+
+        const targetClick = e => {
+            $(e.currentTarget).clone().click(sourceClick).appendTo(source_list);
+            $(e.currentTarget).remove();
+        };
+
+        $(container).find('#transpose-source .transpose-element').click(sourceClick);
+        $(container).find('#transpose-target .transpose-element').click(targetClick);
+    },
     submitDefault: function () {
         $(this).click(function (e) {
             e.preventDefault();
             const form = $(this).closest('form');
-            let data = getFormData(form, getOptions(this), true);
+            let data = getFormData(form, getOptions(this));
 
             /* Some input are not valid */
             if (!data) return;
+
+            $.ajax({
+                method: $(form).attr('method'),
+                headers: $('meta[name="csrf-token"]').length ? {'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')} : null,
+                url: $(form).attr('action'),
+                data: data,
+                success: ajaxFunctions.submitDefault
+            });
+        });
+    },
+    submitPermissions: function () {
+        $(this).click(function (e) {
+            e.preventDefault();
+            const form = $(this).closest('form');
+            let data = getFormData(form, getOptions(this), false);
 
             $.ajax({
                 method: $(form).attr('method'),
@@ -332,6 +406,13 @@ const roleFunctions = {
                 $('#change-password').addClass('hidden');
                 $('#change-password input#password').attr('disabled', 'disabled');
             }
+        })
+    },
+    addRoleTabView: function () {
+        $(this).click(function (e) {
+            e.preventDefault();
+            if ($('#tab_view').val() == -1) return;
+            $('#tab_view').val(-1).change();
         })
     }
 };

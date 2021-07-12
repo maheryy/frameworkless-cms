@@ -4,7 +4,9 @@ $card-shadow: #dcdcde;
   box-shadow: 0 0 0 1px $card-shadow;
   padding: 1.5em 1em;
   background-color: $bg-secondary;
-  min-width: min-content;
+  min-width: 100px;
+  overflow-wrap: break-word;
+
   &.transparent {
     box-shadow: 0 0 0 0;
     background-color: $bg-primary;

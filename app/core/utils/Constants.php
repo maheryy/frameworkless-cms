@@ -18,12 +18,6 @@ class Constants
     const POST_TYPE_PAGE = 1;
     const POST_TYPE_POST = 2;
 
-    # User roles
-    const ROLE_DEFAULT = 1;
-    const ROLE_EDITOR = 2;
-    const ROLE_ADMIN = 10;
-    const ROLE_SUPER_ADMIN = 20;
-
     # Token types
     const TOKEN_EMAIL_CONFIRM = 1;
     const TOKEN_RESET_PASSWORD = 2;
@@ -33,24 +27,31 @@ class Constants
 
     # Password recovery -> 24h
     const RESET_PASSWORD_TIMEOUT = 1440;
+
     # Account confirmation -> 7j
     const EMAIL_CONFIRM_TIMEOUT = 10080;
-
 
     # Visibility types
     const VISIBILITY_PUBLIC = 1;
     const VISIBILITY_PRIVATE = 2;
 
+    # User roles
+    const ROLE_SUPER_ADMIN = 1;
+    const ROLE_ADMIN = 2;
+    const ROLE_EDITOR = 3;
+    const ROLE_TEST = 4;
 
-    public static function getRoles()
-    {
-        return [
-            self::ROLE_DEFAULT => 'Normal',
-            self::ROLE_EDITOR => 'Editeur',
-            self::ROLE_ADMIN => 'Administrateur',
-            self::ROLE_SUPER_ADMIN => 'Super Administrateur',
-        ];
-    }
+    # Permissions
+    const PERM_READ_USER = 1;
+    const PERM_CREATE_USER = 2;
+    const PERM_UPDATE_USER = 3;
+    const PERM_DELETE_USER = 4;
+    const PERM_READ_PAGE = 5;
+    const PERM_CREATE_PAGE = 6;
+    const PERM_UPDATE_PAGE = 7;
+    const PERM_PUBLISH_PAGE = 8;
+    const PERM_DELETE_PAGE = 9;
+
 
     public static function getPostStatuses()
     {

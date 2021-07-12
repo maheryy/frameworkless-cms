@@ -222,12 +222,10 @@ class User extends Controller
     public function listView()
     {
         $users = $this->repository->user->findAll();
-        $roles = Constants::getRoles();
 
         foreach ($users as $key => $user) {
             $users[$key]['url_detail'] = UrlBuilder::makeUrl('User', 'userView', ['id' => $user['id']]);
             $users[$key]['url_delete'] = UrlBuilder::makeUrl('User', 'deleteAction', ['id' => $user['id']]);
-            $users[$key]['role'] = $roles[$user['role']];
         }
 
         $view_data = [
@@ -247,7 +245,7 @@ class User extends Controller
     {
         $this->setCSRFToken();
         $view_data = [
-            'roles' => Constants::getRoles(),
+            'roles' => $this->repository->role->findAll(),
             'url_form' => UrlBuilder::makeUrl('User', 'createAction')
         ];
         $this->render('user_new', $view_data);
@@ -327,7 +325,7 @@ class User extends Controller
         $this->setContentTitle($user['username']);
         $this->setCSRFToken();
         $view_data = [
-            'roles' => Constants::getRoles(),
+            'roles' => $this->repository->role->findAll(),
             'user' => $user,
             'url_form' => UrlBuilder::makeUrl('User', 'userAction'),
             'url_delete' => UrlBuilder::makeUrl('User', 'deleteAction', ['id' => $user['id']]),
@@ -410,10 +408,12 @@ class User extends Controller
 
     private function createSessionData(array $user_data)
     {
+        $permissions = array_map(fn($el) => (int)$el['id'], $this->repository->rolePermission->findAllPermissionsByRole((int)$user_data['role']));
         $this->session->setData([
             'user_id' => $user_data['id'],
             'user_role' => $user_data['role'],
             'is_admin' => $user_data['role'] == Constants::ROLE_ADMIN,
+            'permissions' => $permissions,
             'csrf_token' => (new Token())->generate()->getEncoded()
         ]);
     }

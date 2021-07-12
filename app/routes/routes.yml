@@ -29,6 +29,10 @@
   controller: Installer
   method: registerAction
 
+/db-seed:
+  controller: Installer
+  method: dbSeed
+
 # Authentification
 /login:
   controller: User
@@ -147,3 +151,21 @@
 /page-link-list:
   controller: Page
   method: getPageLinkList
+
+
+# Role management
+/roles:
+  controller: Role
+  method: roleView
+  title: Gestion des rôles
+  require_auth: True
+
+/role-tab:
+  controller: Role
+  method: roleTabView
+  require_auth: True
+
+/role-save:
+  controller: Role
+  method: roleAction
+  require_auth: True

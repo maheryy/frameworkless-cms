@@ -138,11 +138,11 @@ class QueryBuilder
      * 
      * @param string $type JOIN_FULL|JOIN_INNER|JOIN_LEFT|JOIN_RIGHT
      * @param string $table
-     * @param string ...$conditions ex : Expr::eq('id', 5) | "table1.id = table2.id"
+     * @param string|array ...$conditions ex : Expr::eq('id', 5) | "table1.id = table2.id"
      * 
      * @return QueryBuilder
      */
-    private function join(string $type, string $table, string ...$conditions)
+    private function join(string $type, string $table, ...$conditions)
     {
         if (!empty($conditions)) {
             $group_conditions = '';
