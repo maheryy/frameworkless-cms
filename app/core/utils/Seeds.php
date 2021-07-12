@@ -95,7 +95,7 @@ class Seeds
             6 => ['role_id' => 1, 'permission_id' => 6],
             7 => ['role_id' => 1, 'permission_id' => 7],
             8 => ['role_id' => 1, 'permission_id' => 8],
-            9 => ['role_id' => 1, 'permission_id' => 1],
+            9 => ['role_id' => 2, 'permission_id' => 1],
             10 => ['role_id' => 2, 'permission_id' => 2],
             11 => ['role_id' => 2, 'permission_id' => 3],
             12 => ['role_id' => 2, 'permission_id' => 4],
@@ -103,6 +103,9 @@ class Seeds
             14 => ['role_id' => 2, 'permission_id' => 6],
             15 => ['role_id' => 2, 'permission_id' => 7],
             16 => ['role_id' => 2, 'permission_id' => 8],
+            17 => ['role_id' => 4, 'permission_id' => 2],
+            18 => ['role_id' => 4, 'permission_id' => 5],
+            19 => ['role_id' => 4, 'permission_id' => 8],
         ];
     }
 }

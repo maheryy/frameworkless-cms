@@ -1,0 +1,23 @@
+#transposable {
+  #transpose-source {
+    .transpose-element {
+      padding: 1em .5em;
+      cursor: pointer;
+
+      &:hover {
+        border: 1px solid $card-shadow;
+      }
+    }
+  }
+
+  #transpose-target {
+    .transpose-element {
+      padding: 1em .5em;
+      cursor: pointer;
+
+      &:hover {
+        border: 1px solid $card-shadow;
+      }
+    }
+  }
+}

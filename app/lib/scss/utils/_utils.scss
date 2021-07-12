@@ -4,8 +4,16 @@ li {
   list-style-type: none;
 }
 
+.border-none {
+  border: none;
+}
+
 .border-default {
   border: 1px solid $card-shadow;
+}
+
+.border-bottom-default {
+  border-bottom: 1px solid $card-shadow;
 }
 
 .hidden {
@@ -82,9 +90,15 @@ $dimensions: (
         auto : auto,
         full : 100%,
         screen : 100vh,
-        min : min-content,
-        max : max-content,
 );
+
+.w-min {
+  min-width: min-content;
+}
+
+.h-min {
+  min-height: min-content;
+}
 
 @each $class, $value in $dimensions {
   .w-#{$class} {
@@ -241,5 +255,24 @@ $flex-properties: (
     .#{$class} {
       #{$property}: $value;
     }
+  }
+}
+
+
+/* Cursors */
+$cursor-properties: (
+        cursor-auto : auto,
+        cursor-default : default,
+        cursor-pointer : pointer,
+        cursor-wait : wait,
+        cursor-text : text,
+        cursor-move : move,
+        cursor-help : help,
+        cursor-not-allowed : not-allowed,
+);
+
+@each $class, $value in $cursor-properties {
+  .#{$class} {
+    cursor: $value;
   }
 }

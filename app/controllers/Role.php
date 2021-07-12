@@ -7,7 +7,6 @@ use App\Core\Database;
 use App\Core\Exceptions\NotFoundException;
 use App\Core\Utils\Constants;
 use App\Core\Utils\Formatter;
-use App\Core\Utils\FormRegistry;
 use App\Core\Utils\UrlBuilder;
 use App\Core\Utils\Validator;
 
@@ -136,7 +135,30 @@ class Role extends Controller
     public function roleView()
     {
         $this->setCSRFToken();
+
+        $default_role = 4;
+        $permissions = $this->repository->permission->findAll();
+        $role_permissions = $this->repository->rolePermission->findAllPermissionsByRole($default_role);
+        $permissions = $this->getDiff2DArray($permissions, $role_permissions, 'id');
+        $roles = $this->repository->role->findAll();
+
+        $role_name = 'Nouveau rôle';
+        foreach ($roles as $role) {
+            if($role['id'] == $default_role) {
+                $role_name = $role['name'];
+                break;
+            }
+        }
+
         $view_data = [
+            'roles' => $roles,
+            'default_tab' => $default_role,
+            'default_tab_view' => PATH_VIEWS . 'role_tab_default.php',
+            'referer' => $default_role,
+            'role_name' => $role_name,
+            'permissions' => $permissions,
+            'role_permissions' => $role_permissions,
+            'url_form' => UrlBuilder::makeUrl('Role', 'roleAction'),
             'tab_options' => [
                 'url_tab_view' => UrlBuilder::makeUrl('Role', 'roleTabView'),
                 'container_id' => 'tab-content'
@@ -148,8 +170,38 @@ class Role extends Controller
     # /role-tab
     public function roleTabView()
     {
+        $role_id = $this->request->get('ref');
+        if (!$role_id) {
+            throw new \Exception('ref ne peut pas être null');
+        }
+
+        $roles = $this->repository->role->findAll();
+        $permissions = $this->repository->permission->findAll();
+        $role_permissions = [];
+        if ($role_id > 0) {
+            $role_permissions = $this->repository->rolePermission->findAllPermissionsByRole($role_id);
+            $permissions = $this->getDiff2DArray($permissions, $role_permissions, 'id');
+            foreach ($roles as $role) {
+                if($role['id'] == $role_id) {
+                    $role_name = $role['name'];
+                    break;
+                }
+            }
+        } else {
+            $role_name = 'Nouveau rôle';
+        }
+
+//        echo '<pre>';
+//        print_r($permissions);
+//        print_r($role_permissions);
+//        die();
+
         $view_data = [
-            'var' => 'ID : ' . $this->request->get('ref')
+            'referer' => $role_id,
+            'role_name' => $role_name,
+            'permissions' => $permissions,
+            'role_permissions' => $role_permissions,
+            'url_form' => UrlBuilder::makeUrl('Role', 'roleAction'),
         ];
         $this->renderViewOnly('role_tab_default', $view_data);
     }
@@ -158,5 +210,15 @@ class Role extends Controller
     public function roleAction()
     {
 
+    }
+
+    private function getDiff2DArray(array $a, array $b, $key_comp)
+    {
+        return !empty($a) && !empty($b)
+            ? array_filter(
+                $a,
+                fn($el_a) => !in_array($el_a[$key_comp], array_map(fn($el_b) => $el_b[$key_comp], $b))
+            )
+            : $a;
     }
 }
