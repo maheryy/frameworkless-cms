@@ -19,7 +19,7 @@ class Role extends Controller
     {
         $this->setCSRFToken();
 
-        $default_role = $this->request->get('id') ?? 1;
+        $default_role = $this->request->get('id') ?? $this->session->get('user_role');
         $permissions = $this->repository->permission->findAll();
         $role_permissions = $this->repository->rolePermission->findAllPermissionsByRole($default_role);
         $permissions = $this->getDiff2DArray($permissions, $role_permissions, 'id');
@@ -118,6 +118,11 @@ class Role extends Controller
 
             $role_permissions = array_map(fn($perm_id) => ['role_id' => $role_id, 'permission_id' => $perm_id], $permissions);
             $this->repository->rolePermission->create($role_permissions);
+
+            # Refresh session permissions variable
+            if ($this->session->get('user_role') == $role_id) {
+                $this->session->set('permissions', array_map(fn($perm_id) => (int)$perm_id, $permissions));
+            }
 
             Database::commit();
             $this->sendSuccess($success_msg, [

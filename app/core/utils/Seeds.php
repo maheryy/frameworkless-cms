@@ -31,54 +31,50 @@ class Seeds
     public static function role()
     {
         return [
-            1 => ['name' => 'Administrateur'],
-            2 => ['name' => 'Super Administrateur'],
-            3 => ['name' => 'Editeur'],
-            4 => ['name' => 'Test'],
+            Constants::ROLE_SUPER_ADMIN => ['name' => 'Administrateur'],
+            Constants::ROLE_ADMIN => ['name' => 'Super Administrateur'],
+            Constants::ROLE_EDITOR => ['name' => 'Editeur'],
+            Constants::ROLE_TEST => ['name' => 'Test'],
         ];
     }
 
     public static function permission()
     {
         return [
-            1 => [
+            Constants::PERM_READ_USER => [
                 'name' => 'Visibilité d\'un utilisateur',
-                'reference' => 'user_read',
                 'description' => ''
             ],
-            2 => [
+            Constants::PERM_CREATE_USER => [
                 'name' => 'Création d\'un utilisateur',
-                'reference' => 'user_creation',
                 'description' => ''
             ],
-            3 => [
+            Constants::PERM_UPDATE_USER => [
                 'name' => 'Modification d\'un utilisateur',
-                'reference' => 'user_edit',
                 'description' => ''
             ],
-            4 => [
+            Constants::PERM_DELETE_USER => [
                 'name' => 'Suppression d\'un utilisateur',
-                'reference' => 'user_delete',
                 'description' => ''
             ],
-            5 => [
+            Constants::PERM_READ_PAGE => [
                 'name' => 'Visibilité d\'une page',
-                'reference' => 'page_read',
                 'description' => ''
             ],
-            6 => [
+            Constants::PERM_CREATE_PAGE => [
                 'name' => 'Création d\'une page',
-                'reference' => 'page_creation',
                 'description' => ''
             ],
-            7 => [
+            Constants::PERM_UPDATE_PAGE => [
                 'name' => 'Modification d\'une page',
-                'reference' => 'page_edit',
                 'description' => ''
             ],
-            8 => [
+            Constants::PERM_PUBLISH_PAGE => [
                 'name' => 'Publication d\'une page',
-                'reference' => 'page_delete',
+                'description' => ''
+            ],
+            Constants::PERM_DELETE_PAGE => [
+                'name' => 'Suppression d\'une page',
                 'description' => ''
             ],
         ];
@@ -87,25 +83,27 @@ class Seeds
     public static function rolePermission()
     {
         return [
-            1 => ['role_id' => 1, 'permission_id' => 1],
-            2 => ['role_id' => 1, 'permission_id' => 2],
-            3 => ['role_id' => 1, 'permission_id' => 3],
-            4 => ['role_id' => 1, 'permission_id' => 4],
-            5 => ['role_id' => 1, 'permission_id' => 5],
-            6 => ['role_id' => 1, 'permission_id' => 6],
-            7 => ['role_id' => 1, 'permission_id' => 7],
-            8 => ['role_id' => 1, 'permission_id' => 8],
-            9 => ['role_id' => 2, 'permission_id' => 1],
-            10 => ['role_id' => 2, 'permission_id' => 2],
-            11 => ['role_id' => 2, 'permission_id' => 3],
-            12 => ['role_id' => 2, 'permission_id' => 4],
-            13 => ['role_id' => 2, 'permission_id' => 5],
-            14 => ['role_id' => 2, 'permission_id' => 6],
-            15 => ['role_id' => 2, 'permission_id' => 7],
-            16 => ['role_id' => 2, 'permission_id' => 8],
-            17 => ['role_id' => 4, 'permission_id' => 2],
-            18 => ['role_id' => 4, 'permission_id' => 5],
-            19 => ['role_id' => 4, 'permission_id' => 8],
+            1 => ['role_id' => Constants::ROLE_SUPER_ADMIN, 'permission_id' => Constants::PERM_READ_USER],
+            2 => ['role_id' => Constants::ROLE_SUPER_ADMIN, 'permission_id' => Constants::PERM_CREATE_USER],
+            3 => ['role_id' => Constants::ROLE_SUPER_ADMIN, 'permission_id' => Constants::PERM_UPDATE_USER],
+            4 => ['role_id' => Constants::ROLE_SUPER_ADMIN, 'permission_id' => Constants::PERM_DELETE_USER],
+            5 => ['role_id' => Constants::ROLE_SUPER_ADMIN, 'permission_id' => Constants::PERM_READ_PAGE],
+            6 => ['role_id' => Constants::ROLE_SUPER_ADMIN, 'permission_id' => Constants::PERM_CREATE_PAGE],
+            7 => ['role_id' => Constants::ROLE_SUPER_ADMIN, 'permission_id' => Constants::PERM_UPDATE_PAGE],
+            8 => ['role_id' => Constants::ROLE_SUPER_ADMIN, 'permission_id' => Constants::PERM_PUBLISH_PAGE],
+            9 => ['role_id' => Constants::ROLE_SUPER_ADMIN, 'permission_id' => Constants::PERM_DELETE_PAGE],
+            10 => ['role_id' => Constants::ROLE_ADMIN, 'permission_id' => Constants::PERM_READ_USER],
+            11 => ['role_id' => Constants::ROLE_ADMIN, 'permission_id' => Constants::PERM_CREATE_USER],
+            12 => ['role_id' => Constants::ROLE_ADMIN, 'permission_id' => Constants::PERM_UPDATE_USER],
+            13 => ['role_id' => Constants::ROLE_ADMIN, 'permission_id' => Constants::PERM_DELETE_USER],
+            14 => ['role_id' => Constants::ROLE_ADMIN, 'permission_id' => Constants::PERM_READ_PAGE],
+            15 => ['role_id' => Constants::ROLE_ADMIN, 'permission_id' => Constants::PERM_CREATE_PAGE],
+            16 => ['role_id' => Constants::ROLE_ADMIN, 'permission_id' => Constants::PERM_UPDATE_PAGE],
+            17 => ['role_id' => Constants::ROLE_ADMIN, 'permission_id' => Constants::PERM_PUBLISH_PAGE],
+            18 => ['role_id' => Constants::ROLE_ADMIN, 'permission_id' => Constants::PERM_DELETE_PAGE],
+            19 => ['role_id' => Constants::ROLE_TEST, 'permission_id' => Constants::PERM_CREATE_USER],
+            20 => ['role_id' => Constants::ROLE_TEST, 'permission_id' => Constants::PERM_READ_PAGE],
+            21 => ['role_id' => Constants::ROLE_TEST, 'permission_id' => Constants::PERM_PUBLISH_PAGE],
         ];
     }
 }

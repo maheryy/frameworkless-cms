@@ -9,6 +9,7 @@ use App\Core\Utils\Mailer;
 use App\Core\Utils\ConstantManager;
 use App\Core\Utils\Constants;
 use App\Core\Utils\FormRegistry;
+use App\Core\Utils\Seeds;
 use App\Core\Utils\Token;
 use App\Core\Utils\UrlBuilder;
 use App\Core\Utils\Validator;
@@ -164,6 +165,18 @@ class Installer extends Controller
             $this->sendError('Veuillez vérifier les informations de connexion à la base de donnée');
         }
 
+    }
+
+    /* -------- TO DELETE ----------*/
+    # /db-seed
+    public function dbSeed()
+    {
+        $seeds = Seeds::getAvailableSeeds();
+        foreach ($seeds as $seed) {
+            $this->repository->{$seed}->runSeed();
+        }
+
+        echo 'database seeding complete';
     }
 
     public function generateConfig(array $data)

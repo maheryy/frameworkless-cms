@@ -8,7 +8,6 @@ class Permission extends Model
 {
     private $id;
     protected $name;
-    protected $reference;
     protected $description;
 
     public function __construct()
@@ -41,22 +40,6 @@ class Permission extends Model
     public function setName($name): void
     {
         $this->name = $name;
-    }
-
-    /**
-     * @return mixed
-     */
-    public function getReference()
-    {
-        return $this->reference;
-    }
-
-    /**
-     * @param mixed $reference
-     */
-    public function setReference($reference): void
-    {
-        $this->reference = $reference;
     }
 
     /**

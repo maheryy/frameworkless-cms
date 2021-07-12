@@ -91,7 +91,7 @@ class Session
 
     /**
      * @param string $key
-     * @param int|string $value
+     * @param int|string|array $value
      * 
      */
     public function set(string $key, $value)

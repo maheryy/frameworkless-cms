@@ -13,7 +13,7 @@
             <tr>
                 <td><a href="<?= $user['url_detail'] ?>"><?= $user['username'] ?></a></td>
                 <td><?= $user['email'] ?></td>
-                <td><?= $user['role'] ?></td>
+                <td><?= $user['role_name'] ?></td>
                 <td>
                     <a href="<?= $user['url_delete'] ?>" data-role="deleteItem">
                         <i class="fas fa-trash-alt"></i>

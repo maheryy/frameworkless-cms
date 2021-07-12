@@ -29,6 +29,10 @@
   controller: Installer
   method: registerAction
 
+/db-seed:
+  controller: Installer
+  method: dbSeed
+
 # Authentification
 /login:
   controller: User

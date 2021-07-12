@@ -15,6 +15,16 @@ class UserRepository extends BaseRepository
         parent::__construct($model);
     }
 
+    public function findAll()
+    {
+        $role_table = Formatter::getTableName('role');
+        $this->queryBuilder
+            ->select(["$this->table.*", 'role_name' => "$role_table.name"])
+            ->joinInner($role_table, "$this->table.role = $role_table.id");
+
+        return $this->model->fetchAll($this->queryBuilder);
+    }
+
     public function findByLogin(string $login)
     {
         $this->queryBuilder

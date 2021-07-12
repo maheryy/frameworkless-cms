@@ -211,4 +211,15 @@ abstract class Controller
         }
         return true;
     }
+
+    /**
+     * Check permission
+     *
+     * @param int $permission
+     * @return bool
+     */
+    protected function hasPermission(int $permission)
+    {
+        return in_array($permission, $this->session->get('permissions'));
+    }
 }
