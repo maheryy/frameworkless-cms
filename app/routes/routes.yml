@@ -154,7 +154,7 @@
 
 
 # Role management
-/roles:
+/role:
   controller: Role
   method: roleView
   title: Gestion des rôles
@@ -189,26 +189,15 @@
   method: importThemeAction
   require_auth: True
 
-/navigations:
-  controller: Webpage
-  method: navigationListView
-  title: Liste des navigations
-  require_auth: True
-
-/new-navigation:
-  controller: Webpage
-  method: createNavigationView
-  title: Ajouter une navigation
-  require_auth: True
-
-/new-navigation-save:
-  controller: Webpage
-  method: createNavigationAction
-  require_auth: True
-
 /navigation:
   controller: Webpage
   method: navigationView
+  title: Liste des navigations
+  require_auth: True
+
+/navigation-tab:
+  controller: Webpage
+  method: navigationTabView
   title: Modifier une navigation
   require_auth: True
 

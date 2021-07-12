@@ -17,14 +17,11 @@ sidebar-main:
   appearance:
     label: Apparance
     icon: fas fa-palette
-    route: /admin/navigations
+    route: /admin/navigation
     sub-links:
       navigations:
         label: Navigations
-        route: /admin/navigations
-      new_navigation:
-        label: Ajouter nav
-        route: /admin/new-navigation
+        route: /admin/navigation
       themes:
         label: Thèmes
         route: /admin/themes
@@ -44,18 +41,7 @@ sidebar-main:
         route:
       roles:
         label: Roles
-        route: /admin/roles
-  appearance:
-    label: Apparance
-    icon: fas fa-palette
-    route: /admin/themes
-    sub-links:
-      themes:
-        label: Thèmes
-        route: /admin/themes
-      navigations:
-        label: Navigation
-        route: /admin/navigations
+        route: /admin/role
 
 sidebar-bottom:
   settings:
