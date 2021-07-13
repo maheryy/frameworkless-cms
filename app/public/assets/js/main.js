@@ -40,17 +40,17 @@ function bindRoles(root_element = null) {
 }
 
 function getOptions(el) {
-    let opts = $(el).data('options');
+    const opts = $(el).data('options');
     return opts != null && opts != undefined && opts != '' ? opts : false;
 }
 
 function getId(el) {
-    let id = $(el).data('id');
+    const id = $(el).data('id');
     return id != null && id != undefined ? id : false;
 }
 
 function getUrl(el) {
-    let url = $(el).data('url');
+    const url = $(el).data('url');
     return url != null && url != undefined && url != '' ? url : false;
 }
 
@@ -131,110 +131,10 @@ function setInfo(type, text, delay = null) {
     }
 }
 
-/* .table-list > (.list-count-container > .list-count + .list-count-text) + (.li-actions)*/
-function updateTableListCounter() {
-    let updated = updateListCounter({
-        countElement: '.table-list .table-row-check',
-        countTag: ':checked',
-        updateElement: '.list-count-container',
-        defaultText: 'éléments',
-        updatedText: 'séléctionnés',
-    });
-
-    if (updated > 0) {
-        $('.list-action-toggle').show();
-    } else {
-        $('.list-action-toggle').hide();
-    }
-
-    return updated;
-}
-
-function updateListCounter(data) {
-    let elt = `${data.countElement}${data.countTag}`;
-    let count_selected = countElement(elt);
-    if (count_selected > 0) {
-        $(data.updateElement).find('.list-count').html(count_selected);
-        $(data.updateElement).find('.list-count-text').html(' ' + data.updatedText);
-    } else {
-        count_total = countElement(data.countElement);
-        $(data.updateElement).find('.list-count').html(count_total);
-        $(data.updateElement).find('.list-count-text').html(' ' + data.defaultText);
-    }
-
-    return count_selected;
-}
-
-function countElement(element) {
-    return $(element).length;
-}
-
 /* Include every data-role functions declared in the HTML code below */
 const roleFunctions = {
     setActiveLink: function () {
         $(this).parents('li.sidebar-link').addClass('selected');
-    },
-    initTableList: function () {
-        //  Check every table row
-        let total_checkbox = countElement('.table-list .table-row-check');
-        updateTableListCounter();
-        $('#table-check-all').change(function () {
-            let all_checked = $(this).is(':checked');
-            $('.table-list .table-row-check').each(function () {
-                this.checked = all_checked;
-            });
-
-            if (all_checked) {
-                $('.table-list tbody tr').addClass('selected')
-            } else {
-                $('.table-list tbody tr').removeClass('selected');
-            }
-
-            updateTableListCounter();
-        })
-
-        //  Check a row on click
-        $('.table-list tbody tr').click(function (e) {
-            let checkbox = $(this).find('.table-row-check');
-
-            if (!$(e.target).is(checkbox) && !$(e.target).is('a')) {
-                checkbox[0].checked = !checkbox[0].checked;
-            }
-
-            if (checkbox[0].checked) {
-                $(checkbox).closest('tr').addClass('selected')
-            } else {
-                $(checkbox).closest('tr').removeClass('selected')
-            }
-
-
-            $('#table-check-all')[0].checked = total_checkbox - updateTableListCounter() > 0 ? false : true;
-
-            // checkboxes_count = updateTableListCounter();
-        })
-
-        // Delete row(s) from the list
-        $('#list-remove').click(function () {
-            let id_list = [];
-            $('.table-list tr.selected').each(function () {
-                id_list.push(getId(this));
-            });
-
-            if (id_list.length) {
-                $('.table-list tr.selected').addClass('remove-animation');
-                setTimeout(function () {
-                    $('.table-list tr.selected').remove();
-                    $('#table-check-all')[0].checked = total_checkbox - updateTableListCounter() > 0 ? false : true;
-
-                    if (id_list.length == 1) {
-                        setInfo(INFO_DANGER, '1 élément a été supprimé');
-                    } else {
-                        setInfo(INFO_DANGER, id_list.length + ' éléments ont été supprimés');
-                    }
-                }, 650);
-            }
-        })
-
     },
     initInfoBox: function () {
         $('#info-close').click(function () {
@@ -474,7 +374,6 @@ const roleFunctions = {
     }
 };
 
-let delay_function;
 const ajaxFunctions = {
     debug: function (res) {
         if (res.success) {
@@ -501,23 +400,6 @@ const ajaxFunctions = {
     errorDefault: function (error) {
         console.log('An error occured : ', error.responseText);
     },
-    loginSuccessful: function (res) {
-        setInfo(INFO_SUCCESS, res.message);
-        setTimeout(function () {
-            $('#info-box').removeClass('active');
-
-            if (res.data.url_next) {
-                window.location.href = res.data.url_next;
-            }
-        }, 1000);
-    },
-    loginError: function (error) {
-        setInfo(INFO_DANGER, error.responseText);
-        clearTimeout(delay_function);
-        delay_function = setTimeout(function () {
-            $('#info-box').removeClass('active');
-        }, 5000);
-    }
 };
 
 $(document).ready(function () {

@@ -1,26 +1,30 @@
-include .env
+-include .env
 
 ## Run all docker services
 start:
-	@$(DOCKER_COMPOSE) -f $(DOCKER_COMPOSE_FILE) up -d
+	docker-compose -f $(DOCKER_COMPOSE_FILE) up -d
 
 ## Build the dockerfile project
 build:
-	@$(DOCKER_COMPOSE) -f $(DOCKER_COMPOSE_FILE) build
+	docker-compose -f $(DOCKER_COMPOSE_FILE) build
 
 ## Stop all docker services
 stop:
-	@$(DOCKER_COMPOSE) -f $(DOCKER_COMPOSE_FILE) stop
+	docker-compose -f $(DOCKER_COMPOSE_FILE) stop
 
 ## Restart all docker services
 restart:
-	@$(DOCKER_COMPOSE) -f $(DOCKER_COMPOSE_FILE) stop
-	@$(DOCKER_COMPOSE) -f $(DOCKER_COMPOSE_FILE) up -d
+	docker-compose -f $(DOCKER_COMPOSE_FILE) stop
+	docker-compose -f $(DOCKER_COMPOSE_FILE) up -d
 
 ## Show logs for all services
 logs:
-	@$(DOCKER_COMPOSE) -f $(DOCKER_COMPOSE_FILE) logs --tail=5 -f
+	docker-compose -f $(DOCKER_COMPOSE_FILE) logs --tail=5
 
 ## Clear all services
 clear:
-	@$(DOCKER_COMPOSE) -f $(DOCKER_COMPOSE_FILE) down
+	docker-compose -f $(DOCKER_COMPOSE_FILE) down
+
+## .env setup
+env:
+	cp .env.dist .env
