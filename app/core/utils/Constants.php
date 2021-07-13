@@ -34,7 +34,7 @@ class Constants
     # Visibility types
     const VISIBILITY_PUBLIC = 1;
     const VISIBILITY_PRIVATE = 2;
-
+    
     # User roles
     const ROLE_SUPER_ADMIN = 1;
     const ROLE_ADMIN = 2;
@@ -52,6 +52,10 @@ class Constants
     const PERM_PUBLISH_PAGE = 8;
     const PERM_DELETE_PAGE = 9;
 
+    # Navigation types
+    const NAVIGATION_HEADER = 1;
+    const NAVIGATION_FOOTER = 2;
+
 
     public static function getPostStatuses()
     {
@@ -66,6 +70,14 @@ class Constants
         return [
             self::VISIBILITY_PUBLIC => 'Publique',
             self::VISIBILITY_PRIVATE => 'Privé',
+        ];
+    }
+
+    public static function getNavigationTypes()
+    {
+        return [
+            self::NAVIGATION_HEADER => 'Header',
+            self::NAVIGATION_FOOTER => 'Footer',
         ];
     }
 }

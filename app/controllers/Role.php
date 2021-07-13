@@ -14,7 +14,7 @@ class Role extends Controller
         parent::__construct($options);
     }
 
-    # /roles
+    # /role
     public function roleView()
     {
         $this->setCSRFToken();

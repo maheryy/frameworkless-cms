@@ -154,7 +154,7 @@
 
 
 # Role management
-/roles:
+/role:
   controller: Role
   method: roleView
   title: Gestion des rôles
@@ -168,4 +168,45 @@
 /role-save:
   controller: Role
   method: roleAction
+  require_auth: True
+
+
+# Webpage editor (appearance)
+/themes:
+  controller: Appearance
+  method: themeListView
+  title: Liste des thèmes
+  require_auth: True
+
+/import-theme:
+  controller: Appearance
+  method: importThemeView
+  title: Importer un thème
+  require_auth: True
+
+/import-theme-save:
+  controller: Appearance
+  method: importThemeAction
+  require_auth: True
+
+/navigation:
+  controller: Appearance
+  method: navigationView
+  title: Liste des navigations
+  require_auth: True
+
+/navigation-tab:
+  controller: Appearance
+  method: navigationTabView
+  title: Modifier une navigation
+  require_auth: True
+
+/navigation-save:
+  controller: Appearance
+  method: navigationAction
+  require_auth: True
+
+/delete-navigation:
+  controller: Appearance
+  method: deleteNavigationAction
   require_auth: True
