@@ -337,6 +337,55 @@ const roleFunctions = {
         $(container).find('#transpose-source .transpose-element').click(sourceClick);
         $(container).find('#transpose-target .transpose-element').click(targetClick);
     },
+    initNavigationTransferable: function () {
+        const target_list = $(this).find('#transferable-target .list-elements');
+
+        const sourceClick = e => {
+            const data = getOptions($(e.currentTarget).find('input.element-data'));
+            // Base element
+            const element =
+                '<li class="transferable-element">' +
+                '<div class="element-content">' +
+                `<input type="hidden" name="nav_items[]" value="${data.page_id}">` +
+                `<input type="text" name="nav_labels[]" value="${data.page_title}">` +
+                `<span class="description">Page ${data.page_title} | <a target="_blank" href="${data.page_link}">${data.page_link}</a></span>` +
+                '</div>' +
+                '</li>';
+
+            // Attach event to item actions
+            const up = $('<span class="element-up"><i class="fas fa-sort-up"></i></span>').click(moveUp);
+            const down = $('<span class="element-down"><i class="fas fa-sort-down"></i></span>').click(moveDown);
+            const del = $('<span class="element-delete"><i class="fas fa-times"></i></span>').click(remove);
+
+            // Create a container for the actions to append to base element
+            const actions = $('<div class="element-actions"></div>').append(up, [down, del]);
+            $(element).append(actions).appendTo(target_list);
+        };
+
+        const remove = e => {
+            $(e.currentTarget).closest('li').remove();
+        }
+
+        const moveUp = e => {
+            const current = $(e.currentTarget).closest('li');
+            const prev = $(current).prev();
+            if (prev.length) {
+                $(prev).before(current);
+            }
+        }
+        const moveDown = e => {
+            const current = $(e.currentTarget).closest('li');
+            const next = $(current).next();
+            if (next.length) {
+                $(next).after(current);
+            }
+        }
+
+        $(this).find('#transferable-source .transferable-element').click(sourceClick);
+        $(this).find('#transferable-target .transferable-element .element-up').click(moveUp);
+        $(this).find('#transferable-target .transferable-element .element-down').click(moveDown);
+        $(this).find('#transferable-target .transferable-element .element-delete').click(remove);
+    },
     submitDefault: function () {
         $(this).click(function (e) {
             e.preventDefault();

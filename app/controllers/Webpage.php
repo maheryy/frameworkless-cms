@@ -36,14 +36,15 @@ class Webpage extends Controller
         }
 
         $view_data = [
+            'pages' => $this->repository->post->findPublishedPages(),
             'navigations' => $navs,
             'navigation_items' => $nav_items,
-            'pages' => $this->repository->post->findPublishedPages(),
-            'default_tab' => $default_nav,
-            'default_tab_view' => PATH_VIEWS . 'nav_tab_default.php',
             'referer' => $default_nav,
             'nav_name' => $nav_name,
+            'nav_types' => Constants::getNavigationTypes(),
             'url_form' => UrlBuilder::makeUrl('Webpage', 'navigationAction'),
+            'default_tab' => $default_nav,
+            'default_tab_view' => PATH_VIEWS . 'nav_tab_default.php',
             'tab_options' => [
                 'url_tab_view' => UrlBuilder::makeUrl('Webpage', 'navigationTabView'),
                 'container_id' => 'tab-content'
@@ -71,6 +72,7 @@ class Webpage extends Controller
             'referer' => $nav_id,
             'pages' => $this->repository->post->findPublishedPages(),
             'nav_name' => $nav_name,
+            'nav_types' => Constants::getNavigationTypes(),
             'navigation_items' => $nav_items,
             'url_form' => UrlBuilder::makeUrl('Webpage', 'navigationAction'),
         ];
@@ -83,6 +85,7 @@ class Webpage extends Controller
         $this->validateCSRF();
         $nav_id = $this->request->post('ref');
         $nav_items = $this->request->post('nav_items');
+        $nav_labels = $this->request->post('nav_labels');
 
         if (!$nav_id) {
             $this->sendError('Une erreur est survenue', ['nav_id' => $nav_id]);
@@ -94,8 +97,17 @@ class Webpage extends Controller
             $this->sendError('Veuillez ajouter au moins une page');
         }
 
+        $index = 0;
+        $res = array_map(function ($el) use (&$index, $nav_labels) {
+            return [
+                'post_id' => (int)$el,
+                'label' => $nav_labels[$index++],
+                'order' => $index,
+            ];
+        }, $nav_items);
+
         echo '<pre>';
-        print_r($nav_items);
+        print_r($res);
         die();
 
 //        try {
@@ -137,7 +149,7 @@ class Webpage extends Controller
             'delay_url_next' => 0,
         ]);
     }
-    
+
     # /themes
     public function themeListView()
     {
