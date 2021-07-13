@@ -2,7 +2,7 @@ include .env
 
 ## Run all docker services
 start:
-	@$(DOCKER_COMPOSE) -f $(DOCKER_COMPOSE_FILE) up -d --build
+	@$(DOCKER_COMPOSE) -f $(DOCKER_COMPOSE_FILE) up -d
 
 ## Build the dockerfile project
 build:

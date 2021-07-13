@@ -5,7 +5,6 @@ namespace App\Repositories;
 use App\Core\BaseRepository;
 use App\Core\Utils\Constants;
 use App\Core\Utils\Expr;
-use App\Core\Utils\Formatter;
 use App\Models\Navigation;
 
 class NavigationRepository extends BaseRepository
@@ -15,17 +14,23 @@ class NavigationRepository extends BaseRepository
         parent::__construct($model);
     }
 
-    public function findNavigation(int $id)
+    public function findAll()
     {
-        $nav_item_table = Formatter::getTableName('navigation_item');
         $this->queryBuilder
-            ->select([
-                "$nav_item_table.*",
-                "$this->table.*",
-            ])
-            ->joinInner($nav_item_table, "$this->table.id = $nav_item_table.navigation_id")
-            ->where(Expr::eq("$this->table.id", $id));
+            ->where(Expr::neq('status', Constants::STATUS_DELETED))
+            ->orderAsc('type')
+            ->orderDesc('status');
 
         return $this->model->fetchAll($this->queryBuilder);
+
+    }
+    public function setAllInactive(int $type)
+    {
+        return $this->model->updateQuery(['status' => Constants::STATUS_INACTIVE], [Expr::eq('type', $type)]);
+    }
+
+    public function remove(int $id)
+    {
+        return $this->model->deleteQuery([Expr::eq('id', $id)]);
     }
 }

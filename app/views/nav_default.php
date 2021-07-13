@@ -7,10 +7,19 @@
             <select id="tab_view" class="form-control w-full text-base" name="tab_view" data-role="initSelectTabs"
                     data-options=<?= json_encode($tab_options) ?>>
                 <option value="-1">Ajouter une navigation</option>
-                <?php foreach ($navigations as $nav) : ?>
-                    <option <?= $default_tab == $nav['id'] ? 'selected=selected' : '' ?>
-                            value="<?= $nav['id'] ?>"><?= $nav['title'] ?></option>
+                <?php $last_type = null; ?>
+                <?php foreach ($navs as $nav) : ?>
+                    <?php if (is_null($last_type)) : ?>
+                         <optgroup label="<?= $nav_types[$nav['type']] ?>">
+                    <?php elseif ($nav['type'] != $last_type) : ?>
+                        </optgroup>
+                        <optgroup label="<?= $nav_types[$nav['type']] ?>">
+                    <?php endif; ?>
+                    <option <?= $default_tab == $nav['id'] ? 'selected=selected' : '' ?> value="<?= $nav['id'] ?>">
+                        <?= $nav['title'] . ($nav['status'] == \App\Core\Utils\Constants::STATUS_ACTIVE ? ' - Active' : '') ?></option>
+                    <?php $last_type = $nav['type']; ?>
                 <?php endforeach; ?>
+                <?= $last_type ? '</optgroup>' : ''?>
             </select>
         </div>
         <div>

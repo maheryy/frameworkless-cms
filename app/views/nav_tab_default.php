@@ -19,32 +19,35 @@
                 <p class="">
                     <input type="text" id="nav-name"
                            class="text-xl font-extralight py-0.5 px-0.25 w-full border-none border-bottom-default"
-                           name="nav_name" placeholder="Nom de la navigation" value="<?= $nav_name ?>">
+                           name="nav_name" placeholder="Nom de la navigation"
+                           value="<?= isset($nav_data['nav_title']) ? $nav_data['nav_title'] : 'Nouvelle navigation' ?>">
                 </p>
                 <div class="nav-config w-full py-1 px-0.5 flex justify-around">
                     <div class="form-field py-0.5 w-2/6">
                         <select class="form-control w-full" id="nav_type" name="nav_type">
                             <?php foreach ($nav_types as $value => $label) : ?>
-                                <option value="<?= $value ?>"> <?= $label ?></option>
+                                <option value="<?= $value ?>" <?= isset($nav_data['nav_type']) && $nav_data['nav_type'] == $value ? 'selected=selected' : '' ?>> <?= $label ?></option>
                             <?php endforeach; ?>
                         </select>
                         <label for="nav_type">Type de navigation</label>
                     </div>
-                    <div class="form-field-inline py-0.5 w-2/6">
-                        <input type="checkbox" name="nav_active" id="nav_active" value="1">
+                    <div class="form-field-inline py-0.5 w-1/6">
+                        <input type="checkbox" name="nav_active" id="nav_active"
+                               value="1" <?= isset($nav_data['nav_active']) && $nav_data['nav_active'] == \App\Core\Utils\Constants::STATUS_ACTIVE ? 'checked=checked' : '' ?>>
                         <label for="nav_active">Active</label>
                     </div>
                 </div>
                 <hr class="w-4/12 self-center mt-1 mb-0.25 border-bottom-default divider">
                 <div id="transferable-target" class="w-full">
                     <ul class="list-elements py-1">
-                        <?php foreach ($navigation_items as $nav_item) : ?>
+                        <?php foreach ($nav_items as $nav_item) : ?>
                             <li class="transferable-element">
                                 <div class="element-content">
-                                    <input type="hidden" name="nav_items[]" value="<?= $nav_item['id'] ?>">
+                                    <input type="hidden" name="nav_items[]" value="<?= $nav_item['page_id'] ?>">
                                     <input type="text" name="nav_labels[]" value="<?= $nav_item['label'] ?>">
                                     <span class="description">Page <?= $nav_item['page_title'] ?> |
-                                        <a target="_blank" href="<?= $nav_item['slug'] ?>"><?= $nav_item['slug'] ?></a>
+                                        <a target="_blank"
+                                           href="/<?= $nav_item['page_link'] ?>"><?= '/' . $nav_item['page_link'] ?></a>
                                     </span>
                                 </div>
                                 <div class="element-actions">

@@ -4,11 +4,8 @@ namespace App\Controllers;
 
 use App\Core\Controller;
 use App\Core\Database;
-use App\Core\Exceptions\NotFoundException;
 use App\Core\Utils\Constants;
-use App\Core\Utils\Formatter;
 use App\Core\Utils\UrlBuilder;
-use App\Core\Utils\Validator;
 
 class Webpage extends Controller
 {
@@ -24,23 +21,15 @@ class Webpage extends Controller
         $this->setCSRFToken();
 
         $default_nav = $this->request->get('id') ?? 1;
-        $nav_items = $this->repository->navigation->findNavigation($default_nav);
+        $nav_items = $this->repository->navigationItem->findNavigationItems($default_nav);
         $navs = $this->repository->navigation->findAll();
-        $nav_name = 'Nouvelle navigation';
-
-        foreach ($navs as $nav) {
-            if ($nav['id'] == $default_nav) {
-                $nav_name = $nav_name['name'];
-                break;
-            }
-        }
 
         $view_data = [
             'pages' => $this->repository->post->findPublishedPages(),
-            'navigations' => $navs,
-            'navigation_items' => $nav_items,
-            'referer' => $default_nav,
-            'nav_name' => $nav_name,
+            'navs' => $navs,
+            'nav_items' => $nav_items,
+            'referer' => !empty($navs) ? $default_nav : -1,
+            'nav_data' => $nav_items[0] ?? null,
             'nav_types' => Constants::getNavigationTypes(),
             'url_form' => UrlBuilder::makeUrl('Webpage', 'navigationAction'),
             'default_tab' => $default_nav,
@@ -62,18 +51,16 @@ class Webpage extends Controller
         }
         $nav_items = [];
         if ($nav_id > 0) {
-            $nav_items = $this->repository->navigation->findNavigation($nav_id);
-            $nav_name = $nav_items['name'];
-        } else {
-            $nav_name = 'Nouvelle navigation';
+            $nav_items = $this->repository->navigationItem->findNavigationItems($nav_id);
+            $nav_data = $nav_items[0];
         }
 
         $view_data = [
             'referer' => $nav_id,
             'pages' => $this->repository->post->findPublishedPages(),
-            'nav_name' => $nav_name,
+            'nav_data' => $nav_data ?? null,
             'nav_types' => Constants::getNavigationTypes(),
-            'navigation_items' => $nav_items,
+            'nav_items' => $nav_items,
             'url_form' => UrlBuilder::makeUrl('Webpage', 'navigationAction'),
         ];
         $this->renderViewOnly('nav_tab_default', $view_data);
@@ -97,44 +84,53 @@ class Webpage extends Controller
             $this->sendError('Veuillez ajouter au moins une page');
         }
 
-        $index = 0;
-        $res = array_map(function ($el) use (&$index, $nav_labels) {
-            return [
-                'post_id' => (int)$el,
-                'label' => $nav_labels[$index++],
-                'order' => $index,
-            ];
-        }, $nav_items);
 
-        echo '<pre>';
-        print_r($res);
-        die();
+        $items = [];
+        foreach ($nav_items as $key => $item) {
+            if (empty($nav_labels[$key])) $this->sendError('Le label d\'une page ne peut être vide.');
+            $items[] = ['navigation_id' => $nav_id, 'post_id' => (int)$item, 'label' => $nav_labels[$key]];
+        }
 
-//        try {
-//            Database::beginTransaction();
-//            # New role
-//            if ($role_id == -1) {
-//                $role_id = $this->repository->role->create(['name' => $this->request->post('role_name')]);
-//                $success_msg = 'Un nouveau rôle a été ajouté';
-//            } else {
-//                $this->repository->rolePermission->deleteAllByRole((int)$role_id);
-//                $this->repository->role->update($role_id, ['name' => $this->request->post('role_name')]);
-//                $success_msg = 'Informations sauvegardées';
-//            }
-//
-//            $role_permissions = array_map(fn($perm_id) => ['role_id' => $role_id, 'permission_id' => $perm_id], $permissions);
-//            $this->repository->rolePermission->create($role_permissions);
-//
-//
-//            Database::commit();
-//            $this->sendSuccess($success_msg, [
-//                'url_next' => UrlBuilder::makeUrl('Role', 'roleView', ['id' => $role_id]),
-//                'url_next_delay' => 1
-//            ]);
-//        } catch (\Exception $e) {
-//            Database::rollback();
-//            $this->sendError("Une erreur est survenu", [$e->getMessage()]);
-//        }
+        try {
+            Database::beginTransaction();
+
+            if ($this->request->post('nav_active')) {
+                $this->repository->navigation->setAllInactive($this->request->post('nav_type'));
+            }
+
+            # New navigation
+            if ($nav_id == -1) {
+                $nav_id = $this->repository->navigation->create([
+                    'title' => $this->request->post('nav_name'),
+                    'type' => $this->request->post('nav_type'),
+                    'status' => $this->request->post('nav_active') ? Constants::STATUS_ACTIVE : Constants::STATUS_INACTIVE,
+                ]);
+                foreach ($items as $key => $item) {
+                    $items[$key]['navigation_id'] = $nav_id;
+                }
+                $success_msg = 'Une nouvelle navigation a été ajouté';
+            } else {
+                $this->repository->navigationItem->deleteAllByNavigation((int)$nav_id);
+                $this->repository->navigation->update($nav_id, [
+                    'title' => $this->request->post('nav_name'),
+                    'type' => $this->request->post('nav_type'),
+                    'status' => $this->request->post('nav_active') ? Constants::STATUS_ACTIVE : Constants::STATUS_INACTIVE,
+                ]);
+                $success_msg = 'Informations sauvegardées';
+            }
+
+
+            $this->repository->navigationItem->create($items);
+
+            Database::commit();
+            $this->sendSuccess($success_msg, [
+                'url_next' => UrlBuilder::makeUrl('Webpage', 'navigationView', ['id' => $nav_id]),
+                'url_next_delay' => 1
+            ]);
+        } catch (\Exception $e) {
+            Database::rollback();
+            $this->sendError("Une erreur est survenue", [$e->getMessage()]);
+        }
     }
 
     # /delete-navigation

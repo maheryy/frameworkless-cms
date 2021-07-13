@@ -10,7 +10,6 @@ class NavigationItem extends Model
     protected $navigation_id;
     protected $post_id;
     protected $label;
-    protected $order;
 
     public function __construct()
     {
@@ -75,23 +74,6 @@ class NavigationItem extends Model
     {
         $this->label = $label;
     }
-
-    /**
-     * @return mixed
-     */
-    public function getOrder()
-    {
-        return $this->order;
-    }
-
-    /**
-     * @param mixed $order
-     */
-    public function setOrder($order): void
-    {
-        $this->order = $order;
-    }
-
 
 
 }
