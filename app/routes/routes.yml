@@ -173,40 +173,40 @@
 
 # Webpage editor (appearance)
 /themes:
-  controller: Webpage
+  controller: Appearance
   method: themeListView
   title: Liste des thèmes
   require_auth: True
 
 /import-theme:
-  controller: Webpage
+  controller: Appearance
   method: importThemeView
   title: Importer un thème
   require_auth: True
 
 /import-theme-save:
-  controller: Webpage
+  controller: Appearance
   method: importThemeAction
   require_auth: True
 
 /navigation:
-  controller: Webpage
+  controller: Appearance
   method: navigationView
   title: Liste des navigations
   require_auth: True
 
 /navigation-tab:
-  controller: Webpage
+  controller: Appearance
   method: navigationTabView
   title: Modifier une navigation
   require_auth: True
 
 /navigation-save:
-  controller: Webpage
+  controller: Appearance
   method: navigationAction
   require_auth: True
 
 /delete-navigation:
-  controller: Webpage
+  controller: Appearance
   method: deleteNavigationAction
   require_auth: True

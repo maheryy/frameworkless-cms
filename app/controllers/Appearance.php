@@ -7,7 +7,7 @@ use App\Core\Database;
 use App\Core\Utils\Constants;
 use App\Core\Utils\UrlBuilder;
 
-class Webpage extends Controller
+class Appearance extends Controller
 {
 
     public function __construct(array $options = [])
@@ -32,12 +32,12 @@ class Webpage extends Controller
             'referer' => !$is_empty_table ? $default_nav_id : -1,
             'nav_data' => !$is_empty_table ? $nav_items[0] : null,
             'nav_types' => Constants::getNavigationTypes(),
-            'url_form' => UrlBuilder::makeUrl('Webpage', 'navigationAction'),
-            'url_delete' => !$is_empty_table ? UrlBuilder::makeUrl('Webpage', 'deleteNavigationAction', ['id' => $default_nav_id]) : null,
+            'url_form' => UrlBuilder::makeUrl('Appearance', 'navigationAction'),
+            'url_delete' => !$is_empty_table ? UrlBuilder::makeUrl('Appearance', 'deleteNavigationAction', ['id' => $default_nav_id]) : null,
             'default_tab' => $default_nav_id,
             'default_tab_view' => PATH_VIEWS . 'nav_tab_default.php',
             'tab_options' => [
-                'url_tab_view' => UrlBuilder::makeUrl('Webpage', 'navigationTabView'),
+                'url_tab_view' => UrlBuilder::makeUrl('Appearance', 'navigationTabView'),
                 'container_id' => 'tab-content'
             ]
         ];
@@ -55,7 +55,7 @@ class Webpage extends Controller
         if ($nav_id > 0) {
             $nav_items = $this->repository->navigationItem->findNavigationItems($nav_id);
             $nav_data = $nav_items[0];
-            $url_delete = UrlBuilder::makeUrl('Webpage', 'deleteNavigationAction', ['id' => $nav_id]);
+            $url_delete = UrlBuilder::makeUrl('Appearance', 'deleteNavigationAction', ['id' => $nav_id]);
         }
 
         $view_data = [
@@ -64,7 +64,7 @@ class Webpage extends Controller
             'nav_data' => $nav_data ?? null,
             'nav_types' => Constants::getNavigationTypes(),
             'nav_items' => $nav_items,
-            'url_form' => UrlBuilder::makeUrl('Webpage', 'navigationAction'),
+            'url_form' => UrlBuilder::makeUrl('Appearance', 'navigationAction'),
             'url_delete' => $url_delete ?? null,
         ];
         $this->renderViewOnly('nav_tab_default', $view_data);
@@ -128,7 +128,7 @@ class Webpage extends Controller
 
             Database::commit();
             $this->sendSuccess($success_msg, [
-                'url_next' => UrlBuilder::makeUrl('Webpage', 'navigationView', ['id' => $nav_id]),
+                'url_next' => UrlBuilder::makeUrl('Appearance', 'navigationView', ['id' => $nav_id]),
                 'url_next_delay' => 1
             ]);
         } catch (\Exception $e) {
@@ -145,7 +145,7 @@ class Webpage extends Controller
         }
         $this->repository->navigation->remove($this->request->get('id'));
         $this->sendSuccess('Navigation supprimée', [
-            'url_next' => UrlBuilder::makeUrl('Webpage', 'navigationView'),
+            'url_next' => UrlBuilder::makeUrl('Appearance', 'navigationView'),
             'delay_url_next' => 0,
         ]);
     }
