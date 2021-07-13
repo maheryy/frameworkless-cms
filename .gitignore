@@ -1,11 +1,10 @@
 .DS_Store
-
-.db_data
-docker-compose.*.yaml
+.db_data/
+.idea/
 .env
 
-.docker/config/*.*.ini
-.docker/config/*.*.conf
+docker-compose.*.yaml
+docker/php/*.*.ini
+docker/nginx/*.*.conf
 
-db_backups
-.idea
+db_backups/
