@@ -20,19 +20,21 @@ class Webpage extends Controller
     {
         $this->setCSRFToken();
 
-        $default_nav = $this->request->get('id') ?? 1;
-        $nav_items = $this->repository->navigationItem->findNavigationItems($default_nav);
         $navs = $this->repository->navigation->findAll();
+        $default_nav_id = $this->request->get('id') ?? $navs[0]['id'] ?? -1;
+        $nav_items = $this->repository->navigationItem->findNavigationItems($default_nav_id);
+        $is_empty_table = empty($navs);
 
         $view_data = [
             'pages' => $this->repository->post->findPublishedPages(),
             'navs' => $navs,
             'nav_items' => $nav_items,
-            'referer' => !empty($navs) ? $default_nav : -1,
-            'nav_data' => $nav_items[0] ?? null,
+            'referer' => !$is_empty_table ? $default_nav_id : -1,
+            'nav_data' => !$is_empty_table ? $nav_items[0] : null,
             'nav_types' => Constants::getNavigationTypes(),
             'url_form' => UrlBuilder::makeUrl('Webpage', 'navigationAction'),
-            'default_tab' => $default_nav,
+            'url_delete' => !$is_empty_table ? UrlBuilder::makeUrl('Webpage', 'deleteNavigationAction', ['id' => $default_nav_id]) : null,
+            'default_tab' => $default_nav_id,
             'default_tab_view' => PATH_VIEWS . 'nav_tab_default.php',
             'tab_options' => [
                 'url_tab_view' => UrlBuilder::makeUrl('Webpage', 'navigationTabView'),
@@ -53,6 +55,7 @@ class Webpage extends Controller
         if ($nav_id > 0) {
             $nav_items = $this->repository->navigationItem->findNavigationItems($nav_id);
             $nav_data = $nav_items[0];
+            $url_delete = UrlBuilder::makeUrl('Webpage', 'deleteNavigationAction', ['id' => $nav_id]);
         }
 
         $view_data = [
@@ -62,6 +65,7 @@ class Webpage extends Controller
             'nav_types' => Constants::getNavigationTypes(),
             'nav_items' => $nav_items,
             'url_form' => UrlBuilder::makeUrl('Webpage', 'navigationAction'),
+            'url_delete' => $url_delete ?? null,
         ];
         $this->renderViewOnly('nav_tab_default', $view_data);
     }
@@ -140,8 +144,8 @@ class Webpage extends Controller
             $this->sendError('Une erreur est survenue');
         }
         $this->repository->navigation->remove($this->request->get('id'));
-        $this->sendSuccess('Page supprimée', [
-            'url_next' => UrlBuilder::makeUrl('Webpage', 'navigationListView'),
+        $this->sendSuccess('Navigation supprimée', [
+            'url_next' => UrlBuilder::makeUrl('Webpage', 'navigationView'),
             'delay_url_next' => 0,
         ]);
     }

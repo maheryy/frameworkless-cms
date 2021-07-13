@@ -63,6 +63,9 @@
                     <input type="submit" class="<?= $referer == -1 ? 'btn-success' : 'btn-primary' ?> text-base"
                            value="<?= $referer == -1 ? 'Ajouter' : 'Sauvegarder' ?>" data-role="submitPermissions"
                            data-options=<?= json_encode(['add_data' => ['ref' => $referer]]) ?>>
+                    <?php if ($url_delete) : ?>
+                        <button class="btn-danger text-base" data-url="<?= $url_delete ?>" data-role="deleteItem">Supprimer</button>
+                    <?php endif; ?>
                 </div>
             </form>
         </article>
