@@ -56,6 +56,10 @@ class Constants
     const NAVIGATION_HEADER = 1;
     const NAVIGATION_FOOTER = 2;
 
+    # General settings table keys
+    const STG_TITLE = 'site_title';
+    const STG_DESCRIPTION = 'site_description';
+
 
     public static function getPostStatuses()
     {

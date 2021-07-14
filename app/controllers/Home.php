@@ -13,6 +13,11 @@ class Home extends Controller
 
     public function defaultView()
     {
+        $res = $this->repository->settings->findAll();
+        echo '<pre>';
+        print_r($res);
+        echo '</pre>';
+
         $view_data = [
             'name' => 'John',
             'age' => 25,

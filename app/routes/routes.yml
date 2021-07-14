@@ -210,3 +210,14 @@
   controller: Appearance
   method: deleteNavigationAction
   require_auth: True
+
+# Settings
+/general-settings:
+  controller: Settings
+  method: generalSettingsView
+  require_auth: True
+
+/general-settings-save:
+  controller: Settings
+  method: generalSettingsAction
+  require_auth: True
