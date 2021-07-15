@@ -1,0 +1,46 @@
+#tabs-container {
+  width: 80%;
+  margin: auto;
+  #tab-list {
+    display: flex;
+    justify-items: flex-start;
+
+    .tab-item {
+      flex-basis: 125px;
+      height: 2.5rem;
+      display: flex;
+      align-items: flex-end;
+      border-right: 1px solid $card-shadow;
+      border-top: 1px solid $card-shadow;
+
+      &:first-of-type {
+        border-left : 1px solid $card-shadow;
+      }
+      .tab-btn {
+        appearance: none;
+        border: none;
+        cursor: pointer;
+        width: 100%;
+        height: 100%;
+        font-size: 1.125em;
+        background-color: darken(#ffff, 5%);
+
+        &.active {
+          background-color: #ffff;
+          height: calc(2.5rem + 7px);
+          border: 1px solid $card-shadow;
+          border-bottom: none;
+        }
+      }
+    }
+  }
+
+  #content-container {
+    .tab-content {
+      width: 100%;
+      border-radius: 0 .5em .5em .5em;
+      border: 1px solid $card-shadow;
+      padding: 1em;
+    }
+  }
+}

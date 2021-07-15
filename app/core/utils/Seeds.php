@@ -22,9 +22,10 @@ class Seeds
     public static function getAvailableSeeds()
     {
         return [
-            'role',
-            'permission',
-            'rolePermission'
+            'settings',
+//            'role',
+//            'permission',
+//            'rolePermission'
         ];
     }
 
@@ -104,6 +105,18 @@ class Seeds
             19 => ['role_id' => Constants::ROLE_TEST, 'permission_id' => Constants::PERM_CREATE_USER],
             20 => ['role_id' => Constants::ROLE_TEST, 'permission_id' => Constants::PERM_READ_PAGE],
             21 => ['role_id' => Constants::ROLE_TEST, 'permission_id' => Constants::PERM_PUBLISH_PAGE],
+        ];
+    }
+
+    public static function settings()
+    {
+        return [
+            ['name' => Constants::STG_TITLE, 'value' => null],
+            ['name' => Constants::STG_DESCRIPTION, 'value' => null],
+            ['name' => Constants::STG_EMAIL_ADMIN, 'value' => null],
+            ['name' => Constants::STG_EMAIL_CONTACT, 'value' => null],
+            ['name' => Constants::STG_ROLE, 'value' => Constants::ROLE_TEST],
+            ['name' => Constants::STG_PUBLIC_SIGNUP, 'value' => 0],
         ];
     }
 }

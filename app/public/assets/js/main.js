@@ -170,6 +170,21 @@ const roleFunctions = {
             }
         });
     },
+    initClassicalTabs: function () {
+        $('#tab-list .tab-btn').click(function () {
+            const ref_id = getId(this);
+            $('#tab-list .tab-btn').each((key, el) => {
+                let id = getId(el);
+                if (ref_id === id) {
+                    $(el).addClass('active');
+                    $(`#content-${id}`).attr('class', 'tab-content active');
+                } else {
+                    $(el).removeClass('active');
+                    $(`#content-${id}`).attr('class', 'tab-content hidden');
+                }
+            });
+        });
+    },
     initTabs: function () {
         const options = getOptions(this);
         $('.tabs-container .tab-view').click(function (e) {

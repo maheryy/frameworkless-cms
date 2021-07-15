@@ -9,6 +9,25 @@ use App\Core\Utils\Repository;
 
 class Mailer
 {
+    public static function connect(string $host, int $port, string $user, string $password) {
+        $mailer = new PHPMailer(true);
+        $mailer->isSMTP();
+        $mailer->SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS;
+        $mailer->SMTPAuth = true;
+        $mailer->Host = $host;
+        $mailer->Port = $port;
+        $mailer->Username = $user;
+        $mailer->Password = $password;
+        $mailer->CharSet = 'UTF-8';
+
+        try {
+            $is_valid = $mailer->smtpConnect();
+        } catch (Exception $e) {
+            $is_valid = false;
+        }
+        return $is_valid;
+    }
+
     public static function send(array $data, $debug = false)
     {
         $data['to'] = !isset($data['to']) ? [] : (is_array($data['to']) ? $data['to'] : [$data['to']]);
@@ -17,21 +36,20 @@ class Mailer
         $data['attachment'] = !isset($data['attachment']) ? [] : (is_array($data['attachment']) ? $data['attachment'] : [$data['attachment']]);
         $data['multiple'] = $data['multiple'] ?? false;
 
-        $res = [];
         $mailer = new PHPMailer(true);
-        $config = self::getSMTPConfig();
         $mailer->isSMTP();
         $mailer->setLanguage('fr', '../vendor/phpmailer/phpmailer/language/');
         $mailer->SMTPDebug = $debug ? SMTP::DEBUG_SERVER : SMTP::DEBUG_OFF;
         $mailer->SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS;
         $mailer->SMTPAuth = true;
-        $mailer->Host = $config['host'];
-        $mailer->Username = $config['username'];
-        $mailer->Password = $config['password'];
-        $mailer->Port = $config['port'];
+        $mailer->Host = SMTP_HOST;
+        $mailer->Port = SMTP_PORT;
+        $mailer->Username = SMTP_USERNAME;
+        $mailer->Password = SMTP_PASSWORD;
         $mailer->isHTML(true);
         $mailer->CharSet = 'UTF-8';
 
+        $res = [];
         try {
             if (empty($data['to']))
                 throw new Exception($mailer->ErrorInfo = 'Vous devez fournir au moins une adresse de destinataire.');
@@ -103,16 +121,6 @@ class Mailer
         }
 
         return $res;
-    }
-
-    private static function getSMTPConfig()
-    {
-        return [
-            'host' => SMTP_HOST,
-            'port' => SMTP_PORT,
-            'username' => SMTP_USERNAME,
-            'password' => SMTP_PASSWORD
-        ];
     }
 
 }

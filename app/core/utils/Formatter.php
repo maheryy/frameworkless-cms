@@ -121,4 +121,10 @@ class Formatter
     {
         return (new DateTime('now', new DateTimeZone(self::DATE_TIME_ZONE)))->modify($modifier)->format($format);
     }
+
+    public static function tableKeyValueToArray(array $data)
+    {
+        foreach ($data as $row) $res[$row['name']] = $row['value'];
+        return $res ?? [];
+    }
 }

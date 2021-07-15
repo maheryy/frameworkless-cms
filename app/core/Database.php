@@ -86,7 +86,7 @@ class Database
      */
     public static function beginTransaction()
     {
-        return self::getInstance()->beginTransaction();
+        return self::inTransaction() && self::getInstance()->beginTransaction();
     }
 
     /**
@@ -94,7 +94,7 @@ class Database
      */
     public static function commit()
     {
-        return self::getInstance()->commit();
+        return self::inTransaction() && self::getInstance()->commit();
     }
 
     /**
@@ -102,6 +102,6 @@ class Database
      */
     public static function rollback()
     {
-        return self::getInstance()->rollback();
+        return self::inTransaction() && self::getInstance()->rollback();
     }
 }

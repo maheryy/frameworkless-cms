@@ -28,10 +28,10 @@ class Validator
     public function validate(array $data)
     {
         foreach ($this->form as $name => $field) {
-            if (isset($field['optional']) && !isset($data[$name])) {
+            if (isset($field['optional']) && !isset($data[$name]) || empty($field['required']) && !isset($data[$name])) {
                 continue;
             }
-            if (!isset($data[$name])) {
+            if (!array_key_exists($name, $data)) {
                 throw new \Exception('Le champ ' . $name . ' n\'est pas trouvé');
             }
 
@@ -128,7 +128,7 @@ class Validator
         return true;
     }
 
-    public static function isValidDate(string $date)
+    public static function isValidDate(?string $date)
     {
         # Format YYYY-MM-DD
         if (preg_match("/^([0-9]{4})-([0-9]{2})-([0-9]{2})$/", $date, $parts)) {
@@ -137,7 +137,7 @@ class Validator
         return false;
     }
 
-    public static function isValidEmail(string $email)
+    public static function isValidEmail(?string $email)
     {
         return filter_var($email, FILTER_VALIDATE_EMAIL);
     }

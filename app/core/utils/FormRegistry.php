@@ -109,5 +109,26 @@ class FormRegistry
         ];
     }
 
+    public static function getSettingsGeneral()
+    {
+        return [
+            'site_title' => [
+                'type' => Validator::TYPE_TEXT,
+                'required' => true,
+                'max' => 25,
+                'error_message' => 'Le titre du site ne doit pas faire plus de 25 caractères',
+            ],
+            'email_admin' => [
+                'type' => Validator::TYPE_EMAIL,
+                'required' => true,
+                'error_message' => Validator::ERROR_EMAIL_DEFAULT,
+            ],
+            'email_contact' => [
+                'type' => Validator::TYPE_EMAIL,
+                'required' => false,
+                'error_message' => Validator::ERROR_EMAIL_DEFAULT,
+            ],
+        ];
+    }
 
 }

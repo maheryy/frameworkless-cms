@@ -138,7 +138,7 @@ abstract class Model
     private function fetch(string $sql, array $params, int $type = Database::FETCH_ALL)
     {
         $st = $this->execute($sql, $params);
-        $results = false;
+        $results = [];
 
         switch ($type) {
             case Database::FETCH_ONE:
@@ -184,8 +184,8 @@ abstract class Model
                 . 'VALUES (:' . implode(', :', $fields) . ')';
         }
 
-        $res = $this->execute($sql, $sql_params);
-        return $res ? $this->db->lastInsertId() : $res;
+        $this->execute($sql, $sql_params);
+        return $this->db->lastInsertId();
     }
 
     /**
@@ -222,7 +222,7 @@ abstract class Model
         }
 
         $res = $this->execute($sql, $params);
-        return $res ? $res->rowCount() : $res;
+        return $res->rowCount();
     }
 
     /**
@@ -250,7 +250,7 @@ abstract class Model
         }
 
         $res = $this->execute($sql, $params);
-        return $res ? $res->rowCount() : $res;
+        return $res->rowCount();
     }
 
     /**

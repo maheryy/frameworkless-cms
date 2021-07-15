@@ -210,3 +210,25 @@
   controller: Appearance
   method: deleteNavigationAction
   require_auth: True
+
+# Settings
+/settings:
+  controller: Settings
+  method: settingsView
+  title: Paramètres
+  require_auth: True
+
+/settings-general-save:
+  controller: Settings
+  method: settingsGeneralAction
+  require_auth: True
+
+/settings-mail-save:
+  controller: Settings
+  method: settingsMailAction
+  require_auth: True
+
+/settings-page-save:
+  controller: Settings
+  method: settingsPageAction
+  require_auth: True

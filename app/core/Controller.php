@@ -15,6 +15,7 @@ abstract class Controller
     protected Request $request;
     protected Repository $repository;
     protected Session $session;
+    protected array $settings;
     protected string $template;
 
     protected function __construct(array $options)
@@ -23,6 +24,7 @@ abstract class Controller
         $this->request = new Request();
         $this->repository = new Repository();
         $this->session = new Session($options['require_auth'] ?? false);
+        $this->settings = $this->repository->settings->findAll();
 
         # Default back office template
         $this->setTemplate('back_office');

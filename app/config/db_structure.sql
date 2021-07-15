@@ -1,3 +1,15 @@
+DROP TABLE IF EXISTS `{PREFIX10}_settings`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `{PREFIX10}_settings`
+(
+    `id`    int                          NOT NULL AUTO_INCREMENT,
+    `name`  varchar(30) COLLATE utf8_bin NOT NULL,
+    `value` varchar(255) COLLATE utf8_bin DEFAULT NULL,
+    PRIMARY KEY (`id`),
+    UNIQUE KEY `{PREFIX10}_settings_name_uindex` (`name`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin;
+/*!40101 SET character_set_client = @saved_cs_client */;
 DROP TABLE IF EXISTS `{PREFIX1}_role`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
@@ -112,10 +124,10 @@ DROP TABLE IF EXISTS `{PREFIX8}_navigation`;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `{PREFIX8}_navigation`
 (
-    `id`     int                          NOT NULL AUTO_INCREMENT,
-    `title`  varchar(60) COLLATE utf8_bin NOT NULL,
-    `type`   tinyint                      NOT NULL,
-    `status` tinyint                      NOT NULL,
+    `id`     int                                             NOT NULL AUTO_INCREMENT,
+    `title`  varchar(60) CHARACTER SET utf8 COLLATE utf8_bin NOT NULL,
+    `type`   tinyint                                         NOT NULL,
+    `status` tinyint                                         NOT NULL,
     PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin;
 /*!40101 SET character_set_client = @saved_cs_client */;
@@ -124,10 +136,10 @@ DROP TABLE IF EXISTS `{PREFIX9}_navigation_item`;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `{PREFIX9}_navigation_item`
 (
-    `id`            int                          NOT NULL AUTO_INCREMENT,
+    `id`            int                                             NOT NULL AUTO_INCREMENT,
     `navigation_id` int DEFAULT NULL,
     `post_id`       int DEFAULT NULL,
-    `label`         varchar(20) COLLATE utf8_bin NOT NULL,
+    `label`         varchar(20) CHARACTER SET utf8 COLLATE utf8_bin NOT NULL,
     PRIMARY KEY (`id`),
     KEY             `{PREFIX9}_navigation_item_{PREFIX6}_post_id_fk` (`post_id`),
     KEY             `{PREFIX9}_navigation_item_{PREFIX8}_navigation_id_fk` (`navigation_id`),

@@ -47,12 +47,10 @@ class Router
         $uri = explode('?', $_SERVER['REQUEST_URI'])[0];
         try {
             if ($this->isBackOfficeUri($uri)) {
-                $this->setUri($this->getBackOfficeUri($uri));
                 $this->loadRoutes();
-                $this->execute();
+                $this->execute($this->getBackOfficeUri($uri));
             } else {
-                $this->setUri($uri);
-                $this->accessWebsite();
+                $this->accessWebsite($uri);
             }
         } catch (NotFoundException $e) {
             (new Error())->displayErrorNotFound($e);
@@ -225,10 +223,12 @@ class Router
 
     /**
      * Parse URI and find the right method to execute
+     * @param string $uri
      *
      */
-    private function execute()
+    private function execute(string $uri)
     {
+        $this->setUri($uri);
         $route = $this->getRouteData();
         $this->setController($route['controller']);
         $this->setMethod($route['method']);
@@ -239,8 +239,9 @@ class Router
         $this->callMethod($class_name, $method, $route['options']);
     }
 
-    private function accessWebsite()
+    private function accessWebsite(string $uri)
     {
+        $this->setUri($uri);
         $this->setController('Website');
         switch ($this->uri) {
             case '/redirect' :

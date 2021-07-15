@@ -154,7 +154,10 @@ class Installer extends Controller
                 $st = $pdo->prepare($sql);
                 $st->execute();
 
-                $this->generateConfig($data);
+                $data['app_debug'] = 1;
+                $data['app_dev'] = 1;
+
+                self::generateConfig($data);
                 $this->sendSuccess('Installation réussie', [
                     'url_next' => UrlBuilder::makeUrl('Installer', 'installerRegisterView')
                 ]);
@@ -179,7 +182,7 @@ class Installer extends Controller
         echo 'database seeding complete';
     }
 
-    public function generateConfig(array $data)
+    public static function generateConfig(array $data)
     {
         $content = <<<CONF
 DB_HOST={$data['db_host']}
@@ -188,8 +191,13 @@ DB_USER={$data['db_user']}
 DB_PWD={$data['db_password']}
 DB_PREFIX={$data['db_prefix']}
 
-APP_DEBUG=1
-APP_DEV=1
+APP_DEBUG={$data['app_debug']}
+APP_DEV={$data['app_dev']}
+
+SMTP_HOST={$data['smtp_host']}
+SMTP_PORT={$data['smtp_port']}
+SMTP_USERNAME={$data['smtp_user']}
+SMTP_PASSWORD={$data['smtp_password']}
 CONF;
 
         file_put_contents(ConstantManager::$env_path, $content, LOCK_EX);

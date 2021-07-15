@@ -56,6 +56,14 @@ class Constants
     const NAVIGATION_HEADER = 1;
     const NAVIGATION_FOOTER = 2;
 
+    # General settings table keys
+    const STG_TITLE = 'site_title';
+    const STG_DESCRIPTION = 'site_description';
+    const STG_EMAIL_ADMIN = 'email_admin';
+    const STG_EMAIL_CONTACT = 'email_contact';
+    const STG_ROLE= 'default_role';
+    const STG_PUBLIC_SIGNUP = 'public_signup';
+
 
     public static function getPostStatuses()
     {

@@ -13,13 +13,15 @@ class Home extends Controller
 
     public function defaultView()
     {
+        # Quick monitoring
         $view_data = [
-            'name' => 'John',
-            'age' => 25,
-            'test' => '25/12/2015',
-            'test2' => PHP_INT_MAX
+            'pages' => count($this->repository->post->findAll()),
+            'users' => count($this->repository->user->findAll()),
+            'roles' => count($this->repository->role->findAll()),
+            'navs' => count($this->repository->navigation->findAll()),
+            'debug' => $this->repository->settings->findAll(),
         ];
-        $this->render('default', $view_data);
+        $this->render('dashboard', $view_data);
     }
 
 }
