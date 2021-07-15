@@ -111,8 +111,12 @@ class Seeds
     public static function settings()
     {
         return [
-            ['name' => Constants::STG_TITLE, 'value' => 'Taaaay'],
-            ['name' => Constants::STG_DESCRIPTION, 'value' => 'Desczer'],
+            ['name' => Constants::STG_TITLE, 'value' => null],
+            ['name' => Constants::STG_DESCRIPTION, 'value' => null],
+            ['name' => Constants::STG_EMAIL_ADMIN, 'value' => null],
+            ['name' => Constants::STG_EMAIL_CONTACT, 'value' => null],
+            ['name' => Constants::STG_ROLE, 'value' => Constants::ROLE_TEST],
+            ['name' => Constants::STG_PUBLIC_SIGNUP, 'value' => 0],
         ];
     }
 }

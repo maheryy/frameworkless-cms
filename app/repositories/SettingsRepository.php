@@ -27,6 +27,9 @@ class SettingsRepository extends BaseRepository
 
     public function updateSettings(array $data)
     {
-        return $this->model->updateQuery($data);
+        foreach ($data as $key => $value) {
+            $this->model->updateQuery(['value' => $value], [Expr::like('name', $key)]);
+        }
+        return !empty($data);
     }
 }
