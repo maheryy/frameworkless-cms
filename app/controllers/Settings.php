@@ -18,7 +18,7 @@ class Settings extends Controller
     {
         $this->setCSRFToken();
         $view_data = [
-
+            'active_view' => 1,
         ];
         $this->render('settings', $view_data);
     }
