@@ -3,6 +3,7 @@
 namespace App\Controllers;
 
 use App\Core\Controller;
+use App\Core\Database;
 
 class Settings extends Controller
 {
@@ -12,16 +13,30 @@ class Settings extends Controller
         parent::__construct($options);
     }
 
-    # /general-settings
-    public function generalSettingsView()
+    # /settings
+    public function settingsView()
     {
+        $this->setCSRFToken();
+        $view_data = [
 
+        ];
+        $this->render('settings', $view_data);
     }
 
-    # /general-settings-save
-    public function generalSettingsAction()
+    # /settings-save
+    public function settingsAction()
     {
+        $this->validateCSRF();
+        try {
+//            Database::beginTransaction();
 
+
+            $this->sendSuccess('Informations sauvegardés');
+//            Database::commit();
+        } catch (\Exception $e) {
+//            Database::rollback();
+            $this->sendError('Une erreur est survenue', [$e->getMessage()]);
+        }
     }
 
 }

@@ -47,4 +47,4 @@ sidebar-bottom:
   settings:
     label: Paramètres
     icon: fas fa-cog
-    route:
+    route: /admin/settings

@@ -138,7 +138,7 @@ abstract class Model
     private function fetch(string $sql, array $params, int $type = Database::FETCH_ALL)
     {
         $st = $this->execute($sql, $params);
-        $results = false;
+        $results = [];
 
         switch ($type) {
             case Database::FETCH_ONE:

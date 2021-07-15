@@ -6,17 +6,13 @@ main.content {
 
   section.content-header {
     padding: 1em 1.5rem;
-    margin: 0 -1em;
+    margin: 0 -1em 2em;
     border-bottom: 1px solid #dddddd;
     background-color: $bg-secondary;
 
     h2 {
       font-weight: 350;
     }
-  }
-
-  section.content-body {
-    margin-top: 2em;
   }
 }
 

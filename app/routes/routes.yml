@@ -212,12 +212,13 @@
   require_auth: True
 
 # Settings
-/general-settings:
+/settings:
   controller: Settings
-  method: generalSettingsView
+  method: settingsView
+  title: Paramètres
   require_auth: True
 
-/general-settings-save:
+/settings-save:
   controller: Settings
-  method: generalSettingsAction
+  method: settingsAction
   require_auth: True
