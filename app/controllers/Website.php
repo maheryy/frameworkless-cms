@@ -20,7 +20,7 @@ class Website extends Controller
 
     public function display()
     {
-        $page = $this->repository->post->findPageBySlug($this->uri);
+        $page = $this->repository->post->findPageBySlug('first-page');
         if (!$page) {
             throw new HttpNotFoundException($this->uri);
         }
