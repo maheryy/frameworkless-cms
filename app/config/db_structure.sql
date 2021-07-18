@@ -35,6 +35,21 @@ CREATE TABLE `{PREFIX12}_subscriber`
     UNIQUE KEY `{PREFIX12}_subscriber_email_uindex` (`email`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb3 COLLATE=utf8_bin;
 /*!40101 SET character_set_client = @saved_cs_client */;
+DROP TABLE IF EXISTS `{PREFIX13}_review`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `{PREFIX13}_review`
+(
+    `id`     int                           NOT NULL AUTO_INCREMENT,
+    `rate`   tinyint                       NOT NULL,
+    `author` varchar(65) COLLATE utf8_bin  NOT NULL,
+    `email`  varchar(65) COLLATE utf8_bin  NOT NULL,
+    `review` varchar(255) COLLATE utf8_bin NOT NULL,
+    `status` tinyint                       NOT NULL,
+    `date`   timestamp                     NOT NULL,
+    PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb3 COLLATE=utf8_bin;
+/*!40101 SET character_set_client = @saved_cs_client */;
 DROP TABLE IF EXISTS `{PREFIX1}_role`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
