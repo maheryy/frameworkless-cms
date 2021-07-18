@@ -66,6 +66,7 @@ $bg-header: rgba(250, 250, 250, 0.95);
   opacity: 0;
   transition: all .6s ease-in-out;
   position: relative;
+  margin-top: -70px;
 
   .hero-content {
     margin: auto;
@@ -101,6 +102,8 @@ footer {
   color: #f0f9ff;
   background-color: $bg-footer;
   font-family: "Montserrat", sans-serif;
+  position: relative;
+  bottom: 0;
 
   h3 {
     margin-bottom: 1em;
@@ -231,6 +234,134 @@ footer {
       opacity: 0.3;
       font-size: 13px;
       margin-bottom: 0;
+    }
+  }
+}
+
+
+/* Ratings */
+$border: #9c9da0;
+$border-error: #ff0000;
+$border-active: #245dff;
+
+.review {
+  width: 100%;
+
+  h2 {
+
+  }
+  .review-content {
+    width: 50%;
+    padding: 1em 1.3em;
+    min-width: 350px;
+
+    .review-form {
+      display: flex;
+      flex-direction: column;
+      align-items: flex-start;
+      justify-content: space-around;
+      font-size: 1rem;
+
+      & > .form-field {
+        width: 100%;
+        padding: .5em 0;
+      }
+
+      input#name, input#email {
+        min-width: 100px;
+        width: 50%;
+        padding: .6em .5em;
+        border: 1px solid $border;
+        border-radius: 0.3em;
+        box-shadow: 0 1px 0 1px rgba(#000, 0.05);
+        transition: border 0.25s, box-shadow 0.25s;
+        font-size: 1rem;
+        &:focus {
+          border-color: $border-active;
+          box-shadow: 0 1px lighten($border-active, 15%);
+          outline: none;
+        }
+      }
+
+      textarea#review {
+        font-size: 1rem;
+        padding: 0.5em 0.5em;
+        border-radius: 0.3em;
+        width: 100%;
+        min-width: 200px;
+        border: 1px solid $border;
+        font-family: Montserrat, sans-serif;
+        resize: none;
+
+        &:focus {
+          border-color: $border-active;
+          box-shadow: 0 1px lighten($border-active, 15%);
+          outline: none;
+        }
+      }
+
+      .form-action {
+        appearance: none;
+        background-color: transparent;
+        border-radius: 0.6em;
+        cursor: pointer;
+        font-size: 1rem;
+        padding: .7em 2.5em;
+        text-transform: uppercase;
+        border-color: #bfbfbf;
+        color: #8f8f8f;
+        transition: background 200ms ease-in-out;
+
+        &:hover {
+          background-color: #3498db;
+          color: whitesmoke;
+        }
+      }
+    }
+  }
+}
+
+.rate {
+  padding: .5em 0;
+  width: fit-content;
+
+  &:not(:checked) {
+    input {
+      display: none;
+    }
+
+    & > label {
+      float: right;
+      width: 1em;
+      cursor: pointer;
+      font-size: 30px;
+      color: #ccc;
+
+      &:before {
+        content: '★';
+      }
+      &:hover, &:hover ~ label {
+        color: #deb217;
+      }
+    }
+  }
+
+  & > input {
+    &:checked {
+      & ~ label {
+        color: #ffc700;
+      }
+
+      & + label:hover,
+      & + label:hover ~ label,
+      & ~ label:hover,
+      & ~ label:hover ~ label {
+        color: #c59b08;
+      }
+    }
+
+    & > label:hover ~ input:checked ~ label {
+      color: #c59b08;
     }
   }
 }

@@ -51,7 +51,7 @@ class Website extends Controller
             'content_title' => $page['title'],
             'content' => $page['content']
         ];
-        $this->render('website_default', $view_data);
+        $this->render('website_submit_review', $view_data);
     }
 
 
@@ -66,7 +66,7 @@ class Website extends Controller
                 $res = $this->handleNewsletter($this->request->post('email'));
                 break;
             case 'review':
-                $res = $this->handleReview($this->request->post('rating'), $this->request->post('name'), $this->request->post('comment'));
+                $res = $this->handleReview($this->request->post('rate'), $this->request->post('name'), $this->request->post('email'), $this->request->post('review'));
                 break;
         }
         $this->sendJSON($res);
@@ -139,7 +139,7 @@ class Website extends Controller
                 ]),
             ]);
             if (!$mail_confirmation['success']) {
-                return ['success' => false, 'message' => $mail_confirmation['message']];
+                throw new \Exception($mail_confirmation['message']);
             }
 
             Database::commit();
@@ -151,8 +151,50 @@ class Website extends Controller
         return ['success' => true, 'message' => 'Inscription bien pris en compte'];
     }
 
-    private function handleReview(int $rating, ?string $name, ?string $comment)
+    private function handleReview(int $rate, ?string $name, ?string $email, ?string $review)
     {
+        if (!$name) {
+            return ['success' => false, 'message' => 'Le nom est obligatoire'];
+        }
+        if (!Validator::isValidEmail($email)) {
+            return ['success' => false, 'message' => Validator::ERROR_EMAIL_DEFAULT];
+        }
 
+        if (!empty($this->repository->review->findReviewByEmailAndDate($email, date('Y-m-d')))) {
+            return ['success' => false, 'message' => 'Vous avez déjà soumis un avis'];
+        }
+
+        try {
+            Database::beginTransaction();
+            $this->repository->review->create([
+                'rate' => $rate,
+                'author' => $name,
+                'email' => $email,
+                'review' => $review,
+                'status' => Constants::REVIEW_VALID,
+                'date' => date('Y-m-d'),
+            ]);
+
+            # Send confirmation email to the reviewer
+//            $mail = Mailer::send([
+//                'to' => $email,
+//                'subject' => 'Confirmation de votre inscription à notre newsletter',
+//                'content' => View::getHtml('email/newsletter_confirmation', [
+//                    'message' => nl2br("Votre inscription a bien été pris en compte."),
+//                    'unsubscribe_link' => 'http://' . $_SERVER['HTTP_HOST'] . '/admin/unsubscribe?subscriber=' . $subscriber_id,
+//                ]),
+//            ]);
+//
+//            if (!$mail['success']) {
+//                throw new \Exception($mail['message']);
+//            }
+
+            Database::commit();
+        } catch (\Exception $e) {
+            Database::rollback();
+            return ['success' => false, 'message' => "Une erreur est survenue : " . $e->getMessage()];
+        }
+
+        return ['success' => true, 'message' => 'Votre avis a bien été pris en compte'];
     }
 }

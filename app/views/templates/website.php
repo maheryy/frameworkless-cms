@@ -13,7 +13,7 @@
     <link rel="stylesheet" href="/assets/vendor/fontawesome/css/fontawesome-all.min.css">
     <link rel="stylesheet" href="/assets/css/default_theme.min.css">
     <script src="/assets/vendor/jquery/jquery-3.5.1.min.js"></script>
-    <script src="/assets/js/theme_default.js"></script>
+    <script src="/assets/js/default_theme.js"></script>
 </head>
 <body>
 
@@ -31,15 +31,15 @@
         </ul>
     </nav>
 </header>
-<section class="hero-header">
-    <div id="hero-img"
-         data-url="https://images.pexels.com/photos/2598638/pexels-photo-2598638.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=750&w=1260"></div>
-    <article class="hero-content">
-        <h1><?= $content_title ?></h1>
-        <p>Etiam quis tristique lectus. Aliquam in arcu eget velit pulvinar dictum vel in
-            justo.</p>
-    </article>
-</section>
+<!--<section class="hero-header">-->
+<!--    <div id="hero-img"-->
+<!--         data-url="https://images.pexels.com/photos/2598638/pexels-photo-2598638.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=750&w=1260"></div>-->
+<!--    <article class="hero-content">-->
+<!--        <h1>--><?//= $content_title ?><!--</h1>-->
+<!--        <p>Etiam quis tristique lectus. Aliquam in arcu eget velit pulvinar dictum vel in-->
+<!--            justo.</p>-->
+<!--    </article>-->
+<!--</section>-->
 <main class="content">
     <?php include $this->view ?>
 </main>
@@ -71,7 +71,7 @@
                 <div class="section-content">
                     <form method="POST" action="contact">
                         <div class="form-field">
-                            <input type="text" class="form-control" name="email" placeholder="Adresse email">
+                            <input type="email" class="form-control" name="email" placeholder="Adresse email">
                         </div>
                         <div class="form-field">
                             <textarea class="form-control" name="message" placeholder="Message" rows="5"></textarea>
@@ -85,7 +85,7 @@
                 <div class="section-content">
                     <form method="POST" action="newsletter">
                         <div class="form-field">
-                            <input type="text" class="form-control" name="email" placeholder="Adresse email">
+                            <input type="email" class="form-control" name="email" placeholder="Adresse email">
                             <input type="submit" class="form-action" value="S'inscrire">
                         </div>
                     </form>
