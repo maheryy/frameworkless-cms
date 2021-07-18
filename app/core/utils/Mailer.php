@@ -9,7 +9,8 @@ use App\Core\Utils\Repository;
 
 class Mailer
 {
-    public static function connect(string $host, int $port, string $user, string $password) {
+    public static function connect(string $host, int $port, string $user, string $password)
+    {
         $mailer = new PHPMailer(true);
         $mailer->isSMTP();
         $mailer->SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS;
@@ -61,6 +62,10 @@ class Mailer
             $mailer->setFrom('from@example.com', 'Mailer');
             $mailer->Subject = $data['subject'];
             $mailer->Body = $data['content'];
+
+            if (isset($data['reply_to'])) {
+                $mailer->addReplyTo($data['reply_to']);
+            }
 
             $user_repository = (new Repository)->user;
             foreach ($data['cc'] as $uid) {

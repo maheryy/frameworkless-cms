@@ -69,12 +69,12 @@
             <div class="footer-section contact w-3/12">
                 <h3>Contactez nous</h3>
                 <div class="section-content">
-                    <form method="POST" action="">
+                    <form method="POST" action="contact">
                         <div class="form-field">
-                            <input type="text" class="form-control" placeholder="Adresse email">
+                            <input type="text" class="form-control" name="email" placeholder="Adresse email">
                         </div>
                         <div class="form-field">
-                            <textarea class="form-control" placeholder="Message" rows="5"></textarea>
+                            <textarea class="form-control" name="message" placeholder="Message" rows="5"></textarea>
                         </div>
                         <input type="submit" class="form-action" value="Envoyer">
                     </form>
@@ -83,9 +83,9 @@
             <div class="footer-section newsletter w-3/12">
                 <h3>Newsletter</h3>
                 <div class="section-content">
-                    <form method="POST" action="">
+                    <form method="POST" action="newsletter">
                         <div class="form-field">
-                            <input type="text" class="form-control" placeholder="Adresse email">
+                            <input type="text" class="form-control" name="email" placeholder="Adresse email">
                             <input type="submit" class="form-action" value="S'inscrire">
                         </div>
                     </form>

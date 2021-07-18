@@ -6,6 +6,7 @@ use App\Controllers\Error;
 use App\Core\Exceptions\ForbiddenAccessException;
 use App\Core\Exceptions\HttpNotFoundException;
 use App\Core\Exceptions\NotFoundException;
+use App\Core\Utils\Request;
 use Exception;
 
 class Router
@@ -243,20 +244,7 @@ class Router
     {
         $this->setUri($uri);
         $this->setController('Website');
-        switch ($this->uri) {
-            case '/redirect' :
-                # Website redirects
-
-                break;
-            case '/send-action' :
-                # Website form actions
-
-                break;
-            default :
-                # Go to user-defined page slug
-                $this->callMethod($this->getControllerNamespace(), 'display');
-                break;
-        }
+        $this->callMethod($this->getControllerNamespace(), Request::isPost() ? 'formAction' : 'display');
     }
 
     private function isBackOfficeUri(string $uri)
@@ -272,7 +260,6 @@ class Router
 
     public function existRoute(string $uri)
     {
-        //$uri = explode('?', $_SERVER['REQUEST_URI'])[0];
         return isset($this->routes[$uri]);
     }
 

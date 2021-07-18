@@ -5,6 +5,9 @@ namespace App\Controllers;
 use App\Core\Controller;
 use App\Core\Exceptions\HttpNotFoundException;
 use App\Core\Utils\Formatter;
+use App\Core\Utils\Mailer;
+use App\Core\Utils\Validator;
+use App\Core\View;
 
 
 class Website extends Controller
@@ -37,7 +40,7 @@ class Website extends Controller
         if (!$page) {
             throw new HttpNotFoundException($this->uri);
         }
-        $this->setNewVisitor($_SERVER['REMOTE_ADDR'], $_SERVER['HTTP_USER_AGENT'], $this->uri, date('Y-m-d'));
+//        $this->setNewVisitor($_SERVER['REMOTE_ADDR'], $_SERVER['HTTP_USER_AGENT'], $this->uri, date('Y-m-d'));
 
         $view_data = [
             'meta_title' => $page['meta_title'],
@@ -49,13 +52,74 @@ class Website extends Controller
         $this->render('website_default', $view_data);
     }
 
-    public function redirect()
+
+    public function formAction()
     {
-        echo 'redirect';
+        $res = [];
+        switch ($this->request->get('action')) {
+            case 'contact':
+                $res = $this->handleContactUs($this->request->post('email'), $this->request->post('message'));
+                break;
+            case 'newsletter':
+                $res = $this->handleNewsletter($this->request->post('email'));
+                break;
+            case 'review':
+                $res = $this->handleReview($this->request->post('rating'), $this->request->post('name'), $this->request->post('comment'));
+                break;
+        }
+        $this->sendJSON($res);
     }
 
-    public function sendAction()
+    private function handleContactUs(?string $email, ?string $message)
     {
-        echo 'sendAction';
+        if (!Validator::isValidEmail($email)) {
+            return ['success' => false, 'message' => Validator::ERROR_EMAIL_DEFAULT];
+        }
+        if (!Validator::isValid($message)) {
+            return ['success' => false, 'message' => 'le message ne peut pas être vide'];
+        }
+
+        # Send message to admin or contact email registered
+        $mail_contact = Mailer::send([
+            'to' => $this->settings['email_contact'] ?? $this->settings['email_admin'],
+            'reply_to' => $email,
+            'subject' => 'Message reçu',
+            'content' => View::getHtml('email/contact_form', [
+                'sender' => $email,
+                'message' => nl2br($message),
+                'date' => Formatter::getDateTime('now', 'd/m/Y - H:i:s')
+            ]),
+        ]);
+        if (!$mail_contact['success']) {
+            return ['success' => false, 'message' => $mail_contact['message']];
+        }
+
+        # Send confirmation email to the user
+        $mail_confirmation = Mailer::send([
+            'to' => $email,
+            'subject' => 'Votre message a été envoyé',
+            'content' => View::getHtml('email/contact_confirmation', [
+                'message' => nl2br("Nous vous contacterons dès que possible"),
+            ]),
+        ]);
+        if (!$mail_confirmation['success']) {
+            return ['success' => false, 'message' => $mail_confirmation['message']];
+        }
+
+        return ['success' => true, 'message' => 'Message envoyé !'];
+    }
+
+    private function handleNewsletter(?string $email)
+    {
+        if (!Validator::isValidEmail($email)) {
+            return ['success' => false, 'message' => Validator::ERROR_EMAIL_DEFAULT];
+        }
+
+        return ['success' => true, 'message' => 'Inscription bien pris en compte'];
+    }
+
+    private function handleReview(int $rating, ?string $name, ?string $comment)
+    {
+
     }
 }
