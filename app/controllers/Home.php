@@ -13,7 +13,6 @@ class Home extends Controller
 
     public function dashboardView()
     {
-        $visitors = 1;
 
         # Quick monitoring
         $view_data = [
@@ -22,7 +21,7 @@ class Home extends Controller
             'roles' => count($this->repository->role->findAll()),
             'navs' => count($this->repository->navigation->findAll()),
             'debug' => $this->repository->settings->findAll(),
-            'visitors' => $visitors,
+            'visitors' => $this->repository->visitor->countTotalUniqueVisitors(),
         ];
         $this->render('dashboard', $view_data);
     }

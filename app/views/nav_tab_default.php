@@ -7,7 +7,7 @@
                     <?php foreach ($pages as $page) : ?>
                         <li class="transferable-element">
                             <input type="hidden" class="element-data"
-                                   data-options='<?= json_encode(['page_id' => $page['id'], 'page_link' => '/' . $page['slug'], 'page_title' => $page['title']]) ?>'>
+                                   data-options='<?= json_encode(['page_id' => $page['id'], 'page_link' => $page['slug'], 'page_title' => $page['title']]) ?>'>
                             <span class="label"><?= $page['title'] ?></span>
                         </li>
                     <?php endforeach; ?>

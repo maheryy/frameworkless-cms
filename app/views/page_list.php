@@ -16,7 +16,7 @@
                     <p class="flex-col justify-between items-center">
                         <a href="<?= $page['url_detail'] ?>"><?= $page['title'] ?></a>
                         <?php if ($page['status'] == \App\Core\Utils\Constants::STATUS_PUBLISHED) : ?>
-                            <em style="font-size:.75em"><?= '/' . $page['slug'] ?></em>
+                            <em style="font-size:.75em"><?= $page['slug'] ?></em>
                         <?php endif; ?>
                     </p>
                 </td>
