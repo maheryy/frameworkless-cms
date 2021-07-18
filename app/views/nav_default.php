@@ -1,4 +1,4 @@
-<article class="content">
+<div class="content">
     <article id="info-box" class="info-primary center">
         <span id="info-description"></span>
     </article>
@@ -31,4 +31,4 @@
     <div id="tab-content">
         <?php include $default_tab_view ?>
     </div>
-</article>
+</div>

@@ -11,8 +11,10 @@ class Home extends Controller
         parent::__construct($options);
     }
 
-    public function defaultView()
+    public function dashboardView()
     {
+        $visitors = 1;
+
         # Quick monitoring
         $view_data = [
             'pages' => count($this->repository->post->findAll()),
@@ -20,6 +22,7 @@ class Home extends Controller
             'roles' => count($this->repository->role->findAll()),
             'navs' => count($this->repository->navigation->findAll()),
             'debug' => $this->repository->settings->findAll(),
+            'visitors' => $visitors,
         ];
         $this->render('dashboard', $view_data);
     }

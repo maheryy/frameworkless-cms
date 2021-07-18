@@ -1,4 +1,4 @@
-<section class="">
+<div class="content">
     <article id="info-box" class="info-primary center">
         <span id="info-description"></span>
     </article>
@@ -27,4 +27,4 @@
             <input type="submit" class="btn-success" data-role="submitDefault" value="Valider">
         </div>
     </form>
-</section>
+</div>

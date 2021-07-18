@@ -7,6 +7,9 @@
             <a href="<?= $link_user ?>">
                 <i class="link-icon fas fa-user"></i>
             </a>
+            <a href="<?= $link_website ?>">
+                <i class="link-icon fas fa-globe"></i>
+            </a>
             <a href="<?= $link_logout ?>">
                 <i class="link-icon fas fa-sign-out-alt"></i>
             </a>

@@ -1,12 +1,12 @@
 /:
   controller: Home
-  method: defaultView
+  method: dashboardView
   title: Tableau de bord
   require_auth: True
 
 /dashboard:
   controller: Home
-  method: defaultView
+  method: dashboardView
   title: Tableau de bord
   require_auth: True
 

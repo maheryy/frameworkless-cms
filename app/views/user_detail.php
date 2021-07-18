@@ -1,4 +1,4 @@
-<section class="">
+<div class="content">
     <article id="info-box" class="info-primary center">
         <span id="info-description"></span>
     </article>
@@ -32,4 +32,4 @@
             <button class="btn-danger" data-url="<?= $url_delete ?>" data-role="deleteItem">Supprimer</button>
         </div>
     </form>
-</section>
+</div>
