@@ -232,3 +232,41 @@
   controller: Settings
   method: settingsPageAction
   require_auth: True
+
+# Newsletter
+/newsletters:
+  controller: Newsletter
+  method: listView
+  title: Newsletter
+  require_auth: True
+
+/new-newsletter:
+  controller: Newsletter
+  method: createView
+  title: Newsletter
+  require_auth: True
+
+/new-newsletter-save:
+  controller: Newsletter
+  method: createAction
+  require_auth: True
+
+/newsletter:
+  controller: Newsletter
+  method: newsletterView
+  title: Newsletter
+  require_auth: True
+
+/newsletter-save:
+  controller: Newsletter
+  method: newsletterAction
+  require_auth: True
+
+/delete-newsletter:
+  controller: Newsletter
+  method: deleteAction
+  require_auth: True
+
+/unsubscribe:
+  controller: Newsletter
+  method: unsubscribeView

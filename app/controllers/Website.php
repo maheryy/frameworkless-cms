@@ -3,7 +3,9 @@
 namespace App\Controllers;
 
 use App\Core\Controller;
+use App\Core\Database;
 use App\Core\Exceptions\HttpNotFoundException;
+use App\Core\Utils\Constants;
 use App\Core\Utils\Formatter;
 use App\Core\Utils\Mailer;
 use App\Core\Utils\Validator;
@@ -113,6 +115,37 @@ class Website extends Controller
     {
         if (!Validator::isValidEmail($email)) {
             return ['success' => false, 'message' => Validator::ERROR_EMAIL_DEFAULT];
+        }
+
+        try {
+            Database::beginTransaction();
+            $found = $this->repository->subscriber->findSubscriber($email);
+
+            if (empty($found)) {
+                $subscriber_id = $this->repository->subscriber->subscribe($email);
+            } elseif ($found['status'] == Constants::STATUS_INACTIVE) {
+                $subscriber_id = $found['id'];
+                $this->repository->subscriber->update((int)$subscriber_id, ['status' => Constants::STATUS_ACTIVE]);
+            } else {
+                return ['success' => false, 'message' => "l'adresse email est déjà utilisé"];
+            }
+            # Send confirmation email to the user
+            $mail_confirmation = Mailer::send([
+                'to' => $email,
+                'subject' => 'Confirmation de votre inscription à notre newsletter',
+                'content' => View::getHtml('email/newsletter_confirmation', [
+                    'message' => nl2br("Votre inscription a bien été pris en compte."),
+                    'unsubscribe_link' => 'http://' . $_SERVER['HTTP_HOST'] . '/admin/unsubscribe?subscriber=' . $subscriber_id,
+                ]),
+            ]);
+            if (!$mail_confirmation['success']) {
+                return ['success' => false, 'message' => $mail_confirmation['message']];
+            }
+
+            Database::commit();
+        } catch (\Exception $e) {
+            Database::rollback();
+            return ['success' => false, 'message' => "Une erreur est survenue : " . $e->getMessage()];
         }
 
         return ['success' => true, 'message' => 'Inscription bien pris en compte'];
