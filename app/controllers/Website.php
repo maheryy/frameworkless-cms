@@ -48,9 +48,10 @@ class Website extends Controller
             'meta_description' => $page['meta_description'],
             'is_indexable' => $page['meta_indexable'],
             'content_title' => $page['title'],
-            'content' => $page['content']
+            'content' => $page['content'],
+            'reviews' => $this->repository->review->findAll()
         ];
-        $this->render('website_review_form', $view_data);
+        $this->render('website_review_list', $view_data);
     }
 
 
