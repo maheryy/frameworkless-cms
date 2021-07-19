@@ -242,4 +242,114 @@ class Website extends Controller
 
         return ['success' => true, 'message' => 'Votre avis a bien été pris en compte'];
     }
+
+
+    /* ----------------- Utility functions to display website components ----------------- */
+
+    public static function getMenuHeader(array $data)
+    {
+        $items = null;
+        foreach ($data as $item) {
+            $items .= "<li class='h-link'><a href='{$item['link']}'>{$item['label']}</a></li>" . PHP_EOL;
+        }
+        return
+            '<nav class="header-nav">
+                <ul class="links">' . $items . '</ul>
+            </nav>' . PHP_EOL;
+    }
+
+
+    public static function getHero(string $title, string $content, string $bg_image)
+    {
+        return
+            '<section class="hero-header">
+                <div id="hero-img" data-url="' . $bg_image . '"></div>
+                <article class="hero-content">
+                    <h1>' . $title . '</h1>
+                    <p>' . $content . '</p>
+                </article>
+            </section>' . PHP_EOL;
+    }
+
+    public static function getContactFooter(string $title, int $size)
+    {
+        return
+            '<div class="footer-section contact w-' . $size . '/12">
+                <h3>' . $title . '</h3>
+                <div class="section-content">
+                    <form method="POST" action="contact">
+                        <div class="form-field">
+                            <input type="email" class="form-control" name="email" placeholder="Adresse email">
+                        </div>
+                        <div class="form-field">
+                            <textarea class="form-control" name="message" placeholder="Message" rows="5"></textarea>
+                        </div>
+                        <div class="form-field">
+                            <input type="submit" class="form-action" value="Envoyer">
+                        </div>
+                        <div class="info-box">
+                            <span class="info-description"></span>
+                        </div>
+                    </form>
+                </div>
+            </div>' . PHP_EOL;
+    }
+
+    public static function getNewsletterFooter(string $title, int $size)
+    {
+        return
+            '<div class="footer-section newsletter w-' . $size . '/12">
+                <h3>' . $title . '</h3>
+                <div class="section-content">
+                    <form method="POST" action="newsletter">
+                        <div class="form-field">
+                            <input type="email" class="form-control" name="email" placeholder="Adresse email">
+                            <input type="submit" class="form-action" value="S\'inscrire">
+                        </div>
+                        <div class="info-box">
+                            <span class="info-description"></span>
+                        </div>
+                    </form>
+                </div>
+            </div>' . PHP_EOL;
+    }
+
+    public static function getTextFooter(string $title, string $text, int $size)
+    {
+        return
+            '<div class="footer-section text w-' . $size . '/12">
+                <h3>' . $title . '</h3>
+                <div class="section-content">
+                    <p>' . $text . '</p>
+                </div>
+            </div>' . PHP_EOL;
+    }
+
+    public static function getLinkFooter(string $title, array $data, int $size)
+    {
+        $items = null;
+        foreach ($data as $item) {
+            $items .= "<li><a href='{$item['link']}'>{$item['label']}</a></li>" . PHP_EOL;
+        }
+
+        return
+            '<nav class="footer-section link w-' . $size . '/12">
+                <h3>' . $title . '</h3>
+                <ul>' . $items . '</ul>
+            </nav>' . PHP_EOL;
+    }
+
+    public static function getSocialFooter(array $data)
+    {
+        $items = null;
+        foreach ($data as $item) {
+            $items .= "<li class='social-item'><a href='{$item['link']}'><i class='fab fa-{$item['icon']}'></i></a></li>" . PHP_EOL;
+        }
+
+        return
+            '<nav class="footer-section social">
+                <ul>' . $items . '</ul>
+            </nav>' . PHP_EOL;
+    }
+
 }
