@@ -149,6 +149,17 @@ footer {
     }
   }
 
+  .info-box {
+    font-size: 0.75rem;
+    width: 100%;
+    padding: 0;
+    margin: 0;
+
+    .info-description {
+      padding: .5em .8em;
+    }
+  }
+
   .footer-section {
     padding: .7rem .5rem;
 
@@ -250,6 +261,7 @@ $border-active: #245dff;
   h2 {
 
   }
+
   .review-content {
     width: 50%;
     padding: 1em 1.3em;
@@ -261,6 +273,14 @@ $border-active: #245dff;
       align-items: flex-start;
       justify-content: space-around;
       font-size: 1rem;
+
+      .info-box {
+        font-size: 1rem;
+        width: 100%;
+        margin: 0;
+        color: black;
+        font-family: Montserrat, sans-serif;
+      }
 
       & > .form-field {
         width: 100%;
@@ -276,6 +296,7 @@ $border-active: #245dff;
         box-shadow: 0 1px 0 1px rgba(#000, 0.05);
         transition: border 0.25s, box-shadow 0.25s;
         font-size: 1rem;
+
         &:focus {
           border-color: $border-active;
           box-shadow: 0 1px lighten($border-active, 15%);
@@ -321,47 +342,36 @@ $border-active: #245dff;
   }
 }
 
-.rate {
-  padding: .5em 0;
-  width: fit-content;
 
-  &:not(:checked) {
-    input {
-      display: none;
-    }
+$star-size: 30px;
+$color: slategray;
 
-    & > label {
-      float: right;
-      width: 1em;
-      cursor: pointer;
-      font-size: 30px;
-      color: #ccc;
+@mixin set-star($border: $color, $fill: transparent) {
+  background: url("data:image/svg+xml;charset=utf8,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 512 512'%3E%3Cpath fill='#{$fill}' stroke='#{$border}' stroke-width='38' d='M259.216 29.942L330.27 173.92l158.89 23.087L374.185 309.08l27.145 158.23-142.114-74.698-142.112 74.698 27.146-158.23L29.274 197.007l158.89-23.088z' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+}
 
-      &:before {
-        content: '★';
-      }
-      &:hover, &:hover ~ label {
-        color: #deb217;
-      }
+.rating {
+  input {
+    position: absolute;
+    clip: rect(0, 0, 0, 0);
+
+    &:nth-child(1):checked ~ label:nth-of-type(-n + 1),
+    &:nth-child(2):checked ~ label:nth-of-type(-n + 2),
+    &:nth-child(3):checked ~ label:nth-of-type(-n + 3),
+    &:nth-child(4):checked ~ label:nth-of-type(-n + 4),
+    &:nth-child(5):checked ~ label:nth-of-type(-n + 5) {
+      @include set-star($color, $color);
     }
   }
 
-  & > input {
-    &:checked {
-      & ~ label {
-        color: #ffc700;
-      }
-
-      & + label:hover,
-      & + label:hover ~ label,
-      & ~ label:hover,
-      & ~ label:hover ~ label {
-        color: #c59b08;
-      }
-    }
-
-    & > label:hover ~ input:checked ~ label {
-      color: #c59b08;
-    }
+  label {
+    box-sizing: border-box;
+    display: inline-block;
+    margin-right: 6px;
+    height: $star-size;
+    width: $star-size;
+    @include set-star;
+    font-size: 0;
+    cursor: pointer;
   }
 }

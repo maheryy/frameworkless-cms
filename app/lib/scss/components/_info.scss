@@ -1,5 +1,13 @@
+$info-primary: #315a9f;
+$info-success: #81ae34;
+$info-warning: #fb902d;
+$info-danger: #e64042;
+
 @mixin base-info($color, $icon) {
-  @include flex-display(space-between);
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
   position: relative;
   padding: 0.5em 10px;
   margin: .5em;

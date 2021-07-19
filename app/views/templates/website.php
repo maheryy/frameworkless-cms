@@ -35,7 +35,7 @@
 <!--    <div id="hero-img"-->
 <!--         data-url="https://images.pexels.com/photos/2598638/pexels-photo-2598638.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=750&w=1260"></div>-->
 <!--    <article class="hero-content">-->
-<!--        <h1>--><?//= $content_title ?><!--</h1>-->
+<!--        <h1>--><? //= $content_title ?><!--</h1>-->
 <!--        <p>Etiam quis tristique lectus. Aliquam in arcu eget velit pulvinar dictum vel in-->
 <!--            justo.</p>-->
 <!--    </article>-->
@@ -76,7 +76,12 @@
                         <div class="form-field">
                             <textarea class="form-control" name="message" placeholder="Message" rows="5"></textarea>
                         </div>
-                        <input type="submit" class="form-action" value="Envoyer">
+                        <div class="form-field">
+                            <input type="submit" class="form-action" value="Envoyer">
+                        </div>
+                        <div class="info-box">
+                            <span class="info-description"></span>
+                        </div>
                     </form>
                 </div>
             </div>
@@ -87,6 +92,9 @@
                         <div class="form-field">
                             <input type="email" class="form-control" name="email" placeholder="Adresse email">
                             <input type="submit" class="form-action" value="S'inscrire">
+                        </div>
+                        <div class="info-box">
+                            <span class="info-description"></span>
                         </div>
                     </form>
                 </div>

@@ -39,9 +39,8 @@ class Website extends Controller
     {
         $page = $this->repository->post->findPageBySlug('/first-page');
 //        $page = $this->repository->post->findPageBySlug($this->uri);
-        if (!$page) {
-            throw new HttpNotFoundException($this->uri);
-        }
+        if (!$page) throw new HttpNotFoundException($this->uri);
+
 //        $this->setNewVisitor($_SERVER['REMOTE_ADDR'], $_SERVER['HTTP_USER_AGENT'], $this->uri, date('Y-m-d'));
 
         $view_data = [
@@ -51,7 +50,7 @@ class Website extends Controller
             'content_title' => $page['title'],
             'content' => $page['content']
         ];
-        $this->render('website_submit_review', $view_data);
+        $this->render('website_review_form', $view_data);
     }
 
 

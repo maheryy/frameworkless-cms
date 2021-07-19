@@ -3,17 +3,17 @@
     <article class="review-content">
         <form class="review-form" action="review">
             <div class="form-field">
-                <div class="rate">
-                    <input type="radio" id="star-5" name="rate" value="5" checked>
-                    <label for="star-5" title="text"></label>
-                    <input type="radio" id="star-4" name="rate" value="4">
-                    <label for="star-4" title="text"></label>
-                    <input type="radio" id="star-3" name="rate" value="3">
-                    <label for="star-3" title="text"></label>
-                    <input type="radio" id="star-2" name="rate" value="2">
-                    <label for="star-2" title="text"></label>
-                    <input type="radio" id="star-1" name="rate" value="1">
-                    <label for="star-1" title="text"></label>
+                <div class="rating">
+                    <input type="radio" id="star1" name="rate" value="1">
+                    <input type="radio" id="star2" name="rate" value="2">
+                    <input type="radio" id="star3" name="rate" value="3">
+                    <input type="radio" id="star4" name="rate" value="4" checked>
+                    <input type="radio" id="star5" name="rate" value="5">
+                    <label for="star1"></label>
+                    <label for="star2"></label>
+                    <label for="star3"></label>
+                    <label for="star4"></label>
+                    <label for="star5"></label>
                 </div>
             </div>
             <div class="form-field">
@@ -27,6 +27,9 @@
             </div>
             <div class="form-field">
                 <input type="submit" class="form-action" value="Envoyer">
+            </div>
+            <div class="info-box">
+                <span class="info-description"></span>
             </div>
         </form>
     </article>
