@@ -168,8 +168,9 @@ abstract class Controller
         $this->setParam('current_route', $this->router->getFullUri());
         $this->setParam('sidebar_links', $sidebar_links['main']);
         $this->setParam('link_settings', $sidebar_links['bottom']['settings']);
-        $this->setParam('link_home', UrlBuilder::makeUrl('Home', 'defaultView'));
+        $this->setParam('link_home', UrlBuilder::makeUrl('Home', 'dashboardView'));
         $this->setParam('link_logout', UrlBuilder::makeUrl('User', 'logoutAction'));
+        $this->setParam('link_website', '/');
         $this->setParam('link_user', $user_link);
         $this->setParam('sidebar', $layout->getSidebarPath());
     }

@@ -75,9 +75,10 @@ class Page extends Controller
                 'status' => $this->request->post('action_publish') ? Constants::STATUS_PUBLISHED : Constants::STATUS_DRAFT,
                 'published_at' => $this->request->post('action_publish') ? Formatter::getDateTime(null, Formatter::DATE_TIME_FORMAT) : null
             ]);
+            $slug = $this->request->post('slug') ?? Formatter::slugify($this->request->post('title'));
             $this->repository->pageExtra->create([
                 'post_id' => $page_id,
-                'slug' => $this->request->post('slug') ?? Formatter::slugify($this->request->post('title')),
+                'slug' => strpos($slug, '/') === 0 ? $slug : '/' . $slug,
                 'visibility' => $this->request->post('visibility'),
                 'allow_comments' => $this->request->post('allow_comments') ? 1 : 0,
                 'meta_title' => $this->request->post('meta_title') ?? $this->request->post('title'),
@@ -148,7 +149,7 @@ class Page extends Controller
             }
 
             $page_fields = [
-                'slug' => $this->request->post('slug'),
+                'slug' => strpos($this->request->post('slug'), '/') === 0 ? $this->request->post('slug') : '/' . $this->request->post('slug'),
                 'meta_title' => $this->request->post('meta_title'),
                 'meta_description' => $this->request->post('meta_description'),
                 'allow_comments' => $this->request->post('allow_comments') ? 1 : 0,
@@ -189,7 +190,7 @@ class Page extends Controller
         foreach ($pages as $page) {
             $links[] = [
                 'title' => $page['title'],
-                'value' => '/' . $page['slug']
+                'value' => $page['slug']
             ];
         }
 

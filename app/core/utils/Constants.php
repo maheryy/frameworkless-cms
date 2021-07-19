@@ -65,6 +65,11 @@ class Constants
     const STG_PUBLIC_SIGNUP = 'public_signup';
 
 
+    # Review statuses
+    const REVIEW_PENDING = 0;
+    const REVIEW_VALID = 1;
+    const REVIEW_INVALID = -1;
+
     public static function getPostStatuses()
     {
         return [

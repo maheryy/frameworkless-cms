@@ -86,7 +86,7 @@ class Database
      */
     public static function beginTransaction()
     {
-        return self::inTransaction() && self::getInstance()->beginTransaction();
+        return !self::inTransaction() && self::getInstance()->beginTransaction();
     }
 
     /**

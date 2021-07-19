@@ -27,7 +27,7 @@ class User extends Controller
     public function loginView()
     {
         if ($this->session->isLoggedIn()) {
-            $this->router->redirect(UrlBuilder::makeUrl('Home', 'defaultView'));
+            $this->router->redirect(UrlBuilder::makeUrl('Home', 'dashboardView'));
         }
 
         if ($this->request->get('timeout')) {
@@ -67,7 +67,7 @@ class User extends Controller
 
         $this->createSessionData($user);
         $this->sendSuccess('Bien joué ! Tu es connecté', [
-            'url_next' => $this->request->url('redirect') ?? UrlBuilder::makeUrl('Home', 'defaultView'),
+            'url_next' => $this->request->url('redirect') ?? UrlBuilder::makeUrl('Home', 'dashboardView'),
         ]);
     }
 
