@@ -35,26 +35,28 @@ class Website extends Controller
         }
     }
 
+    # GET routes
     public function display()
     {
-        $page = $this->repository->post->findPageBySlug('/first-page');
-//        $page = $this->repository->post->findPageBySlug($this->uri);
-        if (!$page) throw new HttpNotFoundException($this->uri);
+        switch ($this->uri) {
+            case '/reviews' :
+                $view = $this->getReviewsPage();
+                break;
+            case '/review' :
+                $view = $this->getReviewFormPage();
+                break;
+            default :
+                $view = $this->getUserDefinedPage();
+                break;
+        }
+        # Unexpected case
+        if (empty($view)) throw new \Exception("Une erreur est survenue, la page demandée n'est pas disponible");
 
-//        $this->setNewVisitor($_SERVER['REMOTE_ADDR'], $_SERVER['HTTP_USER_AGENT'], $this->uri, date('Y-m-d'));
-
-        $view_data = [
-            'meta_title' => $page['meta_title'],
-            'meta_description' => $page['meta_description'],
-            'is_indexable' => $page['meta_indexable'],
-            'content_title' => $page['title'],
-            'content' => $page['content'],
-            'reviews' => $this->repository->review->findAll()
-        ];
-        $this->render('website_review_list', $view_data);
+        $this->setNewVisitor($_SERVER['REMOTE_ADDR'], $_SERVER['HTTP_USER_AGENT'], $this->uri, date('Y-m-d'));
+        $this->render($view['view'], $view['context']);
     }
 
-
+    # POST routes
     public function formAction()
     {
         $res = [];
@@ -70,6 +72,49 @@ class Website extends Controller
                 break;
         }
         $this->sendJSON($res);
+    }
+
+    private function getUserDefinedPage()
+    {
+        $page = $this->repository->post->findPageBySlug($this->uri);
+        if (!$page) throw new HttpNotFoundException($this->uri);
+
+        return [
+            'view' => 'website_default',
+            'context' => [
+                'meta_title' => $page['meta_title'],
+                'meta_description' => $page['meta_description'],
+                'is_indexable' => $page['meta_indexable'],
+                'content_title' => $page['title'],
+                'content' => $page['content'],
+                'display_hero' => $this->uri === '/',
+            ]
+        ];
+    }
+
+    private function getReviewsPage()
+    {
+        return [
+            'view' => 'website_review_list',
+            'context' => [
+                'meta_title' => 'Les avis de nos clients',
+                'meta_description' => 'Les avis de nos clients',
+                'is_indexable' => false,
+                'reviews' => $this->repository->review->findAll()
+            ]
+        ];
+    }
+
+    private function getReviewFormPage()
+    {
+        return [
+            'view' => 'website_review_form',
+            'context' => [
+                'meta_title' => 'Votre avis',
+                'meta_description' => 'Votre avis compte',
+                'is_indexable' => false,
+            ]
+        ];
     }
 
     private function handleContactUs(?string $email, ?string $message)

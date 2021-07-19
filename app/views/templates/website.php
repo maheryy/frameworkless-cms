@@ -19,7 +19,7 @@
 
 <header class="main-header">
     <div class="main-logo">
-        <a class="logo" href="#">Hollytel</a>
+        <a class="logo" href="/">Munkee</a>
     </div>
     <nav>
         <ul class="links">
@@ -31,15 +31,17 @@
         </ul>
     </nav>
 </header>
-<!--<section class="hero-header">-->
-<!--    <div id="hero-img"-->
-<!--         data-url="https://images.pexels.com/photos/2598638/pexels-photo-2598638.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=750&w=1260"></div>-->
-<!--    <article class="hero-content">-->
-<!--        <h1>--><? //= $content_title ?><!--</h1>-->
-<!--        <p>Etiam quis tristique lectus. Aliquam in arcu eget velit pulvinar dictum vel in-->
-<!--            justo.</p>-->
-<!--    </article>-->
-<!--</section>-->
+<?php if (isset($display_hero) && $display_hero) : ?>
+    <section class="hero-header">
+        <div id="hero-img"
+             data-url="https://images.pexels.com/photos/2598638/pexels-photo-2598638.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=750&w=1260"></div>
+        <article class="hero-content">
+            <h1><? //= $content_title ?></h1>
+            <p>Etiam quis tristique lectus. Aliquam in arcu eget velit pulvinar dictum vel in
+                justo.</p>
+        </article>
+    </section>
+<?php endif; ?>
 <main class="content">
     <?php include $this->view ?>
 </main>
@@ -58,7 +60,7 @@
                 </ul>
             </div>
             <div class="footer-section text w-3/12">
-                <h3>Hollytel</h3>
+                <h3>Munkee</h3>
                 <div class="section-content">
                     <p>Praesent sed lobortis mi. Suspendisse vel placerat ligula. Vivamus ac sem lacus. Ut vehicula
                         rhoncus
@@ -107,7 +109,7 @@
             <a href="#"><i class="fab fa-instagram"></i></a>
         </div>
         <div class="footer-section">
-            <p class="copyright">Hollytel © 2021</p>
+            <p class="copyright">Munkee © 2021</p>
         </div>
     </div>
 </footer>
