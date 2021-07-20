@@ -1,14 +1,46 @@
 <article class="tab-content">
-    <div id="transferable" class="flex items-start" data-role="initNavigationTransferable">
-        <article class="card w-4/12 px-1.5 py-1 mr-1.75">
-            <p class="text-lg font-bold pb-1 py-0.5">Toutes les pages</p>
-            <div id="transferable-source" class="w-full">
+    <div id="transferable" class="flex items-start" data-role="initMenuTransferable">
+        <article class="card transparent w-4/12 px-1.5 pt-0 pb-1 mr-1.75">
+            <?php if ($referer == -1) : ?>
+                <div class="menu-config w-full">
+                    <div class="form-field p-0 mb-1 w-full">
+                        <select class="form-control w-full" id="menu_type" name="menu_type"
+                                data-role="refreshMenuSource">
+                            <?php foreach ($menu_types as $value => $label) : ?>
+                                <option value="<?= $value ?>" <?= isset($menu_data['menu_type']) && $menu_data['menu_type'] == $value ? 'selected=selected' : '' ?>> <?= $label ?></option>
+                            <?php endforeach; ?>
+                        </select>
+                        <label for="menu_type">Type de menu</label>
+                    </div>
+                </div>
+            <?php endif; ?>
+            <div class="transferable-source source-links w-full <?= isset($menu_data['menu_type']) && $menu_data['menu_type'] != \App\Core\Utils\Constants::MENU_LINKS ? 'hidden' : '' ?>">
+                <p class="text-lg font-bold py-0.5">Toutes les pages</p>
                 <ul class="list-elements py-1">
                     <?php foreach ($pages as $page) : ?>
                         <li class="transferable-element">
                             <input type="hidden" class="element-data"
-                                   data-options='<?= json_encode(['page_id' => $page['id'], 'page_link' => $page['slug'], 'page_title' => $page['title']]) ?>'>
+                                   data-options='<?= json_encode(['type' => 1, 'page_id' => $page['id'], 'page_link' => $page['slug'], 'page_title' => $page['title']]) ?>'>
                             <span class="label"><?= $page['title'] ?></span>
+                        </li>
+                    <?php endforeach; ?>
+                </ul>
+                <p class="text-lg font-bold py-0.5">Autre</p>
+                <ul class="list-elements py-1">
+                    <li class="transferable-element">
+                        <input type="hidden" class="element-data" data-options='<?= json_encode(['type' => 2]) ?>'>
+                        <span class="label">Lien personnalisé</span>
+                    </li>
+                </ul>
+            </div>
+            <div class="transferable-source source-socials w-full <?= isset($menu_data['menu_type']) && $menu_data['menu_type'] == \App\Core\Utils\Constants::MENU_SOCIALS ? '' : 'hidden' ?>">
+                <p class="text-lg font-bold py-0.5">Réseaux sociaux</p>
+                <ul class="list-elements py-1">
+                    <?php foreach ($social_medias as $item) : ?>
+                        <li class="transferable-element">
+                            <input type="hidden" class="element-data"
+                                   data-options='<?= json_encode(['type' => 2, 'icon' => $item['icon'], 'page_title' => $item['label']]) ?>'>
+                            <span class="label"><i class="<?= $item['icon'] ?> p-0.25"></i><?= $item['label'] ?></span>
                         </li>
                     <?php endforeach; ?>
                 </ul>
@@ -17,38 +49,39 @@
         <article class="card w-8/12 px-1.5 py-1">
             <form class="w-full flex-col" method="POST" action="<?= $url_form ?>">
                 <p class="">
-                    <input type="text" id="nav-name"
+                    <input type="text" id="menu_name"
                            class="text-xl font-extralight py-0.5 px-0.25 w-full border-none border-bottom-default"
-                           name="nav_name" placeholder="Nom de la navigation"
-                           value="<?= isset($nav_data['nav_title']) ? $nav_data['nav_title'] : 'Nouvelle navigation' ?>">
+                           name="menu_name" placeholder="Nom du menu"
+                           value="<?= $menu_data['menu_title'] ?? 'Nouveau menu' ?>">
                 </p>
-                <div class="nav-config w-full py-1 px-0.5 flex justify-around">
-                    <div class="form-field py-0.5 w-2/6">
-                        <select class="form-control w-full" id="nav_type" name="nav_type">
-                            <?php foreach ($nav_types as $value => $label) : ?>
-                                <option value="<?= $value ?>" <?= isset($nav_data['nav_type']) && $nav_data['nav_type'] == $value ? 'selected=selected' : '' ?>> <?= $label ?></option>
-                            <?php endforeach; ?>
-                        </select>
-                        <label for="nav_type">Type de navigation</label>
-                    </div>
-                    <div class="form-field-inline py-0.5 w-1/6">
-                        <input type="checkbox" name="nav_active" id="nav_active"
-                               value="1" <?= isset($nav_data['nav_active']) && $nav_data['nav_active'] == \App\Core\Utils\Constants::STATUS_ACTIVE ? 'checked=checked' : '' ?>>
-                        <label for="nav_active">Active</label>
-                    </div>
-                </div>
-                <hr class="w-4/12 self-center mt-1 mb-0.25 border-bottom-default divider">
                 <div id="transferable-target" class="w-full">
                     <ul class="list-elements py-1">
-                        <?php foreach ($nav_items as $nav_item) : ?>
+                        <?php foreach ($menu_items as $item) : ?>
                             <li class="transferable-element">
                                 <div class="element-content">
-                                    <input type="hidden" name="nav_items[]" value="<?= $nav_item['page_id'] ?>">
-                                    <input type="text" name="nav_labels[]" value="<?= $nav_item['label'] ?>">
-                                    <span class="description">Page <?= $nav_item['page_title'] ?> |
-                                        <a target="_blank"
-                                           href="/<?= $nav_item['page_link'] ?>"><?= '/' . $nav_item['page_link'] ?></a>
-                                    </span>
+                                    <?php if ($item['menu_type'] == \App\Core\Utils\Constants::MENU_LINKS) : ?>
+                                        <input type="hidden" name="menu_items[icons][]" value="">
+                                        <input type="hidden" name="menu_items[pages][]"
+                                               value="<?= $item['page_id'] ?? '' ?>">
+                                        <input class="label" type="text" name="menu_items[labels][]"
+                                               value="<?= $item['label'] ?>" placeholder="Nom du lien">
+                                        <span class="description">
+                                            <label><?= !empty($item['page_id']) ? 'Page ' . $item['page_title'] . ' :' : 'Lien personnalisé :' ?></label>
+                                            <input type="text" class="link" name="menu_items[links][]"
+                                                   value="<?= !empty($item['page_id']) ? $item['page_link'] : $item['url'] ?>"
+                                                   readonly>
+                                        </span>
+                                    <?php else : ?>
+                                        <input type="hidden" name="menu_items[icons][]" value="<?= $item['icon'] ?>">
+                                        <input type="hidden" name="menu_items[pages][]" value="">
+                                        <input class="label" type="text" name="menu_items[labels][]"
+                                               value="<?= $item['label'] ?>" placeholder="Nom du lien" readonly>
+                                        <span class="description">
+                                            <i class="<?= $item['icon'] ?> px-0.25"></i>
+                                            <input type="text" class="link" name="menu_items[links][]"
+                                                   placeholder="www.example.com" value=<?= $item['url'] ?>>
+                                        </span>
+                                    <?php endif ?>
                                 </div>
                                 <div class="element-actions">
                                     <span class="element-up"><i class="fas fa-sort-up"></i></span>
@@ -60,11 +93,13 @@
                     </ul>
                 </div>
                 <div class="form-action px-0 right">
-                    <input type="submit" class="<?= $referer == -1 ? 'btn-success' : 'btn-primary' ?> text-base"
-                           value="<?= $referer == -1 ? 'Ajouter' : 'Sauvegarder' ?>" data-role="submitPermissions"
+                    <input type="submit" class="<?= isset($menu_data) ? 'btn-primary' : 'btn-success' ?> text-base"
+                           value="<?= isset($menu_data) ? 'Sauvegarder' : 'Ajouter' ?>" data-role="submitPermissions"
                            data-options=<?= json_encode(['add_data' => ['ref' => $referer]]) ?>>
                     <?php if ($url_delete) : ?>
-                        <button class="btn-danger text-base" data-url="<?= $url_delete ?>" data-role="deleteItem">Supprimer</button>
+                        <button class="btn-danger text-base" data-url="<?= $url_delete ?>" data-role="deleteItem">
+                            Supprimer
+                        </button>
                     <?php endif; ?>
                 </div>
             </form>

@@ -1,5 +1,5 @@
 #transferable {
-  #transferable-source {
+  .transferable-source {
     .transferable-element {
       padding: .75em .5em;
       font-size: 1.125rem;
@@ -11,7 +11,7 @@
     }
   }
 
-  #nav-name {
+  #menu_name {
     &:hover {
       border: 1px solid $card-shadow;
     }
@@ -29,10 +29,23 @@
         flex: .8;
 
         input {
-          font-size: 1.125rem;
-          height: 1.5em;
-          padding: .2em .3em;
           border: none;
+          padding: .2em .3em;
+
+          &.label {
+            font-size: 1.125rem;
+            height: 1.5em;
+          }
+
+          &.link {
+            padding: 0;
+            &:read-only{
+              outline: none;
+              &:hover {
+                border: none;
+              }
+            }
+          }
 
           &:hover {
             border: 1px solid $card-shadow;

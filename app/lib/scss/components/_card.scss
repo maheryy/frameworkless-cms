@@ -6,8 +6,8 @@
   overflow-wrap: break-word;
 
   &.transparent {
-    box-shadow: 0 0 0 0;
-    background-color: $bg-primary;
+    box-shadow: none;
+    background : none;
   }
 
   &.rounded {

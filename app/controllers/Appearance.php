@@ -20,22 +20,24 @@ class Appearance extends Controller
     {
         $this->setCSRFToken();
 
-        $navs = $this->repository->navigation->findAll();
-        $default_nav_id = $this->request->get('id') ?? $navs[0]['id'] ?? -1;
-        $nav_items = $this->repository->navigationItem->findNavigationItems($default_nav_id);
-        $is_empty_table = empty($navs);
+        $menus = $this->repository->menu->findAll();
+        $default_menu_id = $this->request->get('id') ?? $menus[0]['id'] ?? -1;
+        $menu_items = $this->repository->menuItem->findMenuItems($default_menu_id);
+        $is_empty_table = empty($menu_items);
+        $menu_data = !$is_empty_table ? ($menu_items[0] ?? null) : null;
 
         $view_data = [
             'pages' => $this->repository->post->findPublishedPages(),
-            'navs' => $navs,
-            'nav_items' => $nav_items,
-            'referer' => !$is_empty_table ? $default_nav_id : -1,
-            'nav_data' => !$is_empty_table ? $nav_items[0] : null,
-            'nav_types' => Constants::getNavigationTypes(),
+            'menus' => $menus,
+            'menu_items' => $menu_items,
+            'referer' => $default_menu_id,
+            'menu_data' => $menu_data,
+            'menu_types' => Constants::getMenusTypes(),
             'url_form' => UrlBuilder::makeUrl('Appearance', 'navigationAction'),
-            'url_delete' => !$is_empty_table ? UrlBuilder::makeUrl('Appearance', 'deleteNavigationAction', ['id' => $default_nav_id]) : null,
-            'default_tab' => $default_nav_id,
+            'url_delete' => !$is_empty_table ? UrlBuilder::makeUrl('Appearance', 'deleteNavigationAction', ['id' => $default_menu_id]) : null,
+            'default_tab' => $default_menu_id,
             'default_tab_view' => PATH_VIEWS . 'nav_tab_default.php',
+            'social_medias' => Constants::getSocialList(),
             'tab_options' => [
                 'url_tab_view' => UrlBuilder::makeUrl('Appearance', 'navigationTabView'),
                 'container_id' => 'tab-content'
@@ -47,23 +49,24 @@ class Appearance extends Controller
     # /navigation-tab
     public function navigationTabView()
     {
-        $nav_id = $this->request->get('ref');
-        if (!$nav_id) {
+        $menu_id = $this->request->get('ref');
+        if (!$menu_id) {
             throw new \Exception('ref ne peut pas être null');
         }
-        $nav_items = [];
-        if ($nav_id > 0) {
-            $nav_items = $this->repository->navigationItem->findNavigationItems($nav_id);
-            $nav_data = $nav_items[0];
-            $url_delete = UrlBuilder::makeUrl('Appearance', 'deleteNavigationAction', ['id' => $nav_id]);
+        $menu_items = [];
+        if ($menu_id > 0) {
+            $menu_items = $this->repository->menuItem->findMenuItems($menu_id);
+            $menu_data = $menu_items[0] ?? null;
+            $url_delete = UrlBuilder::makeUrl('Appearance', 'deleteNavigationAction', ['id' => $menu_id]);
         }
 
         $view_data = [
-            'referer' => $nav_id,
+            'referer' => $menu_id,
             'pages' => $this->repository->post->findPublishedPages(),
-            'nav_data' => $nav_data ?? null,
-            'nav_types' => Constants::getNavigationTypes(),
-            'nav_items' => $nav_items,
+            'menu_data' => $menu_data ?? null,
+            'menu_types' => Constants::getMenusTypes(),
+            'menu_items' => $menu_items,
+            'social_medias' => Constants::getSocialList(),
             'url_form' => UrlBuilder::makeUrl('Appearance', 'navigationAction'),
             'url_delete' => $url_delete ?? null,
         ];
@@ -74,61 +77,80 @@ class Appearance extends Controller
     public function navigationAction()
     {
         $this->validateCSRF();
-        $nav_id = $this->request->post('ref');
-        $nav_items = $this->request->post('nav_items');
-        $nav_labels = $this->request->post('nav_labels');
+        $menu_id = $this->request->post('ref');
+        $menu_items = $this->request->post('menu_items');
+//        $menu_labels = $this->request->post('menu_labels');
+//        $menu_links = $this->request->post('menu_links');
 
-        if (!$nav_id) {
-            $this->sendError('Une erreur est survenue', ['nav_id' => $nav_id]);
+        if (!$menu_id) {
+            $this->sendError('Une erreur est survenue', ['menu_id' => $menu_id]);
         }
-        if (!$this->request->post('nav_name')) {
-            $this->sendError('Veuillez nommer la navigation');
+        if (!$this->request->post('menu_name')) {
+            $this->sendError('Veuillez nommer le menu');
         }
-        if (empty($nav_items)) {
-            $this->sendError('Veuillez ajouter au moins une page');
+        if (empty($menu_items)) {
+            $this->sendError('Veuillez ajouter au moins un élément');
         }
 
+//        $this->sendError(',qdz,', $menu_items);
+        $data_length = count($menu_items['pages']);
+        $labels = [];
+        $i = 0;
+        while ($i < $data_length) {
+            if (empty($menu_items['labels'][$i])) $this->sendError('Le label d\'une page ne peut être vide.');
+            if (empty($menu_items['links'][$i])) $this->sendError('Le lien ne peut être vide.');
+            if (in_array($menu_items['labels'][$i], $labels)) $this->sendError('Un label doit être unique.', [$menu_items['labels'][$i], $menu_items['labels']]);
 
-        $items = [];
-        foreach ($nav_items as $key => $item) {
-            if (empty($nav_labels[$key])) $this->sendError('Le label d\'une page ne peut être vide.');
-            $items[] = ['navigation_id' => $nav_id, 'post_id' => (int)$item, 'label' => $nav_labels[$key]];
+            $labels[] = $menu_items['labels'][$i];
+            $items[] = [
+                'menu_id' => $menu_id,
+                'post_id' => !empty($menu_items['pages'][$i]) ? $menu_items['pages'][$i] : null,
+                'label' => $menu_items['labels'][$i],
+                'icon' => !empty($menu_items['icons'][$i]) ? $menu_items['icons'][$i] : null,
+                'url' => !empty($menu_items['pages'][$i]) ? null : $menu_items['links'][$i],
+            ];
+            $i++;
         }
+//        echo '<pre>';
+//        print_r($items);
+//        die();
+
 
         try {
             Database::beginTransaction();
 
-            if ($this->request->post('nav_active')) {
-                $this->repository->navigation->setAllInactive($this->request->post('nav_type'));
-            }
+//            if ($this->request->post('nav_active')) {
+//                $this->repository->menu->setAllInactive($this->request->post('nav_type'));
+//            }
 
-            # New navigation
-            if ($nav_id == -1) {
-                $nav_id = $this->repository->navigation->create([
-                    'title' => $this->request->post('nav_name'),
-                    'type' => $this->request->post('nav_type'),
-                    'status' => $this->request->post('nav_active') ? Constants::STATUS_ACTIVE : Constants::STATUS_INACTIVE,
+            # New menu
+            if ($menu_id == -1) {
+                $menu_id = $this->repository->menu->create([
+                    'title' => $this->request->post('menu_name'),
+                    'type' => !empty($items[0]['icon']) ? Constants::MENU_SOCIALS : Constants::MENU_LINKS,
+                    'status' => Constants::STATUS_ACTIVE,
                 ]);
                 foreach ($items as $key => $item) {
-                    $items[$key]['navigation_id'] = $nav_id;
+                    $items[$key]['menu_id'] = (int)$menu_id;
                 }
-                $success_msg = 'Une nouvelle navigation a été ajouté';
+                $success_msg = 'Un nouveau menu a été ajouté';
             } else {
-                $this->repository->navigationItem->deleteAllByNavigation((int)$nav_id);
-                $this->repository->navigation->update($nav_id, [
-                    'title' => $this->request->post('nav_name'),
-                    'type' => $this->request->post('nav_type'),
-                    'status' => $this->request->post('nav_active') ? Constants::STATUS_ACTIVE : Constants::STATUS_INACTIVE,
+                $this->repository->menuItem->deleteAllByMenu((int)$menu_id);
+                $this->repository->menu->update($menu_id, [
+                    'title' => $this->request->post('menu_name'),
+                    'type' => !empty($items[0]['icon']) ? Constants::MENU_SOCIALS : Constants::MENU_LINKS,
                 ]);
                 $success_msg = 'Informations sauvegardées';
             }
 
-
-            $this->repository->navigationItem->create($items);
+//            var_dump($items);die;
+//            echo '<pre>';
+//            print_r($items);die;
+            $this->repository->menuItem->create($items);
 
             Database::commit();
             $this->sendSuccess($success_msg, [
-                'url_next' => UrlBuilder::makeUrl('Appearance', 'navigationView', ['id' => $nav_id]),
+                'url_next' => UrlBuilder::makeUrl('Appearance', 'navigationView', ['id' => $menu_id]),
                 'url_next_delay' => 1
             ]);
         } catch (\Exception $e) {
@@ -143,8 +165,8 @@ class Appearance extends Controller
         if (!$this->request->get('id')) {
             $this->sendError('Une erreur est survenue');
         }
-        $this->repository->navigation->remove($this->request->get('id'));
-        $this->sendSuccess('Navigation supprimée', [
+        $this->repository->menu->remove($this->request->get('id'));
+        $this->sendSuccess('Menu supprimée', [
             'url_next' => UrlBuilder::makeUrl('Appearance', 'navigationView'),
             'delay_url_next' => 0,
         ]);

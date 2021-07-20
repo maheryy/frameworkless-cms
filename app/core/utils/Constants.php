@@ -34,7 +34,7 @@ class Constants
     # Visibility types
     const VISIBILITY_PUBLIC = 1;
     const VISIBILITY_PRIVATE = 2;
-    
+
     # User roles
     const ROLE_SUPER_ADMIN = 1;
     const ROLE_ADMIN = 2;
@@ -52,16 +52,16 @@ class Constants
     const PERM_PUBLISH_PAGE = 8;
     const PERM_DELETE_PAGE = 9;
 
-    # Navigation types
-    const NAVIGATION_HEADER = 1;
-    const NAVIGATION_FOOTER = 2;
+    # Menu types
+    const MENU_LINKS = 1;
+    const MENU_SOCIALS = 2;
 
     # General settings table keys
     const STG_TITLE = 'site_title';
     const STG_DESCRIPTION = 'site_description';
     const STG_EMAIL_ADMIN = 'email_admin';
     const STG_EMAIL_CONTACT = 'email_contact';
-    const STG_ROLE= 'default_role';
+    const STG_ROLE = 'default_role';
     const STG_PUBLIC_SIGNUP = 'public_signup';
 
 
@@ -86,11 +86,49 @@ class Constants
         ];
     }
 
-    public static function getNavigationTypes()
+    public static function getMenusTypes()
     {
         return [
-            self::NAVIGATION_HEADER => 'Header',
-            self::NAVIGATION_FOOTER => 'Footer',
+            self::MENU_LINKS => 'Liens',
+            self::MENU_SOCIALS => 'Réseaux sociaux',
+        ];
+    }
+
+    public static function getSocialList()
+    {
+        return [
+            'facebook' => [
+                'label' => 'Facebook',
+                'icon' => 'fab fa-facebook blue',
+            ],
+            'instagram' => [
+                'label' => 'Instagram',
+                'icon' => 'fab fa-instagram',
+            ],
+            'twitter' => [
+                'label' => 'Twitter',
+                'icon' => 'fab fa-twitter',
+            ],
+            'snapchat' => [
+                'label' => 'Snapchat',
+                'icon' => 'fab fa-snapchat',
+            ],
+            'discord' => [
+                'label' => 'Discord',
+                'icon' => 'fab fa-discord',
+            ],
+            'linkedin' => [
+                'label' => 'LinkedIn',
+                'icon' => 'fab fa-linkedin',
+            ],
+            'youtube' => [
+                'label' => 'Youtube',
+                'icon' => 'fab fa-youtube',
+            ],
+            'tumblr' => [
+                'label' => 'Tumblr',
+                'icon' => 'fab fa-tumblr',
+            ]
         ];
     }
 }

@@ -131,6 +131,37 @@ function setInfo(type, text, delay = null) {
     }
 }
 
+
+function getMenuItemBaseElement(data) {
+
+    return $(
+        '<li class="transferable-element">' +
+        '<div class="element-content">' +
+        `<input type="hidden" name="menu_items[icons][]" value="${data.icon ?? ''}">` +
+        `<input type="hidden" name="menu_items[pages][]" value="${data.page_id ?? ''}">` +
+        `<input class="label" type="text" name="menu_items[labels][]" value="${data.page_title ?? 'Mon lien'}" ${data.label_readonly ? 'readonly' : ''} placeholder="Nom du lien">` +
+        (
+            data.type === 1
+                ? `<span class="description">Page ${data.page_title} : <input type="text" class="link" name="menu_items[links][]" value="${data.page_link}" readonly></span>`
+                : `<span class="description">${data.icon !== undefined ? '<i class="' + data.icon + ' px-0.25"></i>' : 'Lien personnalisé :'} <input type="text" class="link" name="menu_items[links][]" placeholder="www.example.com"></span>`
+        ) +
+        '</div>' +
+        '</li>'
+    );
+}
+
+
+function createMenuItemElement(data, actionUp, actionDown, actionDel) {
+    const element = getMenuItemBaseElement(data);
+
+    const up = $('<span class="element-up"><i class="fas fa-sort-up"></i></span>').click(actionUp);
+    const down = $('<span class="element-down"><i class="fas fa-sort-down"></i></span>').click(actionDown);
+    const del = $('<span class="element-delete"><i class="fas fa-times"></i></span>').click(actionDel);
+
+    return $(element).append($('<div class="element-actions"></div>').append(up, down, del));
+}
+
+
 /* Include every data-role functions declared in the HTML code below */
 const roleFunctions = {
     setActiveLink: function () {
@@ -252,29 +283,13 @@ const roleFunctions = {
         $(container).find('#transpose-source .transpose-element').click(sourceClick);
         $(container).find('#transpose-target .transpose-element').click(targetClick);
     },
-    initNavigationTransferable: function () {
+    initMenuTransferable: function () {
         const target_list = $(this).find('#transferable-target .list-elements');
 
         const sourceClick = e => {
             const data = getOptions($(e.currentTarget).find('input.element-data'));
-            // Base element
-            const element =
-                '<li class="transferable-element">' +
-                '<div class="element-content">' +
-                `<input type="hidden" name="nav_items[]" value="${data.page_id}">` +
-                `<input type="text" name="nav_labels[]" value="${data.page_title}">` +
-                `<span class="description">Page ${data.page_title} | <a target="_blank" href="${data.page_link}">${data.page_link}</a></span>` +
-                '</div>' +
-                '</li>';
-
-            // Attach event to item actions
-            const up = $('<span class="element-up"><i class="fas fa-sort-up"></i></span>').click(moveUp);
-            const down = $('<span class="element-down"><i class="fas fa-sort-down"></i></span>').click(moveDown);
-            const del = $('<span class="element-delete"><i class="fas fa-times"></i></span>').click(remove);
-
-            // Create a container for the actions to append to base element
-            const actions = $('<div class="element-actions"></div>').append(up, [down, del]);
-            $(element).append(actions).appendTo(target_list);
+            const element = createMenuItemElement(data, moveUp, moveDown, remove);
+            $(target_list).append(element);
         };
 
         const remove = e => {
@@ -296,7 +311,7 @@ const roleFunctions = {
             }
         }
 
-        $(this).find('#transferable-source .transferable-element').click(sourceClick);
+        $(this).find('.transferable-source .transferable-element').click(sourceClick);
         $(this).find('#transferable-target .transferable-element .element-up').click(moveUp);
         $(this).find('#transferable-target .transferable-element .element-down').click(moveDown);
         $(this).find('#transferable-target .transferable-element .element-delete').click(remove);
@@ -386,6 +401,20 @@ const roleFunctions = {
             if ($('#tab_view').val() == -1) return;
             $('#tab_view').val(-1).change();
         })
+    },
+    refreshMenuSource: function () {
+        let storage = {};
+        $(this).change(function () {
+            if ($(this).val() === '1') {
+                $('.source-links').removeClass('hidden');
+                $('.source-socials').addClass('hidden');
+            } else {
+                $('.source-socials').removeClass('hidden');
+                $('.source-links').addClass('hidden');
+
+            }
+            $('#transferable-target .list-elements').html('');
+        });
     }
 };
 
