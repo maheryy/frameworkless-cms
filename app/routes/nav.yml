@@ -25,9 +25,6 @@ sidebar-main:
       customization:
         label: Personnalisation
         route: /admin/customization
-      themes:
-        label: Thèmes
-        route: /admin/themes
   user:
     label: Utilisateurs
     icon: fas fa-users

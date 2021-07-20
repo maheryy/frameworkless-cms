@@ -172,22 +172,6 @@
 
 
 # Webpage editor (appearance)
-/themes:
-  controller: Appearance
-  method: themeListView
-  title: Liste des thèmes
-  require_auth: True
-
-/import-theme:
-  controller: Appearance
-  method: importThemeView
-  title: Importer un thème
-  require_auth: True
-
-/import-theme-save:
-  controller: Appearance
-  method: importThemeAction
-  require_auth: True
 
 /menu:
   controller: Appearance

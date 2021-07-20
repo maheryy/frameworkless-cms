@@ -229,22 +229,4 @@ class Appearance extends Controller
         }
     }
 
-
-    # /themes
-    public function themeListView()
-    {
-
-    }
-
-    # /import-theme
-    public function importThemeView()
-    {
-
-    }
-
-    # /import-theme-save
-    public function importThemeAction()
-    {
-
-    }
 }

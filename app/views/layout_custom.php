@@ -21,6 +21,7 @@
             <div class="custom-content" data-role="initFooterCustomization">
                 <div class="form-field-inline w-5/6 mb-2">
                     <select id="socials_footer" name="socials_footer" class="form-control">
+                        <option value=""></option>
                         <?php foreach ($link_socials as $item) : ?>
                             <option value="<?= $item['id'] ?>"><?= $item['title'] ?></option>
                         <?php endforeach; ?>
