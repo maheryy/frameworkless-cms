@@ -7,7 +7,6 @@ use App\Core\Utils\Constants;
 use App\Core\Utils\Expr;
 use App\Core\Utils\Formatter;
 use App\Models\MenuItem;
-use App\Models\NavigationItem;
 
 class MenuItemRepository extends BaseRepository
 {

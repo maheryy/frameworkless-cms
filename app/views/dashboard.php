@@ -5,7 +5,7 @@
             <p>Pages : <?= $pages ?></p>
             <p>Users : <?= $users ?></p>
             <p>Roles : <?= $roles ?></p>
-            <p>Navs : <?= $navs ?></p>
+            <p>Menus : <?= $menus ?></p>
             <p>
                 <?php
                 echo '<pre>';

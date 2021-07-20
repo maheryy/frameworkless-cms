@@ -17,11 +17,11 @@ sidebar-main:
   appearance:
     label: Apparance
     icon: fas fa-palette
-    route: /admin/navigation
+    route: /admin/menu
     sub-links:
-      navigations:
-        label: Navigations
-        route: /admin/navigation
+      menus:
+        label: Menus
+        route: /admin/menu
       themes:
         label: Thèmes
         route: /admin/themes

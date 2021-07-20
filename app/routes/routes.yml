@@ -189,26 +189,26 @@
   method: importThemeAction
   require_auth: True
 
-/navigation:
+/menu:
   controller: Appearance
-  method: navigationView
-  title: Liste des navigations
+  method: menuView
+  title: Liste des menus
   require_auth: True
 
-/navigation-tab:
+/menu-tab:
   controller: Appearance
-  method: navigationTabView
-  title: Modifier une navigation
+  method: menuTabView
+  title: Modifier une menu
   require_auth: True
 
-/navigation-save:
+/menu-save:
   controller: Appearance
-  method: navigationAction
+  method: menuAction
   require_auth: True
 
-/delete-navigation:
+/delete-menu:
   controller: Appearance
-  method: deleteNavigationAction
+  method: deleteMenuAction
   require_auth: True
 
 # Settings

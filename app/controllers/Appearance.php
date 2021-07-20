@@ -15,8 +15,8 @@ class Appearance extends Controller
         parent::__construct($options);
     }
 
-    # /navigation
-    public function navigationView()
+    # /menu
+    public function menuView()
     {
         $this->setCSRFToken();
 
@@ -33,21 +33,21 @@ class Appearance extends Controller
             'referer' => $default_menu_id,
             'menu_data' => $menu_data,
             'menu_types' => Constants::getMenusTypes(),
-            'url_form' => UrlBuilder::makeUrl('Appearance', 'navigationAction'),
-            'url_delete' => !$is_empty_table ? UrlBuilder::makeUrl('Appearance', 'deleteNavigationAction', ['id' => $default_menu_id]) : null,
+            'url_form' => UrlBuilder::makeUrl('Appearance', 'menuAction'),
+            'url_delete' => !$is_empty_table ? UrlBuilder::makeUrl('Appearance', 'deleteMenuAction', ['id' => $default_menu_id]) : null,
             'default_tab' => $default_menu_id,
-            'default_tab_view' => PATH_VIEWS . 'nav_tab_default.php',
+            'default_tab_view' => PATH_VIEWS . 'menu_tab_default.php',
             'social_medias' => Constants::getSocialList(),
             'tab_options' => [
-                'url_tab_view' => UrlBuilder::makeUrl('Appearance', 'navigationTabView'),
+                'url_tab_view' => UrlBuilder::makeUrl('Appearance', 'menuTabView'),
                 'container_id' => 'tab-content'
             ]
         ];
-        $this->render('nav_default', $view_data);
+        $this->render('menu_default', $view_data);
     }
 
-    # /navigation-tab
-    public function navigationTabView()
+    # /menu-tab
+    public function menuTabView()
     {
         $menu_id = $this->request->get('ref');
         if (!$menu_id) {
@@ -57,7 +57,7 @@ class Appearance extends Controller
         if ($menu_id > 0) {
             $menu_items = $this->repository->menuItem->findMenuItems($menu_id);
             $menu_data = $menu_items[0] ?? null;
-            $url_delete = UrlBuilder::makeUrl('Appearance', 'deleteNavigationAction', ['id' => $menu_id]);
+            $url_delete = UrlBuilder::makeUrl('Appearance', 'deleteMenuAction', ['id' => $menu_id]);
         }
 
         $view_data = [
@@ -67,20 +67,18 @@ class Appearance extends Controller
             'menu_types' => Constants::getMenusTypes(),
             'menu_items' => $menu_items,
             'social_medias' => Constants::getSocialList(),
-            'url_form' => UrlBuilder::makeUrl('Appearance', 'navigationAction'),
+            'url_form' => UrlBuilder::makeUrl('Appearance', 'menuAction'),
             'url_delete' => $url_delete ?? null,
         ];
-        $this->renderViewOnly('nav_tab_default', $view_data);
+        $this->renderViewOnly('menu_tab_default', $view_data);
     }
 
-    # /navigation-save
-    public function navigationAction()
+    # /menu-save
+    public function menuAction()
     {
         $this->validateCSRF();
         $menu_id = $this->request->post('ref');
         $menu_items = $this->request->post('menu_items');
-//        $menu_labels = $this->request->post('menu_labels');
-//        $menu_links = $this->request->post('menu_links');
 
         if (!$menu_id) {
             $this->sendError('Une erreur est survenue', ['menu_id' => $menu_id]);
@@ -92,7 +90,6 @@ class Appearance extends Controller
             $this->sendError('Veuillez ajouter au moins un élément');
         }
 
-//        $this->sendError(',qdz,', $menu_items);
         $data_length = count($menu_items['pages']);
         $labels = [];
         $i = 0;
@@ -111,17 +108,9 @@ class Appearance extends Controller
             ];
             $i++;
         }
-//        echo '<pre>';
-//        print_r($items);
-//        die();
-
 
         try {
             Database::beginTransaction();
-
-//            if ($this->request->post('nav_active')) {
-//                $this->repository->menu->setAllInactive($this->request->post('nav_type'));
-//            }
 
             # New menu
             if ($menu_id == -1) {
@@ -143,14 +132,11 @@ class Appearance extends Controller
                 $success_msg = 'Informations sauvegardées';
             }
 
-//            var_dump($items);die;
-//            echo '<pre>';
-//            print_r($items);die;
             $this->repository->menuItem->create($items);
 
             Database::commit();
             $this->sendSuccess($success_msg, [
-                'url_next' => UrlBuilder::makeUrl('Appearance', 'navigationView', ['id' => $menu_id]),
+                'url_next' => UrlBuilder::makeUrl('Appearance', 'menuView', ['id' => $menu_id]),
                 'url_next_delay' => 1
             ]);
         } catch (\Exception $e) {
@@ -159,15 +145,15 @@ class Appearance extends Controller
         }
     }
 
-    # /delete-navigation
-    public function deleteNavigationAction()
+    # /delete-menu
+    public function deleteMenuAction()
     {
         if (!$this->request->get('id')) {
             $this->sendError('Une erreur est survenue');
         }
         $this->repository->menu->remove($this->request->get('id'));
         $this->sendSuccess('Menu supprimée', [
-            'url_next' => UrlBuilder::makeUrl('Appearance', 'navigationView'),
+            'url_next' => UrlBuilder::makeUrl('Appearance', 'menuView'),
             'delay_url_next' => 0,
         ]);
     }

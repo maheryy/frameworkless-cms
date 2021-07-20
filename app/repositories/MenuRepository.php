@@ -6,7 +6,6 @@ use App\Core\BaseRepository;
 use App\Core\Utils\Constants;
 use App\Core\Utils\Expr;
 use App\Models\Menu;
-use App\Models\Navigation;
 
 class MenuRepository extends BaseRepository
 {
