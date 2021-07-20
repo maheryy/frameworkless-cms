@@ -15,6 +15,8 @@ class MenuItemRepository extends BaseRepository
         parent::__construct($model);
     }
 
+
+
     public function findMenuItems(int $menu_id)
     {
         $menu_table = Formatter::getTableName('menu');

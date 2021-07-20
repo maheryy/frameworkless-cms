@@ -91,12 +91,12 @@ class Appearance extends Controller
         }
 
         $data_length = count($menu_items['pages']);
-        $labels = [];
+        $labels = $items = [];
         $i = 0;
         while ($i < $data_length) {
             if (empty($menu_items['labels'][$i])) $this->sendError('Le label d\'une page ne peut être vide.');
             if (empty($menu_items['links'][$i])) $this->sendError('Le lien ne peut être vide.');
-            if (in_array($menu_items['labels'][$i], $labels)) $this->sendError('Un label doit être unique.', [$menu_items['labels'][$i], $menu_items['labels']]);
+            if (in_array($menu_items['labels'][$i], $labels)) $this->sendError('Un label doit être unique.');
 
             $labels[] = $menu_items['labels'][$i];
             $items[] = [
@@ -157,6 +157,78 @@ class Appearance extends Controller
             'delay_url_next' => 0,
         ]);
     }
+
+    # /customization
+    public function customizationView()
+    {
+        $this->setCSRFToken();
+        $view_data = [
+            'url_form' => UrlBuilder::makeUrl('Appearance', 'customizationAction'),
+            'link_menus' => $this->repository->menu->findMenuLinks(),
+            'link_socials' => $this->repository->menu->findMenuSocials(),
+        ];
+        $this->render('layout_custom', $view_data);
+    }
+
+    # /customization-save
+    public function customizationAction()
+    {
+        $this->validateCSRF();
+        $footer_items = $this->request->post('footer_items');
+
+
+        # Footer sections storage
+        $data_length = !empty($footer_items['types']) ? count($footer_items['types']) : 0;
+        $i = 0;
+        $footer_sections = [];
+        while ($i < $data_length) {
+            if (empty($footer_items['labels'][$i])) $this->sendError('Le label d\'une section ne peut être vide.');
+
+            $links = [];
+            if (!empty($footer_items['menus'][$i])) {
+                $links = array_map(
+                    fn($el) => ['label' => $el['label'], 'link' => $el['page_link'] ?? $el['url']],
+                    $this->repository->menuItem->findMenuItems((int)$footer_items['menus'][$i])
+                );
+            }
+
+            $footer_sections[] = [
+                'type' => $footer_items['types'][$i],
+                'label' => $footer_items['labels'][$i],
+                'data' => $footer_items['types'][$i] == Constants::FOOTER_LINKS ? $links : $footer_items['data'][$i],
+            ];
+            $i++;
+        }
+
+        # Social medias storage
+        $social_items = [];
+        if ($this->request->post('socials_footer')) {
+            $social_items = array_map(
+                fn($el) => ['icon' => $el['icon'], 'link' => $el['url']],
+                $this->repository->menuItem->findMenuItems((int) $this->request->post('socials_footer'))
+            );
+        }
+
+        # Header menu storage
+        $header_items = [];
+        if ($this->request->post('main_header')) {
+            $header_items = array_map(
+                fn($el) => ['label' => $el['label'], 'link' => $el['page_link'] ?? $el['url']],
+                $this->repository->menuItem->findMenuItems((int) $this->request->post('main_header'))
+            );
+        }
+
+        try {
+            $this->repository->settings->updateSettings([
+                'footer_layout' => json_encode(['sections' => $footer_sections, 'socials' => $social_items]),
+                'header_layout' => json_encode($header_items),
+            ]);
+            $this->sendSuccess('Informations sauvegardées');
+        } catch (\Exception $e) {
+            $this->sendError('Une erreur est survenue : '. $e->getMessage());
+        }
+    }
+
 
     # /themes
     public function themeListView()

@@ -52,8 +52,22 @@ class Website extends Controller
         # Unexpected case
         if (empty($view)) throw new \Exception("Une erreur est survenue, la page demandée n'est pas disponible");
 
+        $footer_data = $this->getFooterData();
+        $view['context']['footer_sections'] = $footer_data['sections'];
+        $view['context']['footer_socials'] = $footer_data['socials'];
+        $view['context']['header_menu'] = $this->getHeaderMenu();
+
         $this->setNewVisitor($_SERVER['REMOTE_ADDR'], $_SERVER['HTTP_USER_AGENT'], $this->uri, date('Y-m-d'));
         $this->render($view['view'], $view['context']);
+    }
+
+    public function getFooterData()
+    {
+        return json_decode($this->settings['footer_layout'], true);
+    }
+    public function getHeaderMenu()
+    {
+        return json_decode($this->settings['header_layout'], true);
     }
 
     # POST routes
@@ -343,7 +357,7 @@ class Website extends Controller
     {
         $items = null;
         foreach ($data as $item) {
-            $items .= "<li class='social-item'><a href='{$item['link']}'><i class='fab fa-{$item['icon']}'></i></a></li>" . PHP_EOL;
+            $items .= "<li class='social-item'><a href='{$item['link']}'><i class='{$item['icon']}'></i></a></li>" . PHP_EOL;
         }
 
         return

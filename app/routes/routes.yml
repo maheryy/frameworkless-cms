@@ -198,7 +198,7 @@
 /menu-tab:
   controller: Appearance
   method: menuTabView
-  title: Modifier une menu
+  title: Modifier un menu
   require_auth: True
 
 /menu-save:
@@ -210,6 +210,18 @@
   controller: Appearance
   method: deleteMenuAction
   require_auth: True
+
+/customization:
+  controller: Appearance
+  method: customizationView
+  title: Personnalisation
+  require_auth: True
+
+/customization-save:
+  controller: Appearance
+  method: customizationAction
+  require_auth: True
+
 
 # Settings
 /settings:

@@ -18,8 +18,25 @@ class MenuRepository extends BaseRepository
     {
         $this->queryBuilder
             ->where(Expr::neq('status', Constants::STATUS_DELETED))
-            ->orderAsc('type')
-            ->orderDesc('status');
+            ->orderAsc('type');
+
+        return $this->model->fetchAll($this->queryBuilder);
+    }
+
+    public function findMenuLinks()
+    {
+        $this->queryBuilder
+            ->where(Expr::neq('status', Constants::STATUS_DELETED))
+            ->where(Expr::eq('type', Constants::MENU_LINKS));
+
+        return $this->model->fetchAll($this->queryBuilder);
+    }
+
+    public function findMenuSocials()
+    {
+        $this->queryBuilder
+            ->where(Expr::neq('status', Constants::STATUS_DELETED))
+            ->where(Expr::eq('type', Constants::MENU_SOCIALS));
 
         return $this->model->fetchAll($this->queryBuilder);
     }

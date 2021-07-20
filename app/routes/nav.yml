@@ -22,6 +22,9 @@ sidebar-main:
       menus:
         label: Menus
         route: /admin/menu
+      customization:
+        label: Personnalisation
+        route: /admin/customization
       themes:
         label: Thèmes
         route: /admin/themes

@@ -1,0 +1,64 @@
+#transferable-target {
+  .transferable-element {
+    padding: .75em .5em;
+    display: flex;
+    justify-content: space-between;
+
+    .element-content {
+      display: flex;
+      flex-direction: column;
+      flex: .8;
+
+      input {
+        border: none;
+        padding: .2em .3em;
+
+        &.label {
+          font-size: 1.125rem;
+          height: 1.5em;
+        }
+
+        &.link {
+          padding: 0;
+
+          &:read-only {
+            outline: none;
+
+            &:hover {
+              border: none;
+            }
+          }
+        }
+
+        &:hover {
+          border: 1px solid $card-shadow;
+        }
+      }
+
+      .description {
+        font-size: .75rem;
+        padding: .1em .5em;
+      }
+    }
+
+    .element-actions {
+      flex: .15;
+      display: flex;
+      justify-content: space-around;
+      align-items: center;
+      font-size: 1.5rem;
+
+      & > span {
+        cursor: pointer;
+
+        &.element-up {
+          transform: translateY(5.5px);
+        }
+
+        &.element-down {
+          transform: translateY(-5.2px);
+        }
+      }
+    }
+  }
+}

@@ -239,6 +239,11 @@ $flex-properties: (
                 self-center : center,
                 self-stretch : stretch,
         ),
+        flex-wrap : (
+                flex-wrap: wrap,
+                flex-wrap-reverse : wrap-reverse,
+                flex-nowrap : nowrap,
+        ),
 );
 
 .flex {

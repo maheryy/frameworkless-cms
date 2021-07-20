@@ -21,13 +21,7 @@
     <div class="main-logo">
         <a class="logo" href="/">Munkee</a>
     </div>
-    <?= \App\Controllers\Website::getMenuHeader([
-        ['label' => 'Chambres', 'link' => '#'],
-        ['label' => 'Services', 'link' => '#'],
-        ['label' => 'Evenements', 'link' => '#'],
-        ['label' => 'FAQ', 'link' => '#'],
-        ['label' => 'Contact', 'link' => '#'],
-    ]) ?>
+    <?= !empty($header_menu) ? \App\Controllers\Website::getMenuHeader($header_menu) : '' ?>
 </header>
 <?= empty($display_hero) ? ''
     : \App\Controllers\Website::getHero(
@@ -42,24 +36,30 @@
 </main>
 <footer>
     <div class="flex flex-col m-auto">
-        <div class="flex justify-center h-full">
-            <?= \App\Controllers\Website::getLinkFooter('Our services', [['label' => 'reviews', 'link' => '/reviews'], ['label' => 'review', 'link' => '/review']], 3) ?>
-            <?= \App\Controllers\Website::getTextFooter(
-                'Munkee company',
-                'Praesent sed lobortis mi. Suspendisse vel placerat ligula. 
-                    Vivamus ac sem lacus. Ut vehicula rhoncus elementum. Etiam quis tristique lectus. 
-                    Aliquam in arcu eget velit pulvinar dictum vel in justo.',
-                3)
-            ?>
-            <?= \App\Controllers\Website::getContactFooter('Contact us', 3) ?>
-            <?= \App\Controllers\Website::getNewsletterFooter('Newsletter', 3) ?>
-        </div>
-        <?= \App\Controllers\Website::getSocialFooter([
-            ['icon' => 'facebook', 'link' => '#'],
-            ['icon' => 'twitter', 'link' => '#'],
-            ['icon' => 'snapchat', 'link' => '#'],
-            ['icon' => 'instagram', 'link' => '#']
-        ]) ?>
+        <?php if (!empty($footer_sections)) : ?>
+            <div class="flex justify-center h-full">
+                <?php
+                $size = 12 / count($footer_sections);
+                foreach ($footer_sections as $item) {
+                    switch ($item['type']) {
+                        case \App\Core\Utils\Constants::FOOTER_TEXT :
+                            echo \App\Controllers\Website::getTextFooter($item['label'], nl2br($item['data']), $size);
+                            break;
+                        case \App\Core\Utils\Constants::FOOTER_LINKS :
+                            echo \App\Controllers\Website::getLinkFooter($item['label'], $item['data'], $size);
+                            break;
+                        case \App\Core\Utils\Constants::FOOTER_CONTACT :
+                            echo \App\Controllers\Website::getContactFooter($item['label'], $size);
+                            break;
+                        case \App\Core\Utils\Constants::FOOTER_NEWSLETTER :
+                            echo \App\Controllers\Website::getNewsletterFooter($item['label'], $size);
+                            break;
+                    }
+                }
+                ?>
+            </div>
+        <?php endif; ?>
+        <?= !empty($footer_socials) ? \App\Controllers\Website::getSocialFooter($footer_socials) : '' ?>
         <div class="footer-section">
             <p class="copyright">Munkee © 2021</p>
         </div>

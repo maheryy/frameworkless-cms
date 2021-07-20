@@ -56,6 +56,12 @@ class Constants
     const MENU_LINKS = 1;
     const MENU_SOCIALS = 2;
 
+    # Footer sections
+    const FOOTER_TEXT = 1;
+    const FOOTER_LINKS = 2;
+    const FOOTER_CONTACT = 3;
+    const FOOTER_NEWSLETTER = 4;
+
     # General settings table keys
     const STG_TITLE = 'site_title';
     const STG_DESCRIPTION = 'site_description';
@@ -63,7 +69,6 @@ class Constants
     const STG_EMAIL_CONTACT = 'email_contact';
     const STG_ROLE = 'default_role';
     const STG_PUBLIC_SIGNUP = 'public_signup';
-
 
     # Review statuses
     const REVIEW_PENDING = 0;
