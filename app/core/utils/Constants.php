@@ -72,6 +72,7 @@ class Constants
     const STG_ROLE = 'default_role';
     const STG_PUBLIC_SIGNUP = 'public_signup';
     const STG_SITE_LAYOUT = 'site_layout';
+    const STG_HERO_DATA = 'hero_data';
 
     # Review statuses
     const REVIEW_PENDING = 0;

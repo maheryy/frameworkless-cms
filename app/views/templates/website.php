@@ -23,14 +23,7 @@
     </div>
     <?= !empty($header_menu) ? \App\Controllers\Website::getMenuHeader($header_menu) : '' ?>
 </header>
-<?= empty($display_hero) ? ''
-    : \App\Controllers\Website::getHero(
-        'Hero !!',
-        'Etiam quis tristique lectus. Aliquam in arcu eget velit pulvinar dictum vel in
-                justo.',
-        'https://images.pexels.com/photos/2598638/pexels-photo-2598638.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=750&w=1260'
-    )
-?>
+<?= !empty($display_hero) ? \App\Controllers\Website::getHero($hero_data['title'], $hero_data['description'], $hero_data['image']) : '' ?>
 <main class="content">
     <?php include $this->view ?>
 </main>

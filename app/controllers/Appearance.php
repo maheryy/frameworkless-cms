@@ -168,6 +168,7 @@ class Appearance extends Controller
             'socials_menu' => $layout['footer_socials'] ?? [],
             'footer_sections' => $layout['footer_sections'] ?? [],
             'header_menu' => $layout['main_menu'] ?? [],
+            'hero_data' => json_decode($this->settings[Constants::STG_HERO_DATA], true),
             'link_menus' => $this->repository->menu->findMenuLinks(),
             'link_socials' => $this->repository->menu->findMenuSocials(),
         ];
@@ -209,7 +210,15 @@ class Appearance extends Controller
         ];
 
         try {
-            $this->repository->settings->updateSettings(['site_layout' => json_encode($data)]);
+            $this->repository->settings->updateSettings([
+                'site_layout' => json_encode($data),
+                'hero_data' => json_encode([
+                   'status' => $this->request->post('hero_status'),
+                   'title' => $this->request->post('hero_title'),
+                   'description' => $this->request->post('hero_description'),
+                   'image' => $this->request->post('hero_image'),
+                ]),
+            ]);
             $this->sendSuccess('Informations sauvegardées', [
                 'url_next' => UrlBuilder::makeUrl('Appearance', 'customizationView'),
                 'url_next_delay' => 1
@@ -221,7 +230,7 @@ class Appearance extends Controller
 
     public function getLayoutData()
     {
-        $data = json_decode($this->settings['site_layout'], true);
+        $data = json_decode($this->settings[Constants::STG_SITE_LAYOUT], true);
         if (empty($data)) return ['header_menu' => [], 'footer_data' => []];
 
         $res = [];

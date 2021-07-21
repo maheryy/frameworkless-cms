@@ -47,6 +47,11 @@ class Website extends Controller
                 break;
             default :
                 $view = $this->getUserDefinedPage();
+                $hero_data = json_decode($this->settings[Constants::STG_HERO_DATA], true);
+                if (!empty($hero_data)) {
+                    $view['context']['display_hero'] = $hero_data['status'] == 1 && $this->uri === '/' || $hero_data['status'] == 2;
+                    $view['context']['hero_data'] = $hero_data;
+                }
                 break;
         }
         # Unexpected case
@@ -92,7 +97,6 @@ class Website extends Controller
                 'is_indexable' => $page['meta_indexable'],
                 'content_title' => $page['title'],
                 'content' => $page['content'],
-                'display_hero' => $this->uri === '/',
             ]
         ];
     }
@@ -133,7 +137,7 @@ class Website extends Controller
 
         # Send message to admin or contact email registered
         $mail_contact = Mailer::send([
-            'to' => $this->settings['email_contact'] ?? $this->settings['email_admin'],
+            'to' => $this->settings[Constants::STG_EMAIL_CONTACT] ?? $this->settings[Constants::STG_EMAIL_ADMIN],
             'reply_to' => $email,
             'subject' => 'Message reçu',
             'content' => View::getHtml('email/contact_form', [
@@ -250,7 +254,7 @@ class Website extends Controller
 
     private function getLayoutData()
     {
-        $data = json_decode($this->settings['site_layout'], true);
+        $data = json_decode($this->settings[Constants::STG_SITE_LAYOUT], true);
         if (empty($data)) return ['header_menu' => [], 'footer_data' => []];
 
         $res = [];
@@ -316,7 +320,7 @@ class Website extends Controller
                 <div id="hero-img" data-url="' . $bg_image . '"></div>
                 <article class="hero-content">
                     <h1>' . $title . '</h1>
-                    <p>' . $content . '</p>
+                    <p>' . nl2br($content) . '</p>
                 </article>
             </section>' . PHP_EOL;
     }
