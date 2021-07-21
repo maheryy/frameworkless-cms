@@ -52,10 +52,11 @@ class Website extends Controller
         # Unexpected case
         if (empty($view)) throw new \Exception("Une erreur est survenue, la page demandée n'est pas disponible");
 
-        $footer_data = $this->getFooterData();
-        $view['context']['footer_sections'] = $footer_data['sections'];
-        $view['context']['footer_socials'] = $footer_data['socials'];
         $view['context']['header_menu'] = $this->getHeaderMenu();
+        if(!empty($footer_data = $this->getFooterData())) {
+            $view['context']['footer_sections'] = $footer_data['sections'];
+            $view['context']['footer_socials'] = $footer_data['socials'];
+        }
 
         $this->setNewVisitor($_SERVER['REMOTE_ADDR'], $_SERVER['HTTP_USER_AGENT'], $this->uri, date('Y-m-d'));
         $this->render($view['view'], $view['context']);

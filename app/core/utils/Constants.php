@@ -69,6 +69,8 @@ class Constants
     const STG_EMAIL_CONTACT = 'email_contact';
     const STG_ROLE = 'default_role';
     const STG_PUBLIC_SIGNUP = 'public_signup';
+    const STG_HEADER_LAYOUT = 'header_layout';
+    const STG_FOOTER_LAYOUT = 'footer_layout';
 
     # Review statuses
     const REVIEW_PENDING = 0;

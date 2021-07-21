@@ -23,9 +23,9 @@ class Seeds
     {
         return [
             'settings',
-//            'role',
-//            'permission',
-//            'rolePermission'
+            'role',
+            'permission',
+            'rolePermission'
         ];
     }
 
@@ -117,6 +117,8 @@ class Seeds
             ['name' => Constants::STG_EMAIL_CONTACT, 'value' => null],
             ['name' => Constants::STG_ROLE, 'value' => Constants::ROLE_TEST],
             ['name' => Constants::STG_PUBLIC_SIGNUP, 'value' => 0],
+            ['name' => Constants::STG_HEADER_LAYOUT, 'value' => null],
+            ['name' => Constants::STG_FOOTER_LAYOUT, 'value' => null],
         ];
     }
 }
