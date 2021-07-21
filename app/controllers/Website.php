@@ -52,23 +52,13 @@ class Website extends Controller
         # Unexpected case
         if (empty($view)) throw new \Exception("Une erreur est survenue, la page demandée n'est pas disponible");
 
-        $view['context']['header_menu'] = $this->getHeaderMenu();
-        if(!empty($footer_data = $this->getFooterData())) {
-            $view['context']['footer_sections'] = $footer_data['sections'];
-            $view['context']['footer_socials'] = $footer_data['socials'];
-        }
+        $layout = $this->getLayoutData();
+        $view['context']['header_menu'] = $layout['header_menu'];
+        $view['context']['footer_sections'] = $layout['footer_data']['sections'] ?? [];
+        $view['context']['footer_socials'] = $layout['footer_data']['socials'] ?? [];
 
         $this->setNewVisitor($_SERVER['REMOTE_ADDR'], $_SERVER['HTTP_USER_AGENT'], $this->uri, date('Y-m-d'));
         $this->render($view['view'], $view['context']);
-    }
-
-    public function getFooterData()
-    {
-        return json_decode($this->settings['footer_layout'], true);
-    }
-    public function getHeaderMenu()
-    {
-        return json_decode($this->settings['header_layout'], true);
     }
 
     # POST routes
@@ -258,6 +248,51 @@ class Website extends Controller
         return ['success' => true, 'message' => 'Votre avis a bien été pris en compte'];
     }
 
+    private function getLayoutData()
+    {
+        $data = json_decode($this->settings['site_layout'], true);
+        if (empty($data)) return ['header_menu' => [], 'footer_data' => []];
+
+        $res = [];
+        foreach ($data as $item) {
+            switch ($item['type']) {
+                case Constants::LS_HEADER_MENU :
+                    $res['header_menu'] = $this->repository->menuItem->findMenuItems((int)$item['menu_id']);
+                    break;
+                case Constants::LS_FOOTER_SOCIALS :
+                    $res['footer_data']['socials'] = $this->repository->menuItem->findMenuItems((int)$item['menu_id']);
+                    break;
+                case Constants::LS_FOOTER_TEXT :
+                    $res['footer_data']['sections'][] = [
+                        'type' => $item['type'],
+                        'label' => $item['label'],
+                        'data' => $item['data'],
+                    ];
+                    break;
+                case Constants::LS_FOOTER_LINKS :
+                    $res['footer_data']['sections'][] = [
+                        'type' => $item['type'],
+                        'label' => $item['label'],
+                        'data' => $this->repository->menuItem->findMenuItems((int)$item['menu_id']),
+                    ];
+                    break;
+                case Constants::LS_FOOTER_CONTACT :
+                    $res['footer_data']['sections'][] = [
+                        'type' => $item['type'],
+                        'label' => $item['label']
+                    ];
+                    break;
+                case Constants::LS_FOOTER_NEWSLETTER :
+                    $res['footer_data']['sections'][] = [
+                        'type' => $item['type'],
+                        'label' => $item['label']
+                    ];
+                    break;
+            }
+        }
+        return $res;
+    }
+
 
     /* ----------------- Utility functions to display website components ----------------- */
 
@@ -265,7 +300,7 @@ class Website extends Controller
     {
         $items = null;
         foreach ($data as $item) {
-            $items .= "<li class='h-link'><a href='{$item['link']}'>{$item['label']}</a></li>" . PHP_EOL;
+            $items .= "<li class='h-link'><a href='" . ($item['page_link'] ?? $item['url']) . "'>{$item['label']}</a></li>" . PHP_EOL;
         }
         return
             '<nav class="header-nav">
@@ -344,7 +379,7 @@ class Website extends Controller
     {
         $items = null;
         foreach ($data as $item) {
-            $items .= "<li><a href='{$item['link']}'>{$item['label']}</a></li>" . PHP_EOL;
+            $items .= "<li><a href='" . ($item['page_link'] ?? $item['url']) . "'>{$item['label']}</a></li>" . PHP_EOL;
         }
 
         return
@@ -358,7 +393,7 @@ class Website extends Controller
     {
         $items = null;
         foreach ($data as $item) {
-            $items .= "<li class='social-item'><a href='{$item['link']}'><i class='{$item['icon']}'></i></a></li>" . PHP_EOL;
+            $items .= "<li class='social-item'><a href='{$item['url']}'><i class='{$item['icon']}'></i></a></li>" . PHP_EOL;
         }
 
         return

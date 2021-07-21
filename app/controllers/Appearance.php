@@ -162,8 +162,12 @@ class Appearance extends Controller
     public function customizationView()
     {
         $this->setCSRFToken();
+        $layout = $this->getLayoutData();
         $view_data = [
             'url_form' => UrlBuilder::makeUrl('Appearance', 'customizationAction'),
+            'socials_menu' => $layout['footer_socials'] ?? [],
+            'footer_sections' => $layout['footer_sections'] ?? [],
+            'header_menu' => $layout['main_menu'] ?? [],
             'link_menus' => $this->repository->menu->findMenuLinks(),
             'link_socials' => $this->repository->menu->findMenuSocials(),
         ];
@@ -176,57 +180,65 @@ class Appearance extends Controller
         $this->validateCSRF();
         $footer_items = $this->request->post('footer_items');
 
-
         # Footer sections storage
         $data_length = !empty($footer_items['types']) ? count($footer_items['types']) : 0;
         $i = 0;
-        $footer_sections = [];
+        $data = [];
         while ($i < $data_length) {
             if (empty($footer_items['labels'][$i])) $this->sendError('Le label d\'une section ne peut être vide.');
 
-            $links = [];
-            if (!empty($footer_items['menus'][$i])) {
-                $links = array_map(
-                    fn($el) => ['label' => $el['label'], 'link' => $el['page_link'] ?? $el['url']],
-                    $this->repository->menuItem->findMenuItems((int)$footer_items['menus'][$i])
-                );
-            }
-
-            $footer_sections[] = [
+            $data[] = [
                 'type' => $footer_items['types'][$i],
+                'menu_id' => $footer_items['types'][$i] == Constants::LS_FOOTER_LINKS ? $footer_items['menus'][$i] : null,
                 'label' => $footer_items['labels'][$i],
-                'data' => $footer_items['types'][$i] == Constants::FOOTER_LINKS ? $links : $footer_items['data'][$i],
+                'data' => $footer_items['types'][$i] == Constants::LS_FOOTER_LINKS ? null : $footer_items['data'][$i],
             ];
             $i++;
         }
 
-        # Social medias storage
-        $social_items = [];
-        if ($this->request->post('socials_footer')) {
-            $social_items = array_map(
-                fn($el) => ['icon' => $el['icon'], 'link' => $el['url']],
-                $this->repository->menuItem->findMenuItems((int) $this->request->post('socials_footer'))
-            );
-        }
+        # Header storage
+        $data[] = [
+            'type' => Constants::LS_HEADER_MENU,
+            'menu_id' => $this->request->post('main_header')
+        ];
 
-        # Header menu storage
-        $header_items = [];
-        if ($this->request->post('main_header')) {
-            $header_items = array_map(
-                fn($el) => ['label' => $el['label'], 'link' => $el['page_link'] ?? $el['url']],
-                $this->repository->menuItem->findMenuItems((int) $this->request->post('main_header'))
-            );
-        }
+        # Social medias storage
+        $data[] = [
+            'type' => Constants::LS_FOOTER_SOCIALS,
+            'menu_id' => $this->request->post('socials_footer')
+        ];
 
         try {
-            $this->repository->settings->updateSettings([
-                'footer_layout' => json_encode(['sections' => $footer_sections, 'socials' => $social_items]),
-                'header_layout' => json_encode($header_items),
+            $this->repository->settings->updateSettings(['site_layout' => json_encode($data)]);
+            $this->sendSuccess('Informations sauvegardées', [
+                'url_next' => UrlBuilder::makeUrl('Appearance', 'customizationView'),
+                'url_next_delay' => 1
             ]);
-            $this->sendSuccess('Informations sauvegardées');
         } catch (\Exception $e) {
-            $this->sendError('Une erreur est survenue : '. $e->getMessage());
+            $this->sendError('Une erreur est survenue : ' . $e->getMessage());
         }
+    }
+
+    public function getLayoutData()
+    {
+        $data = json_decode($this->settings['site_layout'], true);
+        if (empty($data)) return ['header_menu' => [], 'footer_data' => []];
+
+        $res = [];
+        foreach ($data as $item) {
+            switch ($item['type']) {
+                case Constants::LS_HEADER_MENU :
+                    $res['main_menu'] = $item['menu_id'];
+                    break;
+                case Constants::LS_FOOTER_SOCIALS :
+                    $res['footer_socials'] = $item['menu_id'];
+                    break;
+                default :
+                    $res['footer_sections'][] = $item;
+                    break;
+            }
+        }
+        return $res;
     }
 
 }

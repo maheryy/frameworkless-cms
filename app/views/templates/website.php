@@ -42,16 +42,16 @@
                 $size = 12 / count($footer_sections);
                 foreach ($footer_sections as $item) {
                     switch ($item['type']) {
-                        case \App\Core\Utils\Constants::FOOTER_TEXT :
+                        case \App\Core\Utils\Constants::LS_FOOTER_TEXT :
                             echo \App\Controllers\Website::getTextFooter($item['label'], nl2br($item['data']), $size);
                             break;
-                        case \App\Core\Utils\Constants::FOOTER_LINKS :
+                        case \App\Core\Utils\Constants::LS_FOOTER_LINKS :
                             echo \App\Controllers\Website::getLinkFooter($item['label'], $item['data'], $size);
                             break;
-                        case \App\Core\Utils\Constants::FOOTER_CONTACT :
+                        case \App\Core\Utils\Constants::LS_FOOTER_CONTACT :
                             echo \App\Controllers\Website::getContactFooter($item['label'], $size);
                             break;
-                        case \App\Core\Utils\Constants::FOOTER_NEWSLETTER :
+                        case \App\Core\Utils\Constants::LS_FOOTER_NEWSLETTER :
                             echo \App\Controllers\Website::getNewsletterFooter($item['label'], $size);
                             break;
                     }
