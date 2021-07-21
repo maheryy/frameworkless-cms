@@ -15,7 +15,7 @@
                 </div>
             <?php endif; ?>
             <div class="transferable-source source-links w-full <?= isset($menu_data['menu_type']) && $menu_data['menu_type'] != \App\Core\Utils\Constants::MENU_LINKS ? 'hidden' : '' ?>">
-                <p class="text-lg font-bold py-0.5">Toutes les pages</p>
+                <p class="text-lg font-bold py-0.5">Mes pages</p>
                 <ul class="list-elements py-1">
                     <?php foreach ($pages as $page) : ?>
                         <li class="transferable-element">
@@ -25,11 +25,19 @@
                         </li>
                     <?php endforeach; ?>
                 </ul>
-                <p class="text-lg font-bold py-0.5">Autre</p>
+                <p class="text-lg font-bold py-0.5">Autres</p>
                 <ul class="list-elements py-1">
                     <li class="transferable-element">
                         <input type="hidden" class="element-data" data-options='<?= json_encode(['type' => 2]) ?>'>
                         <span class="label">Lien personnalisé</span>
+                    </li>
+                    <li class="transferable-element">
+                        <input type="hidden" class="element-data" data-options='<?= json_encode(['type' => 2, 'page_title' => 'Nos avis', 'page_link' => '/reviews', 'link_readonly' => true]) ?>'>
+                        <span class="label">Page avis</span>
+                    </li>
+                    <li class="transferable-element">
+                        <input type="hidden" class="element-data" data-options='<?= json_encode(['type' => 2, 'page_title' => 'Votre avis', 'page_link' => '/review', 'link_readonly' => true]) ?>'>
+                        <span class="label">Formulaire avis</span>
                     </li>
                 </ul>
             </div>
