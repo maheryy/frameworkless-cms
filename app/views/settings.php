@@ -57,10 +57,6 @@
                         <label for="smtp_host">Serveur de messagerie</label>
                     </div>
                     <div class="form-field required">
-                        <input type="number" class="form-control" id="smtp_port" name="smtp_port" placeholder="ex: 587" value="<?= $smtp['port'] ?>">
-                        <label for="smtp_port">Port</label>
-                    </div>
-                    <div class="form-field required">
                         <input type="text" class="form-control" id="smtp_user" name="smtp_user" placeholder="login@example.com" value="<?= $smtp['user'] ?>">
                         <label for="smtp_user">Identifiant</label>
                     </div>

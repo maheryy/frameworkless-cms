@@ -6,7 +6,7 @@ use App\Core\Exceptions\NotFoundException;
 use App\Core\Utils\Constants;
 use App\Core\Utils\Expr;
 use App\Core\Utils\QueryBuilder;
-use App\Core\Utils\Seeds;
+use App\Core\Utils\Seeder;
 
 abstract class BaseRepository
 {
@@ -55,13 +55,13 @@ abstract class BaseRepository
     }
 
     /**
-     * Database seeding : Insert initial data (from Seeds::modelName) for a given model
+     * Database seeding : Insert initial data (from Seeder::modelName) for a given model
      *
      * @return int|bool rows affected or false
      */
     public function runSeed()
     {
-        $callable = [Seeds::class, $this->model->getModelName()];
+        $callable = [Seeder::class, $this->model->getModelName()];
         if (!is_callable($callable)) {
             throw new NotFoundException('Seed data does not exist for ' . $this->model->getModelName());
         }

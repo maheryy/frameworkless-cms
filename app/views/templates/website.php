@@ -3,10 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title><?= $meta_title ?></title>
-    <?php if (!empty($meta_description)) : ?>
-        <meta name="description" content="<?= $meta_description ?>">
-    <?php endif; ?>
+    <title><?= $meta_title ?? $site_title ?></title>
+    <meta name="description" content="<?= $meta_description ?? $site_description ?>">
     <?php if (!$is_indexable) : ?>
         <meta name="robots" content="noindex">
     <?php endif; ?>
@@ -19,7 +17,7 @@
 
 <header class="main-header">
     <div class="main-logo">
-        <a class="logo" href="/">Munkee</a>
+        <a class="logo" href="/"><?= $site_title ?></a>
     </div>
     <?= !empty($header_menu) ? \App\Controllers\Website::getMenuHeader($header_menu) : '' ?>
 </header>
@@ -54,7 +52,7 @@
         <?php endif; ?>
         <?= !empty($footer_socials) ? \App\Controllers\Website::getSocialFooter($footer_socials) : '' ?>
         <div class="footer-section">
-            <p class="copyright">Munkee © 2021</p>
+            <p class="copyright"><?= $site_title . ' © ' . date('Y') ?></p>
         </div>
     </div>
 </footer>

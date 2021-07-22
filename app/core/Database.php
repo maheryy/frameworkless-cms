@@ -2,6 +2,8 @@
 
 namespace App\Core;
 
+use App\Core\Utils\ConstantManager;
+
 class Database
 {
     private static \PDO $pdo_instance;
@@ -31,7 +33,7 @@ class Database
 
     /**
      * Database singleton
-     * 
+     *
      * @return \PDO
      */
     public static function getInstance()
@@ -45,7 +47,7 @@ class Database
 
     /**
      * Get PDO Attributes
-     * 
+     *
      * @return array
      */
     private function getPDOAttributes()
@@ -58,19 +60,36 @@ class Database
 
     /**
      * Execute a prepared statement
-     * 
+     *
      * @param string $sql
      * @param array $params
-     * 
+     *
      * @return \PDOStatement
      */
     public static function execute(string $sql, array $params = null)
     {
-        
+
         $st = self::getInstance()->prepare($sql);
         $st->execute($params);
 
         return $st;
+    }
+
+    /**
+     * Checks .env file and tables in database
+     *
+     * @return bool
+     */
+    public static function isReady()
+    {
+        if (!file_exists(ConstantManager::$env_path)) return false;
+        try {
+            # Quick check if settings table exists
+            self::execute('SELECT * FROM ' . DB_PREFIX . '_settings')->fetch();
+            return true;
+        } catch (\Exception $e) {
+            return false;
+        }
     }
 
     /**

@@ -4,12 +4,15 @@ namespace App\Controllers;
 
 use App\Core\Controller;
 use App\Core\Database;
+use App\Core\Router;
 use App\Core\Utils\Formatter;
 use App\Core\Utils\Mailer;
 use App\Core\Utils\ConstantManager;
 use App\Core\Utils\Constants;
 use App\Core\Utils\FormRegistry;
-use App\Core\Utils\Seeds;
+use App\Core\Utils\Repository;
+use App\Core\Utils\Request;
+use App\Core\Utils\Seeder;
 use App\Core\Utils\Token;
 use App\Core\Utils\UrlBuilder;
 use App\Core\Utils\Validator;
@@ -21,20 +24,35 @@ class Installer extends Controller
 
     public function __construct(array $options = [])
     {
-        parent::__construct($options);
+        //parent::__construct($options);
+        $this->router = Router::getInstance();
+        $this->request = new Request();
+        $this->repository = new Repository();
+        $this->setTemplate('back_office');
+
+        # Redirect to app reset when everything is setup
+        //if (Database::isReady()) {
+        //    $this->installerResetView();
+        //}
+
+    }
+
+    public function installerResetView()
+    {
+
+        throw new Exception('Already installed');
+        $this->render('installer_reset');
     }
 
     # /installer-register
     public function installerRegisterView()
     {
-        if (!ConstantManager::isConfigLoaded()) {
+        if (!Database::isReady()) {
             $this->router->redirect(UrlBuilder::makeUrl('Installer', 'installerDatabaseView'));
         }
 
-        $view_data = [
-            'url_form' => UrlBuilder::makeUrl('Installer', 'registerAction')
-        ];
-        $this->render('installer_register', $view_data);
+        $this->setParam('url_form', UrlBuilder::makeUrl('Installer', 'registerAction'));
+        $this->render('installer_register');
     }
 
     # /installer-register-save
@@ -47,6 +65,7 @@ class Installer extends Controller
                 'password' => $this->request->post('password'),
                 'password_confirm' => $this->request->post('password_confirm'),
                 'email' => $this->request->post('email'),
+                'email_contact' => $this->request->post('email_contact'),
             ];
 
             $validator = new Validator(FormRegistry::getInstallerRegistration());
@@ -57,6 +76,13 @@ class Installer extends Controller
             $form_data['password'] = password_hash($form_data['password'], PASSWORD_DEFAULT);
 
             Database::beginTransaction();
+            $this->loadSeeders();
+            $this->repository->settings->updateSettings([
+                Constants::STG_TITLE => $form_data['website_title'],
+                Constants::STG_EMAIL_ADMIN => $form_data['email'],
+                Constants::STG_EMAIL_CONTACT => $form_data['email_contact'],
+            ]);
+
             $user_id = $this->repository->user->create([
                 'username' => $form_data['username'],
                 'email' => $form_data['email'],
@@ -97,7 +123,7 @@ class Installer extends Controller
             }
 
             Database::commit();
-            $this->sendSuccess('Utilisateur créé', [
+            $this->sendSuccess('Installation terminé', [
                 'url_next' => UrlBuilder::makeUrl('User', 'loginView')
             ]);
         } catch (Exception $e) {
@@ -115,13 +141,16 @@ class Installer extends Controller
         ];
 
         if (ConstantManager::isConfigLoaded()) {
-            $view_data['config'] = [
+            $this->setParam('config', [
                 'db_host' => DB_HOST,
                 'db_name' => DB_NAME,
                 'db_user' => DB_USER,
                 'db_password' => DB_PWD,
                 'db_prefix' => DB_PREFIX,
-            ];
+                'smtp_host' => SMTP_HOST,
+                'smtp_user' => SMTP_USERNAME,
+                'smtp_password' => SMTP_PASSWORD,
+            ]);
         }
 
         $this->render('installer_db', $view_data);
@@ -136,6 +165,9 @@ class Installer extends Controller
             'db_password' => $this->request->post('db_password'),
             'db_host' => $this->request->post('db_host'),
             'db_prefix' => $this->request->post('db_prefix'),
+            'smtp_host' => $this->request->post('smtp_host'),
+            'smtp_user' => $this->request->post('smtp_user'),
+            'smtp_password' => $this->request->post('smtp_password'),
         ];
 
         $validator = new Validator();
@@ -145,20 +177,23 @@ class Installer extends Controller
 
         try {
             $pdo = Database::connect($data['db_host'], $data['db_name'], $data['db_user'], $data['db_password']);
+
+            if (!Mailer::connect($data['smtp_host'], 587, $data['smtp_user'], $data['smtp_password'])) {
+                $this->sendError('Impossible de se connecter au serveur SMTP');
+            }
             if ($this->request->post('try_connection')) {
                 $this->sendSuccess('Connexion réussie !');
             }
 
             try {
                 $sql = preg_replace("/{PREFIX[0-9]*}/", $data['db_prefix'], file_get_contents(PATH_SQL_DUMP));
-                $st = $pdo->prepare($sql);
-                $st->execute();
+                $pdo->prepare($sql)->execute();
 
                 $data['app_debug'] = 1;
                 $data['app_dev'] = 1;
 
                 self::generateConfig($data);
-                $this->sendSuccess('Installation réussie', [
+                $this->sendSuccess('La base de donnéees est prête', [
                     'url_next' => UrlBuilder::makeUrl('Installer', 'installerRegisterView')
                 ]);
             } catch (Exception $e) {
@@ -170,16 +205,12 @@ class Installer extends Controller
 
     }
 
-    /* -------- TO DELETE ----------*/
-    # /db-seed
-    public function dbSeed()
+    public function loadSeeders()
     {
-        $seeds = Seeds::getAvailableSeeds();
-        foreach ($seeds as $seed) {
-            $this->repository->{$seed}->runSeed();
+        $seeders = Seeder::getAvailableSeeders();
+        foreach ($seeders as $seeder) {
+            $this->repository->{$seeder}->runSeed();
         }
-
-        echo 'database seeding complete';
     }
 
     public static function generateConfig(array $data)
@@ -195,7 +226,7 @@ APP_DEBUG={$data['app_debug']}
 APP_DEV={$data['app_dev']}
 
 SMTP_HOST={$data['smtp_host']}
-SMTP_PORT={$data['smtp_port']}
+SMTP_PORT=587
 SMTP_USERNAME={$data['smtp_user']}
 SMTP_PASSWORD={$data['smtp_password']}
 CONF;

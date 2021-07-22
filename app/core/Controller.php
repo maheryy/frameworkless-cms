@@ -17,6 +17,7 @@ abstract class Controller
     protected Session $session;
     protected array $settings;
     protected string $template;
+    protected array $view_data;
 
     protected function __construct(array $options)
     {
@@ -24,18 +25,36 @@ abstract class Controller
         $this->request = new Request();
         $this->repository = new Repository();
         $this->session = new Session($options['require_auth'] ?? false);
-        $this->settings = $this->repository->settings->findAll();
+        $this->init($options);
+    }
 
-        # Default back office template
-        $this->setTemplate('back_office');
+    /**
+     * Initialize back office params, sessions and check database installation
+     *
+     * @param array $data
+     * @return bool
+     */
+    private function init(array $options)
+    {
+        # First check database is ready before taking any actions
+        if (!Database::isReady()) {
+            if (Request::isPost()) $this->sendError("Une installation est nécessaire :" . UrlBuilder::makeAbsoluteUrl('Installer', 'installerDatabaseView'));
 
-        if ($this->session->init()) {
-            $this->setLayoutParams();
+            $this->router->redirect(UrlBuilder::makeUrl('Installer', 'installerDatabaseView'));
         }
 
+        # Display back office sidebar for rendering only
+        if (!empty($options['display_back_office'])) {
+            $this->setLayoutParams();
+        }
+        # Content title editable in routes.yml
         if (isset($options['title'])) {
             $this->setContentTitle($options['title']);
         }
+        # Default back office template
+        $this->setTemplate('back_office');
+
+        return $this->session->init();
     }
 
     /**
@@ -47,7 +66,7 @@ abstract class Controller
     protected function render(string $view, array $data = [])
     {
         if (!empty($this->view_data)) {
-            $data = !empty($data) ? array_merge($this->view_data, $data) : $this->view_data;
+            $data = array_merge($this->view_data, $data);
         }
         return new View($view, $this->template, $data);
     }
@@ -162,8 +181,6 @@ abstract class Controller
         $sidebar_links = $layout->getSidebarLinks();
         $user_link = UrlBuilder::makeUrl('User', 'userView', ['id' => $this->session->getUserId()]);
 
-        # Set custom link to existing nav-link
-        $sidebar_links['main']['user']['sub-links']['current_user']['route'] = $user_link;
 
         $this->setParam('current_route', $this->router->getFullUri());
         $this->setParam('sidebar_links', $sidebar_links['main']);
@@ -224,5 +241,19 @@ abstract class Controller
     protected function hasPermission(int $permission)
     {
         return in_array($permission, $this->session->get('permissions'));
+    }
+
+    /**
+     * Get setting value from settings table
+     *
+     * @param int $setting_key
+     * @return mixed
+     */
+    protected function getValue(string $setting_key)
+    {
+        if (!isset($this->settings)) {
+            $this->settings = $this->repository->settings->findAll();
+        }
+        return $this->settings[$setting_key] ?? null;
     }
 }

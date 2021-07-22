@@ -5,9 +5,12 @@ namespace App\Controllers;
 use App\Core\Controller;
 use App\Core\Database;
 use App\Core\Exceptions\HttpNotFoundException;
+use App\Core\Router;
 use App\Core\Utils\Constants;
 use App\Core\Utils\Formatter;
 use App\Core\Utils\Mailer;
+use App\Core\Utils\Repository;
+use App\Core\Utils\Request;
 use App\Core\Utils\Validator;
 use App\Core\View;
 
@@ -18,8 +21,19 @@ class Website extends Controller
 
     public function __construct(array $options = [])
     {
-        parent::__construct($options);
+        //parent::__construct($options);
+        $this->router = Router::getInstance();
+        $this->request = new Request();
+        $this->repository = new Repository();
         $this->uri = $this->router->getUri();
+
+        # Database check is ready before taking any actions
+        if (!Database::isReady()) {
+            if (Request::isPost()) $this->sendError("Une installation est nécessaire : ${_SERVER['HTTP_HOST']}/admin/installer_db");
+
+            $this->router->redirect('/admin/installer_db');
+        }
+
         $this->setTemplate('website');
     }
 
@@ -47,18 +61,13 @@ class Website extends Controller
                 break;
             default :
                 $view = $this->getUserDefinedPage();
-                $hero_data = json_decode($this->settings[Constants::STG_HERO_DATA], true);
-                if (!empty($hero_data)) {
-                    $view['context']['display_hero'] = $hero_data['status'] == 1 && $this->uri === '/' || $hero_data['status'] == 2;
-                    $view['context']['hero_data'] = $hero_data;
-                }
                 break;
         }
         # Unexpected case
         if (empty($view)) throw new \Exception("Une erreur est survenue, la page demandée n'est pas disponible");
 
         $layout = $this->getLayoutData();
-        $view['context']['header_menu'] = $layout['header_menu'];
+        $view['context']['header_menu'] = $layout['header_menu'] ?? [];
         $view['context']['footer_sections'] = $layout['footer_data']['sections'] ?? [];
         $view['context']['footer_socials'] = $layout['footer_data']['socials'] ?? [];
 
@@ -88,15 +97,19 @@ class Website extends Controller
     {
         $page = $this->repository->post->findPageBySlug($this->uri);
         if (!$page) throw new HttpNotFoundException($this->uri);
-
+        $hero_data = json_decode($this->getValue(Constants::STG_HERO_DATA), true);
         return [
             'view' => 'website_default',
             'context' => [
+                'site_title' => $this->getValue(Constants::STG_TITLE),
+                'site_description' => $this->getValue(Constants::STG_DESCRIPTION),
                 'meta_title' => $page['meta_title'],
                 'meta_description' => $page['meta_description'],
                 'is_indexable' => $page['meta_indexable'],
                 'content_title' => $page['title'],
                 'content' => $page['content'],
+                'display_hero' => !empty($hero_data) && ($hero_data['status'] == 1 && $this->uri === '/' || $hero_data['status'] == 2),
+                'hero_data' => $hero_data ?? [],
             ]
         ];
     }
@@ -106,6 +119,7 @@ class Website extends Controller
         return [
             'view' => 'website_review_list',
             'context' => [
+                'site_title' => $this->getValue(Constants::STG_TITLE),
                 'meta_title' => 'Les avis de nos clients',
                 'meta_description' => 'Les avis de nos clients',
                 'is_indexable' => false,
@@ -119,6 +133,7 @@ class Website extends Controller
         return [
             'view' => 'website_review_form',
             'context' => [
+                'site_title' => $this->getValue(Constants::STG_TITLE),
                 'meta_title' => 'Votre avis',
                 'meta_description' => 'Votre avis compte',
                 'is_indexable' => false,
@@ -137,7 +152,7 @@ class Website extends Controller
 
         # Send message to admin or contact email registered
         $mail_contact = Mailer::send([
-            'to' => $this->settings[Constants::STG_EMAIL_CONTACT] ?? $this->settings[Constants::STG_EMAIL_ADMIN],
+            'to' => $this->getValue(Constants::STG_EMAIL_CONTACT) ?? $this->getValue(Constants::STG_EMAIL_ADMIN),
             'reply_to' => $email,
             'subject' => 'Message reçu',
             'content' => View::getHtml('email/contact_form', [
@@ -254,7 +269,7 @@ class Website extends Controller
 
     private function getLayoutData()
     {
-        $data = json_decode($this->settings[Constants::STG_SITE_LAYOUT], true);
+        $data = json_decode($this->getValue(Constants::STG_SITE_LAYOUT), true);
         if (empty($data)) return ['header_menu' => [], 'footer_data' => []];
 
         $res = [];

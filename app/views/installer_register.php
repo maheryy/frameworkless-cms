@@ -4,7 +4,6 @@
         <article id="info-box" class="info-primary center">
             <span id="info-description"></span>
         </article>
-        <p>Veuillez remplir le formulaire ci-dessous pour utiliser toutes les fonctionnalités de Munkee</p>
         <form class="form-default" method="POST" action="<?= $url_form ?>">
             <div class="form-field required">
                 <input type="text" class="form-control" id="website_title" name="website_title">
@@ -25,6 +24,10 @@
             <div class="form-field required">
                 <input type="email" class="form-control" id="email" name="email">
                 <label for="email">Adresse de messagerie</label>
+            </div>
+            <div class="form-field">
+                <input type="email" class="form-control" id="email_contact" name="email_contact">
+                <label for="email_contact">Adresse de contact</label>
             </div>
             <div class="form-action center btn">
                 <input type="submit" class="btn-success" data-role="submitDefault" value="Valider">

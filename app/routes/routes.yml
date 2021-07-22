@@ -3,12 +3,14 @@
   method: dashboardView
   title: Tableau de bord
   require_auth: True
+  display_back_office: True
 
 /dashboard:
   controller: Home
   method: dashboardView
   title: Tableau de bord
   require_auth: True
+  display_back_office: True
 
 # installer
 /installer-db:
@@ -28,10 +30,6 @@
 /installer-register-save:
   controller: Installer
   method: registerAction
-
-/db-seed:
-  controller: Installer
-  method: dbSeed
 
 # Authentification
 /login:
@@ -71,6 +69,7 @@
   method: listView
   title: Liste des utilisateurs
   require_auth: True
+  display_back_office: True
 
 /users-save:
   controller: User
@@ -82,6 +81,7 @@
   method: createView
   title: Ajouter un utilisateur
   require_auth: True
+  display_back_office: True
 
 /new-user-save:
   controller: User
@@ -93,6 +93,7 @@
   method: userView
   title: Profil
   require_auth: True
+  display_back_office: True
 
 /user-save:
   controller: User
@@ -109,12 +110,14 @@
   method: confirmAccountView
   title: Confirmation du compte
 
+
 # Page management
 /pages:
   controller: Page
   method: listView
   title: Liste des pages
   require_auth: True
+  display_back_office: True
 
 /pages-save:
   controller: Page
@@ -126,6 +129,7 @@
   method: createView
   title: Ajouter une page
   require_auth: True
+  display_back_office: True
 
 /new-page-save:
   controller: Page
@@ -137,6 +141,7 @@
   method: pageView
   title: Page
   require_auth: True
+  display_back_office: True
 
 /page-save:
   controller: Page
@@ -159,6 +164,7 @@
   method: roleView
   title: Gestion des rôles
   require_auth: True
+  display_back_office: True
 
 /role-tab:
   controller: Role
@@ -172,12 +178,12 @@
 
 
 # Webpage editor (appearance)
-
 /menu:
   controller: Appearance
   method: menuView
   title: Liste des menus
   require_auth: True
+  display_back_office: True
 
 /menu-tab:
   controller: Appearance
@@ -200,6 +206,7 @@
   method: customizationView
   title: Personnalisation
   require_auth: True
+  display_back_office: True
 
 /customization-save:
   controller: Appearance
@@ -213,6 +220,7 @@
   method: settingsView
   title: Paramètres
   require_auth: True
+  display_back_office: True
 
 /settings-general-save:
   controller: Settings
@@ -235,12 +243,14 @@
   method: listView
   title: Newsletter
   require_auth: True
+  display_back_office: True
 
 /new-newsletter:
   controller: Newsletter
   method: createView
   title: Newsletter
   require_auth: True
+  display_back_office: True
 
 /new-newsletter-save:
   controller: Newsletter
@@ -252,6 +262,7 @@
   method: newsletterView
   title: Newsletter
   require_auth: True
+  display_back_office: True
 
 /newsletter-save:
   controller: Newsletter

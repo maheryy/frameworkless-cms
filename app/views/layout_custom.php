@@ -18,15 +18,15 @@
                     <label style="order: 0; margin-bottom: 0.75rem">En-tête secondaire</label>
                     <div class="w-3/5 flex justify-between">
                         <span>
-                            <input type="radio" class="" id="hero_status1" name="hero_status" value="0" <?= $hero_data['status'] == 0 ? 'checked' : '' ?>>
+                            <input type="radio" class="" id="hero_status1" name="hero_status" value="0" <?= !empty($hero_data) && $hero_data['status'] == 0 ? 'checked' : '' ?>>
                             <label for="hero_status1">Désactivé</label>
                         </span>
                         <span>
-                            <input type="radio" class="" id="hero_status2" name="hero_status" value="1" <?= $hero_data['status'] == 1 ? 'checked' : '' ?>>
+                            <input type="radio" class="" id="hero_status2" name="hero_status" value="1" <?= !empty($hero_data) && $hero_data['status'] == 1 ? 'checked' : '' ?>>
                             <label for="hero_status2">Page principale</label>
                         </span>
                         <span>
-                            <input type="radio" class="" id="hero_status3" name="hero_status" value="2" <?= $hero_data['status'] == 2 ? 'checked' : '' ?>>
+                            <input type="radio" class="" id="hero_status3" name="hero_status" value="2" <?= !empty($hero_data) && $hero_data['status'] == 2 ? 'checked' : '' ?>>
                             <label for="hero_status3">Toutes les pages</label>
                         </span>
                     </div>
@@ -36,7 +36,7 @@
                     <label for="hero_title">Titre en-tête secondaire</label>
                 </div>
                 <div class="form-field-inline w-5/6 mb-2">
-                    <textarea class="form-control" id="hero_description" name="hero_description" placeholder="Entrez une description"><?= $hero_data['description'] ?? '' ?>"</textarea>
+                    <textarea class="form-control" id="hero_description" name="hero_description" placeholder="Entrez une description"><?= $hero_data['description'] ?? '' ?></textarea>
                     <label for="hero_description">Description en-tête secondaire</label>
                 </div>
                 <div class="form-field-inline w-5/6 mb-2">

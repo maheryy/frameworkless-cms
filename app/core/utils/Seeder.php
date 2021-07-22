@@ -3,29 +3,29 @@
 namespace App\Core\Utils;
 
 /**
- * Static class for all database seeds
- * Seeds data methods must have the same name as the model name in order to call BaseRepository::runSeed()
+ * Static class for database seeds
+ * Seeders data methods must have the same name as the model name in order to call BaseRepository::runSeed()
  * Ex :
  *  - table name => my_table
  *  - model name => MyTable
- *  - seed data => Seeds::myTable()
+ *  - seed data => Seeder::myTable()
  *
  */
-class Seeds
+class Seeder
 {
 
     /**
-     * List all of the seeds available in this class
+     * List all of the seeders available in this class
      *
      * @return array
      */
-    public static function getAvailableSeeds()
+    public static function getAvailableSeeders()
     {
         return [
-            'settings',
             'role',
             'permission',
-            'rolePermission'
+            'rolePermission',
+            'settings',
         ];
     }
 
