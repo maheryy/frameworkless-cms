@@ -64,7 +64,6 @@
 /confirm-account:
   controller: Auth
   method: confirmAccountView
-  title: Confirmation du compte
 
 # User management
 /users:
@@ -85,11 +84,13 @@
   title: Ajouter un utilisateur
   require_auth: True
   display_back_office: True
+  permission: 2
 
 /new-user-save:
   controller: User
   method: createAction
   require_auth: True
+  permission: 2
 
 /user:
   controller: User
@@ -97,23 +98,25 @@
   title: Profil
   require_auth: True
   display_back_office: True
+  permission: 1
 
 /user-save:
   controller: User
   method: userAction
   require_auth: True
+  permission: 3
 
 /delete-user:
   controller: User
   method: deleteAction
   require_auth: True
+  permission: 4
 
 /user-reconfirmation:
   controller: User
   method: reconfirmationAction
   require_auth: True
-
-
+  permission: 2
 
 
 # Page management
@@ -135,11 +138,13 @@
   title: Ajouter une page
   require_auth: True
   display_back_office: True
+  permission: 6
 
 /new-page-save:
   controller: Page
   method: createAction
   require_auth: True
+  permission: 6
 
 /page:
   controller: Page
@@ -147,16 +152,19 @@
   title: Page
   require_auth: True
   display_back_office: True
+  permission: 5
 
 /page-save:
   controller: Page
   method: pageAction
   require_auth: True
+  permission: 7
 
 /delete-page:
   controller: Page
   method: deleteAction
   require_auth: True
+  permission: 9
 
 /page-link-list:
   controller: Page
@@ -170,6 +178,7 @@
   title: Gestion des rôles
   require_auth: True
   display_back_office: True
+  permission: 18
 
 /role-tab:
   controller: Role
@@ -180,6 +189,7 @@
   controller: Role
   method: roleAction
   require_auth: True
+  permission: 20
 
 
 # Webpage editor (appearance)
@@ -189,6 +199,7 @@
   title: Liste des menus
   require_auth: True
   display_back_office: True
+  permission: 10
 
 /menu-tab:
   controller: Appearance
@@ -200,11 +211,13 @@
   controller: Appearance
   method: menuAction
   require_auth: True
+  permission: 12
 
 /delete-menu:
   controller: Appearance
   method: deleteMenuAction
   require_auth: True
+  permission: 13
 
 /customization:
   controller: Appearance
@@ -212,11 +225,13 @@
   title: Personnalisation
   require_auth: True
   display_back_office: True
+  permission: 14
 
 /customization-save:
   controller: Appearance
   method: customizationAction
   require_auth: True
+  permission: 15
 
 
 # Settings
@@ -226,16 +241,19 @@
   title: Paramètres
   require_auth: True
   display_back_office: True
+  permission: 16
 
 /settings-general-save:
   controller: Settings
   method: settingsGeneralAction
   require_auth: True
+  permission: 17
 
 /settings-mail-save:
   controller: Settings
   method: settingsMailAction
   require_auth: True
+  permission: 17
 
 /settings-page-save:
   controller: Settings

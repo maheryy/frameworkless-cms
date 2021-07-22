@@ -58,9 +58,11 @@ class Constants
     const PERM_DELETE_MENU = 13;
     const PERM_READ_CUSTOMIZATION = 14;
     const PERM_UPDATE_CUSTOMIZATION = 15;
-    const PERM_UPDATE_SETTINGS = 16;
-    const PERM_CREATE_ROLE = 17;
-    const PERM_UPDATE_ROLE = 18;
+    const PERM_READ_SETTINGS = 16;
+    const PERM_UPDATE_SETTINGS = 17;
+    const PERM_READ_ROLE = 18;
+    const PERM_CREATE_ROLE = 19;
+    const PERM_UPDATE_ROLE = 20;
 
     # Menu types
     const MENU_LINKS = 1;

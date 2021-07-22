@@ -19,7 +19,7 @@ class Role extends Controller
     {
         $this->setCSRFToken();
 
-        $default_role = $this->request->get('id') ?? $this->session->get('user_role');
+        $default_role = $this->request->get('id') ?? $this->session->getRole();
         $permissions = $this->repository->permission->findAll();
         $role_permissions = $this->repository->rolePermission->findAllPermissionsByRole((int) $default_role);
         $permissions = $this->getDiff2DArray($permissions, $role_permissions, 'id');

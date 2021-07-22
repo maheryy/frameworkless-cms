@@ -270,7 +270,6 @@ class Auth extends Controller
         $this->session->setData([
             'user_id' => $user_data['id'],
             'user_role' => $user_data['role'],
-            'is_admin' => $user_data['role'] == Constants::ROLE_ADMIN,
             'permissions' => $permissions,
             'csrf_token' => (new Token())->generate()->getEncoded()
         ]);

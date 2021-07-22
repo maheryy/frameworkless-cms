@@ -64,9 +64,17 @@ class Session
     /**
      * @return bool
      */
+    public function isSuperAdmin()
+    {
+        return $this->getRole() === Constants::ROLE_SUPER_ADMIN;
+    }
+
+    /**
+     * @return bool
+     */
     public function isAdmin()
     {
-        return (bool)$this->get('is_admin');
+        return $this->getRole() === Constants::ROLE_ADMIN;
     }
 
     /**
@@ -102,7 +110,7 @@ class Session
     /**
      * @param string $key
      *
-     * @return string|null
+     * @return string|array|null
      */
     public function get(string $key)
     {
