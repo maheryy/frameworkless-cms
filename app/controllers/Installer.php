@@ -206,6 +206,7 @@ class Installer extends Controller
 
     }
 
+    # /seed
     public function loadSeeders()
     {
         $seeders = Seeder::getAvailableSeeders();

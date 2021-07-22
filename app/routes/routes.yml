@@ -12,6 +12,11 @@
   require_auth: True
   display_back_office: True
 
+
+/seed: #TO REMOVE
+  controller: Installer
+  method: loadSeeders
+
 # installer
 /installer:
   controller: Installer

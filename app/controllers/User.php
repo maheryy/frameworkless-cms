@@ -51,6 +51,7 @@ class User extends Controller
         $this->setCSRFToken();
         $view_data = [
             'roles' => $this->repository->role->findAll(),
+            'default_role' => $this->getValue(Constants::STG_ROLE),
             'url_form' => UrlBuilder::makeUrl('User', 'createAction')
         ];
         $this->render('user_new', $view_data);

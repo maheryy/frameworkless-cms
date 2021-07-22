@@ -39,7 +39,8 @@ class Constants
     const ROLE_SUPER_ADMIN = 1;
     const ROLE_ADMIN = 2;
     const ROLE_EDITOR = 3;
-    const ROLE_TEST = 4;
+    const ROLE_CONTRIBUTOR = 4;
+    const ROLE_SUBSCRIBER = 5;
 
     # Permissions
     const PERM_READ_USER = 1;
@@ -51,6 +52,15 @@ class Constants
     const PERM_UPDATE_PAGE = 7;
     const PERM_PUBLISH_PAGE = 8;
     const PERM_DELETE_PAGE = 9;
+    const PERM_READ_MENU = 10;
+    const PERM_CREATE_MENU = 11;
+    const PERM_UPDATE_MENU = 12;
+    const PERM_DELETE_MENU = 13;
+    const PERM_READ_CUSTOMIZATION = 14;
+    const PERM_UPDATE_CUSTOMIZATION = 15;
+    const PERM_UPDATE_SETTINGS = 16;
+    const PERM_CREATE_ROLE = 17;
+    const PERM_UPDATE_ROLE = 18;
 
     # Menu types
     const MENU_LINKS = 1;
