@@ -21,9 +21,10 @@ class Settings extends Controller
     public function settingsView()
     {
         $this->setCSRFToken();
+
         $view_data = [
             'active_tab' => 1,
-            'settings' => $this->settings,
+            'settings' => $this->repository->settings->findALl(),
             'roles' => $this->repository->role->findAll(),
             'smtp' => [
                 'host' => SMTP_HOST,
@@ -70,9 +71,9 @@ class Settings extends Controller
             }
             $is_valid_config = Mailer::connect(
                 $form_data['smtp_host'],
-                $form_data['smtp_port'],
+                587,
                 $form_data['smtp_user'],
-                $form_data['smtp_password'],
+                $form_data['smtp_password']
             );
 
             if (!$is_valid_config) {
@@ -91,7 +92,6 @@ class Settings extends Controller
                 'app_debug' => APP_DEBUG,
                 'app_dev' => APP_DEV,
                 'smtp_host' => $form_data['smtp_host'],
-                'smtp_port' => $form_data['smtp_port'],
                 'smtp_user' => $form_data['smtp_user'],
                 'smtp_password' => $form_data['smtp_password'],
             ]);

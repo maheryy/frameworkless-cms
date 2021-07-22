@@ -36,6 +36,11 @@ class FormRegistry
                 'required' => true,
                 'error_message' => Validator::ERROR_EMAIL_DEFAULT,
             ],
+            'email_contact' => [
+                'type' => Validator::TYPE_EMAIL,
+                'required' => false,
+                'error_message' => Validator::ERROR_EMAIL_DEFAULT,
+            ],
         ];
     }
 

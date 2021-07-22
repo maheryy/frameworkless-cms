@@ -21,7 +21,7 @@ class Role extends Controller
 
         $default_role = $this->request->get('id') ?? $this->session->get('user_role');
         $permissions = $this->repository->permission->findAll();
-        $role_permissions = $this->repository->rolePermission->findAllPermissionsByRole($default_role);
+        $role_permissions = $this->repository->rolePermission->findAllPermissionsByRole((int) $default_role);
         $permissions = $this->getDiff2DArray($permissions, $role_permissions, 'id');
         $roles = $this->repository->role->findAll();
 
@@ -53,7 +53,7 @@ class Role extends Controller
     # /role-tab
     public function roleTabView()
     {
-        $role_id = $this->request->get('ref');
+        $role_id = (int) $this->request->get('ref');
         if (!$role_id) {
             throw new \Exception('ref ne peut pas être null');
         }

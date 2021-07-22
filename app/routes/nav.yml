@@ -36,9 +36,6 @@ sidebar-main:
       new_user:
         label: Ajouter utilisateur
         route: /admin/new-user
-      current_user:
-        label: Profil
-        route:
       roles:
         label: Roles
         route: /admin/role
