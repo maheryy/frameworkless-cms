@@ -15,7 +15,7 @@
                 </label>
             </article>
         <?php else : ?>
-            <h2 class="text-center">Réinitialisation du mot passe</h2>
+            <h2 class="text-center"><?= $title ?></h2>
             <article class="login-box card">
                 <article id="info-box" class="info-primary">
                     <span id="info-description"></span>

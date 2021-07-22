@@ -70,7 +70,6 @@ class User extends Controller
             Database::beginTransaction();
             $user_id = $this->repository->user->create([
                 'username' => $form_data['username'],
-                'password' => password_hash($form_data['password'], PASSWORD_DEFAULT),
                 'email' => $form_data['email'],
                 'role' => $form_data['role'],
                 'status' => Constants::STATUS_INACTIVE,
@@ -96,7 +95,7 @@ class User extends Controller
                 'subject' => 'Confirmation de votre compte',
                 'content' => View::getHtml('email/confirmation_email', [
                     'email' => $form_data['email'],
-                    'link_confirm' => UrlBuilder::makeAbsoluteUrl('User', 'confirmAccountView', [
+                    'link_confirm' => UrlBuilder::makeAbsoluteUrl('Auth', 'passwordUpdateView', [
                         'ref' => $token_reference->get(),
                         'token' => $token->getEncoded()
                     ]),
@@ -108,9 +107,62 @@ class User extends Controller
             }
 
             Database::commit();
-            $this->sendSuccess('Utilisateur créé', [
+            $this->sendSuccess('Un email de confirmation a été envoyé', [
                 'url_next' => UrlBuilder::makeUrl('User', 'userView', ['id' => $user_id])
             ]);
+        } catch (\Exception $e) {
+            Database::rollback();
+            $this->sendError("Une erreur est survenue", [$e->getMessage()]);
+        }
+    }
+
+    # /user-reconfirmation
+    public function reconfirmationAction()
+    {
+        $this->validateCSRF();
+        try {
+            if (!Validator::isValidEmail($this->request->post('email'))) {
+                $this->sendError('Veuillez vérifier l\'adresse email', [['name' => 'email', 'error' => Validator::ERROR_EMAIL_DEFAULT]]);
+            }
+
+            Database::beginTransaction();
+
+            # Remove existing token for this user
+            $this->repository->validationToken->removeTokenByUser($this->request->post('user_id'), Constants::TOKEN_EMAIL_CONFIRM);
+
+            # Create token
+            $token_reference = (new Token())->generate(8)->encode();
+            $token = (new Token())->generate();
+
+            # Store the token with expiration
+            $this->repository->validationToken->create([
+                'user_id' => $this->request->post('user_id'),
+                'type' => Constants::TOKEN_EMAIL_CONFIRM,
+                'token' => $token->getHash(),
+                'reference' => $token_reference,
+                'created_at' => Formatter::getDateTime(),
+                'expires_at' => Formatter::getModifiedDateTime('+ ' . Constants::EMAIL_CONFIRM_TIMEOUT . ' minutes'),
+            ]);
+
+            # Send confirmation email
+            $mail = Mailer::send([
+                'to' => $this->request->post('email'),
+                'subject' => 'Confirmation de votre compte',
+                'content' => View::getHtml('email/confirmation_email', [
+                    'email' => $this->request->post('email'),
+                    'link_confirm' => UrlBuilder::makeAbsoluteUrl('Auth', 'passwordUpdateView', [
+                        'ref' => $token_reference->get(),
+                        'token' => $token->getEncoded()
+                    ]),
+                ]),
+            ]);
+
+            if (!$mail['success']) {
+                $this->sendError($mail['message']);
+            }
+
+            Database::commit();
+            $this->sendSuccess('Un email de confirmation a été envoyé');
         } catch (\Exception $e) {
             Database::rollback();
             $this->sendError("Une erreur est survenu", [$e->getMessage()]);
@@ -132,7 +184,9 @@ class User extends Controller
         $view_data = [
             'roles' => $this->repository->role->findAll(),
             'user' => $user,
-            'url_form' => UrlBuilder::makeUrl('User', 'userAction'),
+            'hold_confirmation' => $user['status'] == Constants::STATUS_INACTIVE,
+            'is_current_user' => $this->session->getUserId() == $user['id'],
+            'url_form' => $user['status'] == Constants::STATUS_INACTIVE ? UrlBuilder::makeUrl('User', 'reconfirmationAction') : UrlBuilder::makeUrl('User', 'userAction'),
             'url_delete' => UrlBuilder::makeUrl('User', 'deleteAction', ['id' => $user['id']]),
         ];
         $this->render('user_detail', $view_data);

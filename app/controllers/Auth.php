@@ -142,7 +142,7 @@ class Auth extends Controller
                 'subject' => 'Réinitialisation de votre mot passe',
                 'content' => View::getHtml('email/password_reset_email', [
                     'username' => $user['username'],
-                    'link_reset_password' => UrlBuilder::makeAbsoluteUrl('Auth', 'passwordResetView', [
+                    'link_reset_password' => UrlBuilder::makeAbsoluteUrl('Auth', 'passwordUpdateView', [
                         'ref' => $token_reference->get(),
                         'token' => $token->getEncoded()
                     ]),
@@ -159,8 +159,8 @@ class Auth extends Controller
         }
     }
 
-    # /reset-password
-    public function passwordResetView()
+    # /update-password
+    public function passwordUpdateView()
     {
         $token_reference = $this->request->get('ref');
         $token = $this->request->get('token');
@@ -175,9 +175,10 @@ class Auth extends Controller
             ];
         } else {
             $view_data = [
-                'url_form' => UrlBuilder::makeUrl('Auth', 'passwordResetAction'),
+                'url_form' => UrlBuilder::makeUrl('Auth', 'passwordUpdateAction'),
                 'is_token_valid' => true,
                 'has_expired' => false,
+                'title' => $validation_token['type'] == Constants::TOKEN_EMAIL_CONFIRM ? 'Création de votre mot de passe' : 'Réinitialisation du mot de passe',
                 'reference' => $token_reference,
                 'token' => $token,
             ];
@@ -186,8 +187,8 @@ class Auth extends Controller
         $this->render('password_reset', $view_data);
     }
 
-    # /reset-password-send
-    public function passwordResetAction()
+    # /update-password-send
+    public function passwordUpdateAction()
     {
         try {
             # Validate fields
@@ -211,18 +212,27 @@ class Auth extends Controller
 
             Database::beginTransaction();
             # Update user password
-            $this->repository->user->updatePassword($validation_token['user_id'], password_hash($data['password'], PASSWORD_DEFAULT));
+            $update_data = [
+                'password' => password_hash($data['password'], PASSWORD_DEFAULT),
+                'updated_at' => Formatter::getDateTime()
+            ];
+            # Update status to active for confirmation case
+            if ($validation_token['type'] == Constants::TOKEN_EMAIL_CONFIRM) {
+                $update_data['status'] = Constants::STATUS_ACTIVE;
+            }
+            $this->repository->user->update($validation_token['user_id'], $update_data);
 
             # Delete token
             $validation_token_repository->remove($validation_token['id']);
-            Database::commit();
 
-            $this->sendSuccess("Votre mot de passe a été réinitialisé", [
+
+            Database::commit();
+            $this->sendSuccess("Informations sauvegardées", [
                 'url_next' => UrlBuilder::makeUrl('Auth', 'loginView'),
             ]);
         } catch (\Exception $e) {
             Database::rollback();
-            $this->sendError("Une erreur est survenu pendant le traitement", [$e->getMessage()]);
+            $this->sendError("Une erreur est survenu durant le traitement", [$e->getMessage()]);
         }
     }
 

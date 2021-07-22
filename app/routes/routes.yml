@@ -13,7 +13,6 @@
   display_back_office: True
 
 # installer
-
 /installer:
   controller: Installer
   method: installerView
@@ -49,20 +48,18 @@
   controller: Auth
   method: passwordRecoveryAction
 
-/reset-password:
+/update-password:
   controller: Auth
-  method: passwordResetView
-  title: Réinitialisation du mot de passe
+  method: passwordUpdateView
 
-/reset-password-send:
+/update-password-send:
   controller: Auth
-  method: passwordResetAction
+  method: passwordUpdateAction
 
 /confirm-account:
-  controller: User
+  controller: Auth
   method: confirmAccountView
   title: Confirmation du compte
-
 
 # User management
 /users:
@@ -105,6 +102,13 @@
   controller: User
   method: deleteAction
   require_auth: True
+
+/user-reconfirmation:
+  controller: User
+  method: reconfirmationAction
+  require_auth: True
+
+
 
 
 # Page management
