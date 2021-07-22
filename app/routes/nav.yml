@@ -17,14 +17,14 @@ sidebar-main:
   appearance:
     label: Apparance
     icon: fas fa-palette
-    route: /admin/navigation
+    route: /admin/menu
     sub-links:
-      navigations:
-        label: Navigations
-        route: /admin/navigation
-      themes:
-        label: Thèmes
-        route: /admin/themes
+      menus:
+        label: Menus
+        route: /admin/menu
+      customization:
+        label: Personnalisation
+        route: /admin/customization
   user:
     label: Utilisateurs
     icon: fas fa-users

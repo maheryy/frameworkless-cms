@@ -6,18 +6,18 @@
         <div class="w-4/12">
             <select id="tab_view" class="form-control w-full text-base" name="tab_view" data-role="initSelectTabs"
                     data-options=<?= json_encode($tab_options) ?>>
-                <option value="-1">Ajouter une navigation</option>
+                <option value="-1">Ajouter un menu</option>
                 <?php $last_type = null; ?>
-                <?php foreach ($navs as $nav) : ?>
+                <?php foreach ($menus as $menu) : ?>
                     <?php if (is_null($last_type)) : ?>
-                         <optgroup label="<?= $nav_types[$nav['type']] ?>">
-                    <?php elseif ($nav['type'] != $last_type) : ?>
+                         <optgroup label="<?= $menu_types[$menu['type']] ?>">
+                    <?php elseif ($menu['type'] != $last_type) : ?>
                         </optgroup>
-                        <optgroup label="<?= $nav_types[$nav['type']] ?>">
+                        <optgroup label="<?= $menu_types[$menu['type']] ?>">
                     <?php endif; ?>
-                    <option <?= $default_tab == $nav['id'] ? 'selected=selected' : '' ?> value="<?= $nav['id'] ?>">
-                        <?= $nav['title'] . ($nav['status'] == \App\Core\Utils\Constants::STATUS_ACTIVE ? ' - Active' : '') ?></option>
-                    <?php $last_type = $nav['type']; ?>
+                    <option <?= $default_tab == $menu['id'] ? 'selected=selected' : '' ?> value="<?= $menu['id'] ?>">
+                        <?= $menu['title'] ?></option>
+                    <?php $last_type = $menu['type']; ?>
                 <?php endforeach; ?>
                 <?= $last_type ? '</optgroup>' : ''?>
             </select>

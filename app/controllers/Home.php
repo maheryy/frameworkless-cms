@@ -19,7 +19,7 @@ class Home extends Controller
             'pages' => count($this->repository->post->findAll()),
             'users' => count($this->repository->user->findAll()),
             'roles' => count($this->repository->role->findAll()),
-            'navs' => count($this->repository->navigation->findAll()),
+            'menus' => count($this->repository->menu->findAll()),
             'debug' => $this->repository->settings->findAll(),
             'visitors' => $this->repository->visitor->countTotalUniqueVisitors(),
         ];

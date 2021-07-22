@@ -131,6 +131,122 @@ function setInfo(type, text, delay = null) {
     }
 }
 
+
+function getMenuItemBaseElement(data) {
+    return $(
+        '<li class="transferable-element">' +
+        '<div class="element-content">' +
+        `<input type="hidden" name="menu_items[icons][]" value="${data.icon ?? ''}">` +
+        `<input type="hidden" name="menu_items[pages][]" value="${data.page_id ?? ''}">` +
+        `<input class="label" type="text" name="menu_items[labels][]" value="${data.page_title ?? 'Mon lien'}" ${data.label_readonly ? 'readonly' : ''} placeholder="Nom du lien">` +
+        (
+            data.type === 1
+                ? `<span class="description">Page ${data.page_title} : <input type="text" class="link" name="menu_items[links][]" value="${data.page_link}" readonly></span>`
+                : `<span class="description">${data.icon !== undefined ? '<i class="' + data.icon + ' px-0.25"></i>' : 'Lien personnalisé :'} <input type="text" class="link" name="menu_items[links][]" placeholder="www.example.com" value="${data.page_link ?? ''}" ${data.link_readonly ? 'readonly' : ''}></span>`
+        ) +
+        '</div>' +
+        '</li>'
+    );
+}
+
+function createMenuItemElement(data, actionUp, actionDown, actionDel) {
+    const element = getMenuItemBaseElement(data);
+
+    const up = $('<span class="element-up"><i class="fas fa-sort-up"></i></span>').click(actionUp);
+    const down = $('<span class="element-down"><i class="fas fa-sort-down"></i></span>').click(actionDown);
+    const del = $('<span class="element-delete"><i class="fas fa-times"></i></span>').click(actionDel);
+
+    return $(element).append($('<div class="element-actions"></div>').append(up, down, del));
+}
+
+
+function createFooterTextElement() {
+    return $(
+        '<li class="transferable-element">' +
+        '<div class="element-content">' +
+        `<input type="hidden" name="footer_items[types][]" value="1">` +
+        `<input type="hidden" name="footer_items[menus][]" value="">` +
+        `<input class="label" type="text" name="footer_items[labels][]" value="A propos" placeholder="A propos">` +
+        `<textarea class="form-control" name="footer_items[data][]" rows="4" style="resize: none" placeholder="Entrez votre texte..."></textarea>` +
+        '</div>' +
+        '</li>'
+    );
+}
+
+function createFooterLinkElement(data) {
+    let options = "";
+
+    if (data.data) {
+        for (const [key, value] of Object.entries(data.data)) {
+            options += `<option value=${value.id}>Menu - ${value.title}</option>`;
+        }
+    }
+
+    return $(
+        '<li class="transferable-element">' +
+        '<div class="element-content">' +
+        `<input type="hidden" name="footer_items[types][]" value="2">` +
+        `<input type="hidden" name="footer_items[data][]" value="">` +
+        `<input class="label" type="text" name="footer_items[labels][]" value="Liens utiles" placeholder="Liens utiles">` +
+        `<select class="form-control" name="footer_items[menus][]">` + options + `</select>` +
+        '</div>' +
+        '</li>'
+    );
+}
+
+function createFooterContactElement() {
+    return $(
+        '<li class="transferable-element">' +
+        '<div class="element-content">' +
+        `<input type="hidden" name="footer_items[types][]" value="3">` +
+        `<input type="hidden" name="footer_items[data][]" value="">` +
+        `<input type="hidden" name="footer_items[menus][]" value="">` +
+        `<input class="label" type="text" name="footer_items[labels][]" value="Contactez-nous" placeholder="Contactez-nous">` +
+        '<span class="description">Formulaire rapide - Contact</span>' +
+        '</div>' +
+        '</li>'
+    );
+}
+
+function createFooterNewsletterElement() {
+    return $(
+        '<li class="transferable-element">' +
+        '<div class="element-content">' +
+        `<input type="hidden" name="footer_items[types][]" value="4">` +
+        `<input type="hidden" name="footer_items[data][]" value="">` +
+        `<input type="hidden" name="footer_items[menus][]" value="">` +
+        `<input class="label" type="text" name="footer_items[labels][]" value="Newsletter" placeholder="Newsletter">` +
+        '<span class="description">Formulaire rapide - Newsletter</span>' +
+        '</div>' +
+        '</li>'
+    );
+}
+
+
+function createItemElement(data, actionUp, actionDown, actionDel) {
+    let element;
+    switch (data.element) {
+        case 1:
+            element = createFooterTextElement();
+            break;
+        case 2:
+            element = createFooterLinkElement(data);
+            break;
+        case 3:
+            element = createFooterContactElement();
+            break;
+        case 4:
+            element = createFooterNewsletterElement();
+            break;
+    }
+    const up = $('<span class="element-up"><i class="fas fa-sort-up"></i></span>').click(actionUp);
+    const down = $('<span class="element-down"><i class="fas fa-sort-down"></i></span>').click(actionDown);
+    const del = $('<span class="element-delete"><i class="fas fa-times"></i></span>').click(actionDel);
+
+    return $(element).append($('<div class="element-actions"></div>').append(up, down, del));
+}
+
+
 /* Include every data-role functions declared in the HTML code below */
 const roleFunctions = {
     setActiveLink: function () {
@@ -252,29 +368,14 @@ const roleFunctions = {
         $(container).find('#transpose-source .transpose-element').click(sourceClick);
         $(container).find('#transpose-target .transpose-element').click(targetClick);
     },
-    initNavigationTransferable: function () {
+    initMenuTransferable: function () {
         const target_list = $(this).find('#transferable-target .list-elements');
 
         const sourceClick = e => {
             const data = getOptions($(e.currentTarget).find('input.element-data'));
-            // Base element
-            const element =
-                '<li class="transferable-element">' +
-                '<div class="element-content">' +
-                `<input type="hidden" name="nav_items[]" value="${data.page_id}">` +
-                `<input type="text" name="nav_labels[]" value="${data.page_title}">` +
-                `<span class="description">Page ${data.page_title} | <a target="_blank" href="${data.page_link}">${data.page_link}</a></span>` +
-                '</div>' +
-                '</li>';
 
-            // Attach event to item actions
-            const up = $('<span class="element-up"><i class="fas fa-sort-up"></i></span>').click(moveUp);
-            const down = $('<span class="element-down"><i class="fas fa-sort-down"></i></span>').click(moveDown);
-            const del = $('<span class="element-delete"><i class="fas fa-times"></i></span>').click(remove);
-
-            // Create a container for the actions to append to base element
-            const actions = $('<div class="element-actions"></div>').append(up, [down, del]);
-            $(element).append(actions).appendTo(target_list);
+            const element = createMenuItemElement(data, moveUp, moveDown, remove);
+            $(target_list).append(element);
         };
 
         const remove = e => {
@@ -296,7 +397,41 @@ const roleFunctions = {
             }
         }
 
-        $(this).find('#transferable-source .transferable-element').click(sourceClick);
+        $(this).find('.transferable-source .transferable-element').click(sourceClick);
+        $(this).find('#transferable-target .transferable-element .element-up').click(moveUp);
+        $(this).find('#transferable-target .transferable-element .element-down').click(moveDown);
+        $(this).find('#transferable-target .transferable-element .element-delete').click(remove);
+    },
+    initFooterCustomization: function () {
+        const target_list = $(this).find('#transferable-target .list-elements');
+
+        const sourceClick = e => {
+            if($('#transferable-target .transferable-element').length >= 4) return;
+            const data = getOptions($(e.currentTarget));
+
+            const element = createItemElement(data, moveUp, moveDown, remove);
+            $(target_list).append(element);
+        };
+
+        const remove = e => {
+            $(e.currentTarget).closest('li').remove();
+        }
+        const moveUp = e => {
+            const current = $(e.currentTarget).closest('li');
+            const prev = $(current).prev();
+            if (prev.length) {
+                $(prev).before(current);
+            }
+        }
+        const moveDown = e => {
+            const current = $(e.currentTarget).closest('li');
+            const next = $(current).next();
+            if (next.length) {
+                $(next).after(current);
+            }
+        }
+
+        $(this).find('.transferable-source .transferable-element').click(sourceClick);
         $(this).find('#transferable-target .transferable-element .element-up').click(moveUp);
         $(this).find('#transferable-target .transferable-element .element-down').click(moveDown);
         $(this).find('#transferable-target .transferable-element .element-delete').click(remove);
@@ -386,6 +521,20 @@ const roleFunctions = {
             if ($('#tab_view').val() == -1) return;
             $('#tab_view').val(-1).change();
         })
+    },
+    refreshMenuSource: function () {
+        let storage = {};
+        $(this).change(function () {
+            if ($(this).val() === '1') {
+                $('.source-links').removeClass('hidden');
+                $('.source-socials').addClass('hidden');
+            } else {
+                $('.source-socials').removeClass('hidden');
+                $('.source-links').addClass('hidden');
+
+            }
+            $('#transferable-target .list-elements').html('');
+        });
     }
 };
 

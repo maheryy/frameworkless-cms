@@ -47,10 +47,20 @@ class Website extends Controller
                 break;
             default :
                 $view = $this->getUserDefinedPage();
+                $hero_data = json_decode($this->settings[Constants::STG_HERO_DATA], true);
+                if (!empty($hero_data)) {
+                    $view['context']['display_hero'] = $hero_data['status'] == 1 && $this->uri === '/' || $hero_data['status'] == 2;
+                    $view['context']['hero_data'] = $hero_data;
+                }
                 break;
         }
         # Unexpected case
         if (empty($view)) throw new \Exception("Une erreur est survenue, la page demandée n'est pas disponible");
+
+        $layout = $this->getLayoutData();
+        $view['context']['header_menu'] = $layout['header_menu'];
+        $view['context']['footer_sections'] = $layout['footer_data']['sections'] ?? [];
+        $view['context']['footer_socials'] = $layout['footer_data']['socials'] ?? [];
 
         $this->setNewVisitor($_SERVER['REMOTE_ADDR'], $_SERVER['HTTP_USER_AGENT'], $this->uri, date('Y-m-d'));
         $this->render($view['view'], $view['context']);
@@ -87,7 +97,6 @@ class Website extends Controller
                 'is_indexable' => $page['meta_indexable'],
                 'content_title' => $page['title'],
                 'content' => $page['content'],
-                'display_hero' => $this->uri === '/',
             ]
         ];
     }
@@ -128,7 +137,7 @@ class Website extends Controller
 
         # Send message to admin or contact email registered
         $mail_contact = Mailer::send([
-            'to' => $this->settings['email_contact'] ?? $this->settings['email_admin'],
+            'to' => $this->settings[Constants::STG_EMAIL_CONTACT] ?? $this->settings[Constants::STG_EMAIL_ADMIN],
             'reply_to' => $email,
             'subject' => 'Message reçu',
             'content' => View::getHtml('email/contact_form', [
@@ -242,4 +251,159 @@ class Website extends Controller
 
         return ['success' => true, 'message' => 'Votre avis a bien été pris en compte'];
     }
+
+    private function getLayoutData()
+    {
+        $data = json_decode($this->settings[Constants::STG_SITE_LAYOUT], true);
+        if (empty($data)) return ['header_menu' => [], 'footer_data' => []];
+
+        $res = [];
+        foreach ($data as $item) {
+            switch ($item['type']) {
+                case Constants::LS_HEADER_MENU :
+                    $res['header_menu'] = $this->repository->menuItem->findMenuItems((int)$item['menu_id']);
+                    break;
+                case Constants::LS_FOOTER_SOCIALS :
+                    $res['footer_data']['socials'] = $this->repository->menuItem->findMenuItems((int)$item['menu_id']);
+                    break;
+                case Constants::LS_FOOTER_TEXT :
+                    $res['footer_data']['sections'][] = [
+                        'type' => $item['type'],
+                        'label' => $item['label'],
+                        'data' => $item['data'],
+                    ];
+                    break;
+                case Constants::LS_FOOTER_LINKS :
+                    $res['footer_data']['sections'][] = [
+                        'type' => $item['type'],
+                        'label' => $item['label'],
+                        'data' => $this->repository->menuItem->findMenuItems((int)$item['menu_id']),
+                    ];
+                    break;
+                case Constants::LS_FOOTER_CONTACT :
+                    $res['footer_data']['sections'][] = [
+                        'type' => $item['type'],
+                        'label' => $item['label']
+                    ];
+                    break;
+                case Constants::LS_FOOTER_NEWSLETTER :
+                    $res['footer_data']['sections'][] = [
+                        'type' => $item['type'],
+                        'label' => $item['label']
+                    ];
+                    break;
+            }
+        }
+        return $res;
+    }
+
+
+    /* ----------------- Utility functions to display website components ----------------- */
+
+    public static function getMenuHeader(array $data)
+    {
+        $items = null;
+        foreach ($data as $item) {
+            $items .= "<li class='h-link'><a href='" . ($item['page_link'] ?? $item['url']) . "'>{$item['label']}</a></li>" . PHP_EOL;
+        }
+        return
+            '<nav class="header-nav">
+                <ul class="links">' . $items . '</ul>
+            </nav>' . PHP_EOL;
+    }
+
+
+    public static function getHero(string $title, string $content, string $bg_image)
+    {
+        return
+            '<section class="hero-header">
+                <div id="hero-img" data-url="' . $bg_image . '"></div>
+                <article class="hero-content">
+                    <h1>' . $title . '</h1>
+                    <p>' . nl2br($content) . '</p>
+                </article>
+            </section>' . PHP_EOL;
+    }
+
+    public static function getContactFooter(string $title, int $size)
+    {
+        return
+            '<div class="footer-section contact w-' . $size . '/12">
+                <h3>' . $title . '</h3>
+                <div class="section-content">
+                    <form method="POST" action="contact">
+                        <div class="form-field">
+                            <input type="email" class="form-control" name="email" placeholder="Adresse email">
+                        </div>
+                        <div class="form-field">
+                            <textarea class="form-control" name="message" placeholder="Message" rows="5"></textarea>
+                        </div>
+                        <div class="form-field">
+                            <input type="submit" class="form-action" value="Envoyer">
+                        </div>
+                        <div class="info-box">
+                            <span class="info-description"></span>
+                        </div>
+                    </form>
+                </div>
+            </div>' . PHP_EOL;
+    }
+
+    public static function getNewsletterFooter(string $title, int $size)
+    {
+        return
+            '<div class="footer-section newsletter w-' . $size . '/12">
+                <h3>' . $title . '</h3>
+                <div class="section-content">
+                    <form method="POST" action="newsletter">
+                        <div class="form-field">
+                            <input type="email" class="form-control" name="email" placeholder="Adresse email">
+                            <input type="submit" class="form-action" value="S\'inscrire">
+                        </div>
+                        <div class="info-box">
+                            <span class="info-description"></span>
+                        </div>
+                    </form>
+                </div>
+            </div>' . PHP_EOL;
+    }
+
+    public static function getTextFooter(string $title, string $text, int $size)
+    {
+        return
+            '<div class="footer-section text w-' . $size . '/12">
+                <h3>' . $title . '</h3>
+                <div class="section-content">
+                    <p>' . $text . '</p>
+                </div>
+            </div>' . PHP_EOL;
+    }
+
+    public static function getLinkFooter(string $title, array $data, int $size)
+    {
+        $items = null;
+        foreach ($data as $item) {
+            $items .= "<li><a href='" . ($item['page_link'] ?? $item['url']) . "'>{$item['label']}</a></li>" . PHP_EOL;
+        }
+
+        return
+            '<nav class="footer-section link w-' . $size . '/12">
+                <h3>' . $title . '</h3>
+                <ul>' . $items . '</ul>
+            </nav>' . PHP_EOL;
+    }
+
+    public static function getSocialFooter(array $data)
+    {
+        $items = null;
+        foreach ($data as $item) {
+            $items .= "<li class='social-item'><a href='{$item['url']}'><i class='{$item['icon']}'></i></a></li>" . PHP_EOL;
+        }
+
+        return
+            '<nav class="footer-section social">
+                <ul>' . $items . '</ul>
+            </nav>' . PHP_EOL;
+    }
+
 }

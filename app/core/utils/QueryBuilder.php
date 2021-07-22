@@ -233,15 +233,15 @@ class QueryBuilder
         return $this;
     }
 
-    public function joinLeft(string $table, string ...$conditions)
+    public function joinLeft(string $table, ...$conditions)
     {
         return $this->join(self::JOIN_LEFT, $table, ...$conditions);
     }
-    public function joinRight(string $table, string ...$conditions)
+    public function joinRight(string $table, ...$conditions)
     {
         return $this->join(self::JOIN_RIGHT, $table, ...$conditions);
     }
-    public function joinInner(string $table, string ...$conditions)
+    public function joinInner(string $table, ...$conditions)
     {
         return $this->join(self::JOIN_INNER, $table, ...$conditions);
     }

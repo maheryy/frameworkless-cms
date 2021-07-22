@@ -21,6 +21,7 @@ body {
 @import "components/form";
 @import "components/info";
 @import "components/card";
+@import "components/dynamic_list";
 
 // Layout elements
 @import "layout/content";
@@ -30,7 +31,7 @@ body {
 @import "content/installer";
 @import "content/login";
 @import "content/role";
-@import "content/navigation";
+@import "content/menu";
 @import "content/settings";
 
 // Override all styles above with util classes

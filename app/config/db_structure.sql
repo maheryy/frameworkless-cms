@@ -1,69 +1,17 @@
-DROP TABLE IF EXISTS `{PREFIX10}_settings`;
+DROP TABLE IF EXISTS `{PREFIX10}_role`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `{PREFIX10}_settings`
-(
-    `id`    int                          NOT NULL AUTO_INCREMENT,
-    `name`  varchar(30) COLLATE utf8_bin NOT NULL,
-    `value` varchar(255) COLLATE utf8_bin DEFAULT NULL,
-    PRIMARY KEY (`id`),
-    UNIQUE KEY `{PREFIX10}_settings_name_uindex` (`name`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb3 COLLATE=utf8_bin;
-/*!40101 SET character_set_client = @saved_cs_client */;
-DROP TABLE IF EXISTS `{PREFIX11}_visitor`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `{PREFIX11}_visitor`
-(
-    `id`    int                           NOT NULL AUTO_INCREMENT,
-    `ip`    varchar(15) COLLATE utf8_bin  NOT NULL,
-    `agent` varchar(255) COLLATE utf8_bin NOT NULL,
-    `uri`   varchar(60) COLLATE utf8_bin  NOT NULL,
-    `date`  timestamp                     NOT NULL,
-    PRIMARY KEY (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb3 COLLATE=utf8_bin;
-/*!40101 SET character_set_client = @saved_cs_client */;
-DROP TABLE IF EXISTS `{PREFIX12}_subscriber`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `{PREFIX12}_subscriber`
-(
-    `id`     int                          NOT NULL AUTO_INCREMENT,
-    `email`  varchar(60) COLLATE utf8_bin NOT NULL,
-    `status` tinyint                      NOT NULL,
-    PRIMARY KEY (`id`),
-    UNIQUE KEY `{PREFIX12}_subscriber_email_uindex` (`email`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb3 COLLATE=utf8_bin;
-/*!40101 SET character_set_client = @saved_cs_client */;
-DROP TABLE IF EXISTS `{PREFIX13}_review`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `{PREFIX13}_review`
-(
-    `id`     int                           NOT NULL AUTO_INCREMENT,
-    `rate`   tinyint                       NOT NULL,
-    `author` varchar(65) COLLATE utf8_bin  NOT NULL,
-    `email`  varchar(65) COLLATE utf8_bin  NOT NULL,
-    `review` varchar(255) COLLATE utf8_bin NOT NULL,
-    `status` tinyint                       NOT NULL,
-    `date`   timestamp                     NOT NULL,
-    PRIMARY KEY (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb3 COLLATE=utf8_bin;
-/*!40101 SET character_set_client = @saved_cs_client */;
-DROP TABLE IF EXISTS `{PREFIX1}_role`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `{PREFIX1}_role`
+CREATE TABLE `{PREFIX10}_role`
 (
     `id`   int                                             NOT NULL AUTO_INCREMENT,
     `name` varchar(40) CHARACTER SET utf8 COLLATE utf8_bin NOT NULL,
     PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb3 COLLATE=utf8_bin;
 /*!40101 SET character_set_client = @saved_cs_client */;
-DROP TABLE IF EXISTS `{PREFIX2}_user`;
+DROP TABLE IF EXISTS `{PREFIX11}_user`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `{PREFIX2}_user`
+CREATE TABLE `{PREFIX11}_user`
 (
     `id`         int                                              NOT NULL AUTO_INCREMENT,
     `username`   varchar(45) CHARACTER SET utf8 COLLATE utf8_bin  NOT NULL,
@@ -74,15 +22,15 @@ CREATE TABLE `{PREFIX2}_user`
     `created_at` timestamp                                        NOT NULL DEFAULT CURRENT_TIMESTAMP,
     `updated_at` timestamp                                        NOT NULL DEFAULT CURRENT_TIMESTAMP,
     PRIMARY KEY (`id`),
-    UNIQUE KEY `{PREFIX2}_user_username_uindex` (`username`),
-    KEY          `{PREFIX2}_user_{PREFIX1}_role_id_fk` (`role`),
-    CONSTRAINT `{PREFIX2}_user_{PREFIX1}_role_id_fk` FOREIGN KEY (`role`) REFERENCES `{PREFIX1}_role` (`id`) ON DELETE SET NULL
+    UNIQUE KEY `{PREFIX11}_user_username_uindex` (`username`),
+    KEY          `{PREFIX11}_user_{PREFIX10}_role_id_fk` (`role`),
+    CONSTRAINT `{PREFIX11}_user_{PREFIX10}_role_id_fk` FOREIGN KEY (`role`) REFERENCES `{PREFIX10}_role` (`id`) ON DELETE SET NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb3 COLLATE=utf8_bin;
 /*!40101 SET character_set_client = @saved_cs_client */;
-DROP TABLE IF EXISTS `{PREFIX3}_permission`;
+DROP TABLE IF EXISTS `{PREFIX12}_permission`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `{PREFIX3}_permission`
+CREATE TABLE `{PREFIX12}_permission`
 (
     `id`          int                                             NOT NULL AUTO_INCREMENT,
     `name`        varchar(60) CHARACTER SET utf8 COLLATE utf8_bin NOT NULL,
@@ -90,25 +38,25 @@ CREATE TABLE `{PREFIX3}_permission`
     PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb3 COLLATE=utf8_bin;
 /*!40101 SET character_set_client = @saved_cs_client */;
-DROP TABLE IF EXISTS `{PREFIX4}_role_permission`;
+DROP TABLE IF EXISTS `{PREFIX13}_role_permission`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `{PREFIX4}_role_permission`
+CREATE TABLE `{PREFIX13}_role_permission`
 (
     `id`            int NOT NULL AUTO_INCREMENT,
     `role_id`       int DEFAULT NULL,
     `permission_id` int DEFAULT NULL,
     PRIMARY KEY (`id`),
-    KEY             `{PREFIX4}_role_permission_{PREFIX1}_role_id_fk` (`role_id`),
-    KEY             `{PREFIX4}_role_permission_{PREFIX3}_permission_id_fk` (`permission_id`),
-    CONSTRAINT `{PREFIX4}_role_permission_{PREFIX1}_role_id_fk` FOREIGN KEY (`role_id`) REFERENCES `{PREFIX1}_role` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
-    CONSTRAINT `{PREFIX4}_role_permission_{PREFIX3}_permission_id_fk` FOREIGN KEY (`permission_id`) REFERENCES `{PREFIX3}_permission` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
+    KEY             `{PREFIX13}_role_permission_{PREFIX10}_role_id_fk` (`role_id`),
+    KEY             `{PREFIX13}_role_permission_{PREFIX12}_permission_id_fk` (`permission_id`),
+    CONSTRAINT `{PREFIX13}_role_permission_{PREFIX10}_role_id_fk` FOREIGN KEY (`role_id`) REFERENCES `{PREFIX10}_role` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
+    CONSTRAINT `{PREFIX13}_role_permission_{PREFIX12}_permission_id_fk` FOREIGN KEY (`permission_id`) REFERENCES `{PREFIX12}_permission` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb3 COLLATE=utf8_bin;
 /*!40101 SET character_set_client = @saved_cs_client */;
-DROP TABLE IF EXISTS `{PREFIX5}_validation_token`;
+DROP TABLE IF EXISTS `{PREFIX14}_validation_token`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `{PREFIX5}_validation_token`
+CREATE TABLE `{PREFIX14}_validation_token`
 (
     `id`         int                                          NOT NULL AUTO_INCREMENT,
     `user_id`    int                                          NOT NULL,
@@ -118,14 +66,14 @@ CREATE TABLE `{PREFIX5}_validation_token`
     `created_at` timestamp                                    NOT NULL DEFAULT CURRENT_TIMESTAMP,
     `expires_at` timestamp NULL DEFAULT NULL,
     PRIMARY KEY (`id`),
-    KEY          `{PREFIX5}_validation_token_{PREFIX2}_user_id_fk` (`user_id`),
-    CONSTRAINT `{PREFIX5}_validation_token_{PREFIX2}_user_id_fk` FOREIGN KEY (`user_id`) REFERENCES `{PREFIX2}_user` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
+    KEY          `{PREFIX14}_validation_token_{PREFIX11}_user_id_fk` (`user_id`),
+    CONSTRAINT `{PREFIX14}_validation_token_{PREFIX11}_user_id_fk` FOREIGN KEY (`user_id`) REFERENCES `{PREFIX11}_user` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb3 COLLATE=utf8_bin;
 /*!40101 SET character_set_client = @saved_cs_client */;
-DROP TABLE IF EXISTS `{PREFIX6}_post`;
+DROP TABLE IF EXISTS `{PREFIX15}_post`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `{PREFIX6}_post`
+CREATE TABLE `{PREFIX15}_post`
 (
     `id`           int       NOT NULL AUTO_INCREMENT,
     `author_id`    int                                             DEFAULT NULL,
@@ -137,14 +85,14 @@ CREATE TABLE `{PREFIX6}_post`
     `updated_at`   timestamp NOT NULL                              DEFAULT CURRENT_TIMESTAMP,
     `created_at`   timestamp NOT NULL                              DEFAULT CURRENT_TIMESTAMP,
     PRIMARY KEY (`id`),
-    KEY            `{PREFIX6}_post_{PREFIX2}_user_id_fk` (`author_id`),
-    CONSTRAINT `{PREFIX6}_post_{PREFIX2}_user_id_fk` FOREIGN KEY (`author_id`) REFERENCES `{PREFIX2}_user` (`id`) ON DELETE SET NULL
+    KEY            `{PREFIX15}_post_{PREFIX11}_user_id_fk` (`author_id`),
+    CONSTRAINT `{PREFIX15}_post_{PREFIX11}_user_id_fk` FOREIGN KEY (`author_id`) REFERENCES `{PREFIX11}_user` (`id`) ON DELETE SET NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb3 COLLATE=utf8_bin;
 /*!40101 SET character_set_client = @saved_cs_client */;
-DROP TABLE IF EXISTS `{PREFIX7}_page_extra`;
+DROP TABLE IF EXISTS `{PREFIX16}_page_extra`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `{PREFIX7}_page_extra`
+CREATE TABLE `{PREFIX16}_page_extra`
 (
     `id`               int NOT NULL AUTO_INCREMENT,
     `post_id`          int                                              DEFAULT NULL,
@@ -155,14 +103,14 @@ CREATE TABLE `{PREFIX7}_page_extra`
     `meta_description` varchar(255) CHARACTER SET utf8 COLLATE utf8_bin DEFAULT NULL,
     `meta_indexable`   tinyint                                          DEFAULT NULL,
     PRIMARY KEY (`id`),
-    KEY                `{PREFIX7}_page_extra_{PREFIX6}_post_id_fk` (`post_id`),
-    CONSTRAINT `{PREFIX7}_page_extra_{PREFIX6}_post_id_fk` FOREIGN KEY (`post_id`) REFERENCES `{PREFIX6}_post` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
+    KEY                `{PREFIX16}_page_extra_{PREFIX15}_post_id_fk` (`post_id`),
+    CONSTRAINT `{PREFIX16}_page_extra_{PREFIX15}_post_id_fk` FOREIGN KEY (`post_id`) REFERENCES `{PREFIX15}_post` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb3 COLLATE=utf8_bin;
 /*!40101 SET character_set_client = @saved_cs_client */;
-DROP TABLE IF EXISTS `{PREFIX8}_navigation`;
+DROP TABLE IF EXISTS `{PREFIX17}_menu`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `{PREFIX8}_navigation`
+CREATE TABLE `{PREFIX17}_menu`
 (
     `id`     int                                             NOT NULL AUTO_INCREMENT,
     `title`  varchar(60) CHARACTER SET utf8 COLLATE utf8_bin NOT NULL,
@@ -171,19 +119,73 @@ CREATE TABLE `{PREFIX8}_navigation`
     PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb3 COLLATE=utf8_bin;
 /*!40101 SET character_set_client = @saved_cs_client */;
-DROP TABLE IF EXISTS `{PREFIX9}_navigation_item`;
+DROP TABLE IF EXISTS `{PREFIX18}_menu_item`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `{PREFIX9}_navigation_item`
+CREATE TABLE `{PREFIX18}_menu_item`
 (
-    `id`            int                                             NOT NULL AUTO_INCREMENT,
-    `navigation_id` int DEFAULT NULL,
-    `post_id`       int DEFAULT NULL,
-    `label`         varchar(20) CHARACTER SET utf8 COLLATE utf8_bin NOT NULL,
+    `id`      int                                             NOT NULL AUTO_INCREMENT,
+    `menu_id` int                                             NOT NULL,
+    `post_id` int                            DEFAULT NULL,
+    `label`   varchar(20) CHARACTER SET utf8 COLLATE utf8_bin NOT NULL,
+    `icon`    varchar(30) COLLATE utf8_bin   DEFAULT NULL,
+    `url`     varchar(2000) COLLATE utf8_bin DEFAULT NULL,
     PRIMARY KEY (`id`),
-    KEY             `{PREFIX9}_navigation_item_{PREFIX6}_post_id_fk` (`post_id`),
-    KEY             `{PREFIX9}_navigation_item_{PREFIX8}_navigation_id_fk` (`navigation_id`),
-    CONSTRAINT `{PREFIX9}_navigation_item_{PREFIX6}_post_id_fk` FOREIGN KEY (`post_id`) REFERENCES `{PREFIX6}_post` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
-    CONSTRAINT `{PREFIX9}_navigation_item_{PREFIX8}_navigation_id_fk` FOREIGN KEY (`navigation_id`) REFERENCES `{PREFIX8}_navigation` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
+    KEY       `{PREFIX18}_menu_item_{PREFIX15}_post_id_fk` (`post_id`),
+    KEY       `{PREFIX18}_menu_item_{PREFIX17}_menu_id_fk` (`menu_id`),
+    CONSTRAINT `{PREFIX18}_menu_item_{PREFIX15}_post_id_fk` FOREIGN KEY (`post_id`) REFERENCES `{PREFIX15}_post` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
+    CONSTRAINT `{PREFIX18}_menu_item_{PREFIX17}_menu_id_fk` FOREIGN KEY (`menu_id`) REFERENCES `{PREFIX17}_menu` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb3 COLLATE=utf8_bin;
+/*!40101 SET character_set_client = @saved_cs_client */;
+DROP TABLE IF EXISTS `{PREFIX20}_settings`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `{PREFIX20}_settings`
+(
+    `id`    int                                             NOT NULL AUTO_INCREMENT,
+    `name`  varchar(30) CHARACTER SET utf8 COLLATE utf8_bin NOT NULL,
+    `value` longtext COLLATE utf8_bin,
+    PRIMARY KEY (`id`),
+    UNIQUE KEY `{PREFIX20}_settings_name_uindex` (`name`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb3 COLLATE=utf8_bin;
+/*!40101 SET character_set_client = @saved_cs_client */;
+DROP TABLE IF EXISTS `{PREFIX21}_visitor`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `{PREFIX21}_visitor`
+(
+    `id`    int                                              NOT NULL AUTO_INCREMENT,
+    `ip`    varchar(15) CHARACTER SET utf8 COLLATE utf8_bin  NOT NULL,
+    `agent` varchar(255) CHARACTER SET utf8 COLLATE utf8_bin NOT NULL,
+    `uri`   varchar(60) CHARACTER SET utf8 COLLATE utf8_bin  NOT NULL,
+    `date`  timestamp                                        NOT NULL,
+    PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb3 COLLATE=utf8_bin;
+/*!40101 SET character_set_client = @saved_cs_client */;
+DROP TABLE IF EXISTS `{PREFIX22}_subscriber`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `{PREFIX22}_subscriber`
+(
+    `id`     int                                             NOT NULL AUTO_INCREMENT,
+    `email`  varchar(60) CHARACTER SET utf8 COLLATE utf8_bin NOT NULL,
+    `status` tinyint                                         NOT NULL,
+    PRIMARY KEY (`id`),
+    UNIQUE KEY `{PREFIX22}_subscriber_email_uindex` (`email`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb3 COLLATE=utf8_bin;
+/*!40101 SET character_set_client = @saved_cs_client */;
+DROP TABLE IF EXISTS `{PREFIX23}_review`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `{PREFIX23}_review`
+(
+    `id`     int                                             NOT NULL AUTO_INCREMENT,
+    `rate`   tinyint                                         NOT NULL,
+    `author` varchar(65) CHARACTER SET utf8 COLLATE utf8_bin NOT NULL,
+    `email`  varchar(65) CHARACTER SET utf8 COLLATE utf8_bin NOT NULL,
+    `review` text COLLATE utf8_bin                           NOT NULL,
+    `status` tinyint                                         NOT NULL,
+    `date`   timestamp                                       NOT NULL,
+    PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb3 COLLATE=utf8_bin;
 /*!40101 SET character_set_client = @saved_cs_client */;

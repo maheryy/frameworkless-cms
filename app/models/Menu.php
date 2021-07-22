@@ -4,7 +4,7 @@ namespace App\Models;
 
 use App\Core\Model;
 
-class Navigation extends Model
+class Menu extends Model
 {
     private $id;
     protected $title;

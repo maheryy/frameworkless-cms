@@ -60,9 +60,7 @@ $btn-list: (
 }
 
 @each $name, $color in $btn-list {
-  a.#{$name},
-  button.#{$name},
-  input.#{$name} {
+  .#{$name} {
     @include base-btn($color);
   }
 }

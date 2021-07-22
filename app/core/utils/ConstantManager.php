@@ -35,6 +35,10 @@ class ConstantManager
      */
     public static function loadConstants()
     {
+        if (file_exists('../config/debug.php')) {
+            include '../config/debug.php';
+        }
+
         # Constants in config/conf.inc.php
         include self::$conf_path;
 
@@ -64,7 +68,8 @@ class ConstantManager
 
     }
 
-    public static function isConfigLoaded() {
+    public static function isConfigLoaded()
+    {
         return file_exists(self::$env_path)
             && defined('DB_HOST')
             && defined('DB_NAME')

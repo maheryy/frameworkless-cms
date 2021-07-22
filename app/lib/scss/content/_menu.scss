@@ -1,0 +1,19 @@
+#transferable {
+  .transferable-source {
+    .transferable-element {
+      padding: .75em .5em;
+      font-size: 1.125rem;
+      cursor: pointer;
+
+      &:hover {
+        border: 1px solid $card-shadow;
+      }
+    }
+  }
+
+  #menu_name {
+    &:hover {
+      border: 1px solid $card-shadow;
+    }
+  }
+}

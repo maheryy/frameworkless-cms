@@ -6,8 +6,8 @@
   overflow-wrap: break-word;
 
   &.transparent {
-    box-shadow: 0 0 0 0;
-    background-color: $bg-primary;
+    box-shadow: none;
+    background : none;
   }
 
   &.rounded {
@@ -23,7 +23,7 @@
     font-size: 0.875rem;
   }
 
-  h3 {
+  h3.head {
     margin: -1.5em -.9em 1em -.9em;
     padding: .6em .5em;
     border: 1px solid $card-shadow;
@@ -31,7 +31,7 @@
     font-weight: 600;
   }
 
-  h4 {
+  h4.head {
     font-weight: 500;
     margin-bottom: .2em;
     font-size: 1rem;

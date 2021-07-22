@@ -1,10 +1,16 @@
 .DS_Store
 .db_data/
 .idea/
+
 .env
+.env.old
+.env.dev
+.env.prod
 
 docker-compose.*.yaml
 docker/php/*.*.ini
 docker/nginx/*.*.conf
 
 db_backups/
+
+debug.php

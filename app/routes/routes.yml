@@ -172,44 +172,40 @@
 
 
 # Webpage editor (appearance)
-/themes:
+
+/menu:
   controller: Appearance
-  method: themeListView
-  title: Liste des thèmes
+  method: menuView
+  title: Liste des menus
   require_auth: True
 
-/import-theme:
+/menu-tab:
   controller: Appearance
-  method: importThemeView
-  title: Importer un thème
+  method: menuTabView
+  title: Modifier un menu
   require_auth: True
 
-/import-theme-save:
+/menu-save:
   controller: Appearance
-  method: importThemeAction
+  method: menuAction
   require_auth: True
 
-/navigation:
+/delete-menu:
   controller: Appearance
-  method: navigationView
-  title: Liste des navigations
+  method: deleteMenuAction
   require_auth: True
 
-/navigation-tab:
+/customization:
   controller: Appearance
-  method: navigationTabView
-  title: Modifier une navigation
+  method: customizationView
+  title: Personnalisation
   require_auth: True
 
-/navigation-save:
+/customization-save:
   controller: Appearance
-  method: navigationAction
+  method: customizationAction
   require_auth: True
 
-/delete-navigation:
-  controller: Appearance
-  method: deleteNavigationAction
-  require_auth: True
 
 # Settings
 /settings:
