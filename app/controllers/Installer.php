@@ -28,7 +28,7 @@ class Installer extends Controller
         $this->router = Router::getInstance();
         $this->request = new Request();
         $this->repository = new Repository();
-        $this->setTemplate('back_office');
+        $this->setTemplate('default');
 
         # Redirect to app reset when everything is setup
         //if (Database::isReady()) {
@@ -37,22 +37,47 @@ class Installer extends Controller
 
     }
 
-    public function installerResetView()
+    # /installer
+    public function installerView()
     {
+        $step = $this->request->get('step') ?? 1;
 
-        throw new Exception('Already installed');
-        $this->render('installer_reset');
-    }
+        if ($step == 2) {
+            $view = 'installer_register';
 
-    # /installer-register
-    public function installerRegisterView()
-    {
-        if (!Database::isReady()) {
-            $this->router->redirect(UrlBuilder::makeUrl('Installer', 'installerDatabaseView'));
+            if (!Database::isReady()) {
+                $this->router->redirect(UrlBuilder::makeUrl('Installer', 'installerView', ['step' => 1]));
+            }
+            $this->setParam('url_form', UrlBuilder::makeUrl('Installer', 'registerAction'));
+
+
+        } else {
+            $view = 'installer_db';
+
+            if (ConstantManager::isConfigLoaded()) {
+                $this->setParam('config', [
+                    'db_host' => DB_HOST,
+                    'db_name' => DB_NAME,
+                    'db_user' => DB_USER,
+                    'db_password' => DB_PWD,
+                    'db_prefix' => DB_PREFIX,
+                    'smtp_host' => SMTP_HOST,
+                    'smtp_user' => SMTP_USERNAME,
+                    'smtp_password' => SMTP_PASSWORD,
+                ]);
+            }
+
+            $this->setParam('opts_try_connection', ['add_data' => ['try_connection' => 1]]);
+            $this->setParam('url_form', UrlBuilder::makeUrl('Installer', 'registerAction'));
         }
 
-        $this->setParam('url_form', UrlBuilder::makeUrl('Installer', 'registerAction'));
-        $this->render('installer_register');
+        $this->render($view);
+    }
+
+    public function installerResetView()
+    {
+        throw new Exception('Already installed');
+        $this->render('installer_reset');
     }
 
     # /installer-register-save
@@ -124,36 +149,12 @@ class Installer extends Controller
 
             Database::commit();
             $this->sendSuccess('Installation terminé', [
-                'url_next' => UrlBuilder::makeUrl('User', 'loginView')
+                'url_next' => UrlBuilder::makeUrl('Auth', 'loginView')
             ]);
         } catch (Exception $e) {
             Database::rollback();
             $this->sendError('Une erreur est survenue :' . $e->getMessage());
         }
-    }
-
-    # /installer-db
-    public function installerDatabaseView()
-    {
-        $view_data = [
-            'opts_try_connection' => ['add_data' => ['try_connection' => 1]],
-            'url_form' => UrlBuilder::makeUrl('Installer', 'loadDatabaseAction')
-        ];
-
-        if (ConstantManager::isConfigLoaded()) {
-            $this->setParam('config', [
-                'db_host' => DB_HOST,
-                'db_name' => DB_NAME,
-                'db_user' => DB_USER,
-                'db_password' => DB_PWD,
-                'db_prefix' => DB_PREFIX,
-                'smtp_host' => SMTP_HOST,
-                'smtp_user' => SMTP_USERNAME,
-                'smtp_password' => SMTP_PASSWORD,
-            ]);
-        }
-
-        $this->render('installer_db', $view_data);
     }
 
     # /installer-db-save
@@ -194,7 +195,7 @@ class Installer extends Controller
 
                 self::generateConfig($data);
                 $this->sendSuccess('La base de donnéees est prête', [
-                    'url_next' => UrlBuilder::makeUrl('Installer', 'installerRegisterView')
+                    'url_next' => UrlBuilder::makeUrl('Installer', 'installerView', ['step' => 2])
                 ]);
             } catch (Exception $e) {
                 $this->sendError('Une erreur est survenue durant le traitement :' . $e->getMessage());

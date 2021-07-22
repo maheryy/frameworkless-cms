@@ -8,7 +8,7 @@ class Session
 {
     private bool $require_auth;
 
-    public function __construct(bool $require_auth)
+    public function __construct(bool $require_auth = false)
     {
         if (!$this->isActive()) {
             $this->start();
@@ -26,7 +26,7 @@ class Session
         if (!$this->isLoggedIn()) {
             $router = Router::getInstance();
             $url_params = $router->getUri() !== '/' && $router->existRoute($router->getUri()) ? ['redirect' => Formatter::encodeUrlQuery($router->getFullUri())] : [];
-            $router->redirect(UrlBuilder::makeUrl('User', 'loginView', $url_params));
+            $router->redirect(UrlBuilder::makeUrl('Auth', 'loginView', $url_params));
         }
 
         # Apply session timeout
@@ -36,7 +36,7 @@ class Session
             if ($router->getUri() !== '/' && $router->existRoute($router->getUri())) {
                 $url_params['redirect'] = Formatter::encodeUrlQuery($router->getFullUri());
             }
-            $router->redirect(UrlBuilder::makeUrl('User', 'logoutAction', $url_params));
+            $router->redirect(UrlBuilder::makeUrl('Auth', 'logoutAction', $url_params));
         }
         if (!$this->isDev()) {
             $this->set('LAST_ACTIVE_TIME', time());
@@ -50,7 +50,7 @@ class Session
      */
     public function getUserId()
     {
-        return (int) $this->get('user_id');
+        return (int)$this->get('user_id');
     }
 
     /**
@@ -58,7 +58,7 @@ class Session
      */
     public function getRole()
     {
-        return (int) $this->get('user_role');
+        return (int)$this->get('user_role');
     }
 
     /**
@@ -66,7 +66,7 @@ class Session
      */
     public function isAdmin()
     {
-        return (bool) $this->get('is_admin');
+        return (bool)$this->get('is_admin');
     }
 
     /**
@@ -79,7 +79,7 @@ class Session
 
     /**
      * Set multiple session variables
-     * 
+     *
      * @param array $data
      */
     public function setData(array $data)
@@ -92,7 +92,7 @@ class Session
     /**
      * @param string $key
      * @param int|string|array $value
-     * 
+     *
      */
     public function set(string $key, $value)
     {
@@ -101,7 +101,7 @@ class Session
 
     /**
      * @param string $key
-     * 
+     *
      * @return string|null
      */
     public function get(string $key)
@@ -119,7 +119,7 @@ class Session
 
     /**
      * Remove a session variable
-     * 
+     *
      * @param string $key
      */
     public function delete(string $key)
@@ -149,7 +149,7 @@ class Session
 
     /**
      * Session is currently active
-     * 
+     *
      * @return bool
      */
     public function isActive()

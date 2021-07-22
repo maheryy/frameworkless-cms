@@ -38,9 +38,9 @@ abstract class Controller
     {
         # First check database is ready before taking any actions
         if (!Database::isReady()) {
-            if (Request::isPost()) $this->sendError("Une installation est nécessaire :" . UrlBuilder::makeAbsoluteUrl('Installer', 'installerDatabaseView'));
+            if (Request::isPost()) $this->sendError("Une installation est nécessaire :" . UrlBuilder::makeAbsoluteUrl('Installer', 'installerView'));
 
-            $this->router->redirect(UrlBuilder::makeUrl('Installer', 'installerDatabaseView'));
+            $this->router->redirect(UrlBuilder::makeUrl('Installer', 'installerView'));
         }
 
         # Display back office sidebar for rendering only
@@ -186,7 +186,7 @@ abstract class Controller
         $this->setParam('sidebar_links', $sidebar_links['main']);
         $this->setParam('link_settings', $sidebar_links['bottom']['settings']);
         $this->setParam('link_home', UrlBuilder::makeUrl('Home', 'dashboardView'));
-        $this->setParam('link_logout', UrlBuilder::makeUrl('User', 'logoutAction'));
+        $this->setParam('link_logout', UrlBuilder::makeUrl('Auth', 'logoutAction'));
         $this->setParam('link_website', '/');
         $this->setParam('link_user', $user_link);
         $this->setParam('sidebar', $layout->getSidebarPath());

@@ -13,55 +13,56 @@
   display_back_office: True
 
 # installer
-/installer-db:
+
+/installer:
   controller: Installer
-  method: installerDatabaseView
-  title: Configuration de la base de données
+  method: installerView
 
 /installer-db-save:
   controller: Installer
   method: loadDatabaseAction
 
-/installer-register:
-  controller: Installer
-  method: installerRegisterView
-  title: Inscription
-
 /installer-register-save:
   controller: Installer
   method: registerAction
 
-# Authentification
+# Authentication
 /login:
-  controller: User
+  controller: Auth
   method: loginView
   title: Connexion
 
 /login-send:
-  controller: User
+  controller: Auth
   method: loginAction
 
 /logout:
-  controller: User
+  controller: Auth
   method: logoutAction
 
 /recover-password:
-  controller: User
+  controller: Auth
   method: passwordRecoveryView
   title: Mot de passe oublié
 
 /recover-password-send:
-  controller: User
+  controller: Auth
   method: passwordRecoveryAction
 
 /reset-password:
-  controller: User
+  controller: Auth
   method: passwordResetView
   title: Réinitialisation du mot de passe
 
 /reset-password-send:
-  controller: User
+  controller: Auth
   method: passwordResetAction
+
+/confirm-account:
+  controller: User
+  method: confirmAccountView
+  title: Confirmation du compte
+
 
 # User management
 /users:
@@ -104,11 +105,6 @@
   controller: User
   method: deleteAction
   require_auth: True
-
-/confirm-account:
-  controller: User
-  method: confirmAccountView
-  title: Confirmation du compte
 
 
 # Page management
