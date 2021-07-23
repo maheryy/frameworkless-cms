@@ -8,7 +8,7 @@ class UrlBuilder
 {
 
     /**
-     * Return an absolute URL (ex: localhost:8080/login)
+     * Return an absolute URL (ex: localhost:8080/admin/login)
      *
      * @param string $controller
      * @param string $method
@@ -22,7 +22,7 @@ class UrlBuilder
     }
 
     /**
-     * Return a method's URL (ex: /login)
+     * Return a method's URL (ex: /admin/login)
      *
      * @param string $controller
      * @param string $method
@@ -35,5 +35,18 @@ class UrlBuilder
         $route = Router::getInstance()->getUriFromMethod($controller, $method);
 
         return '/admin' . $route . (!empty($params) ? '?' . http_build_query($params) : '');
+    }
+
+    /**
+     * Return a back office URL
+     *
+     * @param string $url
+     * @param array $params
+     *
+     * @return string
+     */
+    public static function getUrl(string $url, array $params = [])
+    {
+        return '/admin/' . $url . (!empty($params) ? '?' . http_build_query($params) : '');
     }
 }

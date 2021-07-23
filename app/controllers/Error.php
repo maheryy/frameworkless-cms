@@ -17,7 +17,7 @@ class Error extends Controller
 
     public function __construct(array $options = [])
     {
-        parent::__construct($options);
+        $this->setTemplate('default');
         $this->debug = defined('APP_DEBUG') ? APP_DEBUG : false;
     }
 

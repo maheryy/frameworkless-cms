@@ -181,19 +181,16 @@ abstract class Controller
      */
     protected function setLayoutParams()
     {
-        $layout = new LayoutManager();
-        $sidebar_links = $layout->getSidebarLinks();
-        $user_link = UrlBuilder::makeUrl('User', 'userView', ['id' => $this->session->getUserId()]);
-
+        $layout = new LayoutManager($this->session->get('permissions'));
 
         $this->setParam('current_route', $this->router->getFullUri());
-        $this->setParam('sidebar_links', $sidebar_links['main']);
-        $this->setParam('link_settings', $sidebar_links['bottom']['settings']);
-        $this->setParam('link_home', UrlBuilder::makeUrl('Home', 'dashboardView'));
+        $this->setParam('link_user',  UrlBuilder::makeUrl('User', 'userView', ['id' => $this->session->getUserId()]));
         $this->setParam('link_logout', UrlBuilder::makeUrl('Auth', 'logoutAction'));
+        $this->setParam('link_home', UrlBuilder::makeUrl('Home', 'dashboardView'));
         $this->setParam('link_website', '/');
-        $this->setParam('link_user', $user_link);
         $this->setParam('sidebar', $layout->getSidebarPath());
+        $this->setParam('sidebar_list', $layout->getSidebar());
+        $this->setParam('sidebar_settings', $layout->getSettings());
     }
 
     /**
