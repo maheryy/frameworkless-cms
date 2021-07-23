@@ -33,7 +33,8 @@ class MenuItemRepository extends BaseRepository
             ->joinInner($menu_table, "$this->table.menu_id = $menu_table.id")
             ->joinLeft($page_table, "$this->table.post_id = $page_table.id", Expr::eq("$page_table.status", Constants::STATUS_PUBLISHED))
             ->joinLeft($page_detail_table, "$page_table.id = $page_detail_table.post_id")
-            ->where(Expr::eq("$this->table.menu_id", $menu_id));
+            ->where(Expr::eq("$this->table.menu_id", $menu_id))
+            ->where(Expr::isNotNull("$page_table.id"), Expr::isNotNull("$this->table.url"));
 
 
         return $this->model->fetchAll($this->queryBuilder);
