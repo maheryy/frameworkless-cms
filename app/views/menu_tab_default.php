@@ -32,11 +32,13 @@
                         <span class="label">Lien personnalisé</span>
                     </li>
                     <li class="transferable-element">
-                        <input type="hidden" class="element-data" data-options='<?= json_encode(['type' => 2, 'page_title' => 'Nos avis', 'page_link' => '/reviews', 'link_readonly' => true]) ?>'>
+                        <input type="hidden" class="element-data"
+                               data-options='<?= json_encode(['type' => 2, 'page_title' => 'Nos avis', 'page_link' => '/reviews', 'link_readonly' => true]) ?>'>
                         <span class="label">Page avis</span>
                     </li>
                     <li class="transferable-element">
-                        <input type="hidden" class="element-data" data-options='<?= json_encode(['type' => 2, 'page_title' => 'Votre avis', 'page_link' => '/review', 'link_readonly' => true]) ?>'>
+                        <input type="hidden" class="element-data"
+                               data-options='<?= json_encode(['type' => 2, 'page_title' => 'Votre avis', 'page_link' => '/review', 'link_readonly' => true]) ?>'>
                         <span class="label">Formulaire avis</span>
                     </li>
                 </ul>
@@ -101,13 +103,10 @@
                     </ul>
                 </div>
                 <div class="form-action px-0 right">
-                    <input type="submit" class="<?= isset($menu_data) ? 'btn-primary' : 'btn-success' ?> text-base <?= !$can_update ? 'hidden' : '' ?>"
-                           value="<?= isset($menu_data) ? 'Sauvegarder' : 'Ajouter' ?>" data-role="submitPermissions"
-                           data-options=<?= json_encode(['add_data' => ['ref' => $referer]]) ?>>
+                    <button class="<?= isset($menu_data) ? 'btn-primary' : 'btn-success' ?> text-base <?= !$can_update ? 'hidden' : '' ?>" data-role="submitPermissions"
+                            data-options=<?= json_encode(['add_data' => ['ref' => $referer]]) ?>><?= isset($menu_data) ? 'Sauvegarder' : 'Ajouter' ?></button>
                     <?php if ($can_delete && $url_delete) : ?>
-                        <button class="btn-danger text-base" data-url="<?= $url_delete ?>" data-role="deleteItem">
-                            Supprimer
-                        </button>
+                        <button class="btn-danger text-base" data-url="<?= $url_delete ?>" data-role="deleteItem">Supprimer</button>
                     <?php endif; ?>
                 </div>
             </form>

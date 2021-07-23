@@ -20,7 +20,7 @@
             <label for="role">Role</label>
         </div>
         <div class="form-action">
-            <input type="submit" class="btn-success" data-role="submitDefault" value="Valider">
+            <button class="btn-success" data-role="submitDefault">Valider</button>
         </div>
     </form>
 </div>

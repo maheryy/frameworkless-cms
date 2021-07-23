@@ -41,6 +41,16 @@ class MenuRepository extends BaseRepository
         return $this->model->fetchAll($this->queryBuilder);
     }
 
+    public function findByTitle(string $title, int $ignore_id = null)
+    {
+        $this->queryBuilder
+            ->where(Expr::like('title', $title));
+        if ($ignore_id) {
+            $this->queryBuilder->where(Expr::neq('id', $ignore_id));
+        }
+        return $this->model->fetchOne($this->queryBuilder);
+    }
+
     public function remove(int $id)
     {
         return $this->model->deleteQuery([Expr::eq('id', $id)]);

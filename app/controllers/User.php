@@ -71,6 +71,10 @@ class User extends Controller
             if (!$validator->validate($form_data)) {
                 $this->sendError('Veuillez vérifier les champs', $validator->getErrors());
             }
+            # Check for duplicate
+            if ($found = $this->repository->user->findByUsernameOrEmail($form_data['username'], $form_data['email'], 0)) {
+                $this->sendError(($found['email'] === $form_data['email'] ? 'l\'adresse email ' : 'le nom d\'utilisateur') . ' est déjà pris');
+            }
 
             Database::beginTransaction();
             $user_id = $this->repository->user->create([
@@ -113,11 +117,12 @@ class User extends Controller
 
             Database::commit();
             $this->sendSuccess('Un email de confirmation a été envoyé', [
-                'url_next' => UrlBuilder::makeUrl('User', 'userView', ['id' => $user_id])
+                'url_next' => UrlBuilder::makeUrl('User', 'listView'),
+                'url_next_delay' => Constants::DELAY_SUCCESS_REDIRECTION
             ]);
         } catch (\Exception $e) {
             Database::rollback();
-            $this->sendError("Une erreur est survenue", [$e->getMessage()]);
+            $this->sendError(Constants::ERROR_UNKNOWN, [$e->getMessage()]);
         }
     }
 
@@ -170,7 +175,7 @@ class User extends Controller
             $this->sendSuccess('Un email de confirmation a été envoyé');
         } catch (\Exception $e) {
             Database::rollback();
-            $this->sendError("Une erreur est survenu", [$e->getMessage()]);
+            $this->sendError(Constants::ERROR_UNKNOWN, [$e->getMessage()]);
         }
     }
 
@@ -181,18 +186,20 @@ class User extends Controller
             throw new \Exception('Cet utilisateur n\'existe pas');
         }
 
-        # Custom permission check for user case
-        if (!$this->hasPermission(Constants::PERM_READ_USER) && $this->request->get('id') != $this->session->getUserId()) {
-            if(Request::isPost()) $this->sendError('Accès non autorisé');
+        $is_current_user = $this->request->get('id') == $this->session->getUserId();
 
-            throw new ForbiddenAccessException('Accès non autorisé');
+        # Custom permission check for user case
+        if (!$this->hasPermission(Constants::PERM_READ_USER) && !$is_current_user) {
+            if (Request::isPost()) $this->sendError(Constants::ERROR_FORBIDDEN);
+
+            throw new ForbiddenAccessException(Constants::ERROR_FORBIDDEN);
         }
 
         $user = $this->repository->user->find($this->request->get('id'));
         if (!$user) {
             throw new NotFoundException('Cet utilisateur n\'est pas trouvé');
         }
-        $this->setContentTitle($user['username']);
+        $this->setContentTitle($is_current_user ? 'Mon profil' : $user['username']);
         $this->setCSRFToken();
         $view_data = [
             'roles' => $this->repository->role->findAll(),
@@ -201,7 +208,7 @@ class User extends Controller
             'is_current_user' => $this->session->getUserId() == $user['id'],
             'url_form' => $user['status'] == Constants::STATUS_INACTIVE ? UrlBuilder::makeUrl('User', 'reconfirmationAction') : UrlBuilder::makeUrl('User', 'userAction'),
             'url_delete' => UrlBuilder::makeUrl('User', 'deleteAction', ['id' => $user['id']]),
-            'can_update' => $user['id'] == $this->session->getUserId() ? true : $this->hasPermission(Constants::PERM_UPDATE_USER),
+            'can_update' => $is_current_user || $this->hasPermission(Constants::PERM_UPDATE_USER),
             'can_delete' => $this->hasPermission(Constants::PERM_DELETE_USER),
         ];
         $this->render('user_detail', $view_data);
@@ -215,9 +222,14 @@ class User extends Controller
 
         # Custom permission check for user case
         if (!$this->hasPermission(Constants::PERM_UPDATE_USER) && $form_data['user_id'] != $this->session->getUserId()) {
-            if(Request::isPost()) $this->sendError('Accès non autorisé');
+            if (Request::isPost()) $this->sendError(Constants::ERROR_FORBIDDEN);
 
-            throw new ForbiddenAccessException('Accès non autorisé');
+            throw new ForbiddenAccessException(Constants::ERROR_FORBIDDEN);
+        }
+
+        # Check for duplicate
+        if ($found = $this->repository->user->findByUsernameOrEmail($form_data['username'], $form_data['email'], (int)$form_data['user_id'])) {
+            $this->sendError(($found['email'] === $form_data['email'] ? 'l\'adresse email ' : 'le nom d\'utilisateur') . ' est déjà pris');
         }
 
         try {
@@ -238,11 +250,12 @@ class User extends Controller
 
             $this->repository->user->update($form_data['user_id'], $update_fields);
 
-            $this->sendSuccess('Informations sauvegardé', [
+            $this->sendSuccess(Constants::SUCCESS_SAVED, [
                 'url_next' => UrlBuilder::makeUrl('User', 'listView'),
+                'url_next_delay' => Constants::DELAY_SUCCESS_REDIRECTION
             ]);
         } catch (\Exception $e) {
-            $this->sendError("Une erreur est survenu", [$e->getMessage()]);
+            $this->sendError(Constants::ERROR_UNKNOWN, [$e->getMessage()]);
         }
     }
 
@@ -250,13 +263,13 @@ class User extends Controller
     public function deleteAction()
     {
         if (!$this->request->get('id')) {
-            $this->sendError('Une erreur est survenue');
+            $this->sendError(Constants::ERROR_UNKNOWN);
         }
 
         $this->repository->user->remove($this->request->get('id'));
         $this->sendSuccess('Utilisateur supprimé', [
             'url_next' => UrlBuilder::makeUrl('User', 'listView'),
-            'delay_url_next' => 0,
+            'url_next_delay' => Constants::DELAY_SUCCESS_REDIRECTION
         ]);
     }
 
@@ -267,7 +280,7 @@ class User extends Controller
 
         $default_role = $this->request->get('id') ?? $this->session->getRole();
         $permissions = $this->repository->permission->findAll();
-        $role_permissions = $this->repository->rolePermission->findAllPermissionsByRole((int) $default_role);
+        $role_permissions = $this->repository->rolePermission->findAllPermissionsByRole((int)$default_role);
         $permissions = $this->getDiff2DArray($permissions, $role_permissions, 'id');
         $roles = $this->repository->role->findAll();
 
@@ -301,7 +314,7 @@ class User extends Controller
     # /role-tab
     public function roleTabView()
     {
-        $role_id = (int) $this->request->get('ref');
+        $role_id = (int)$this->request->get('ref');
         if (!$role_id) {
             throw new \Exception('ref ne peut pas être null');
         }
@@ -344,13 +357,17 @@ class User extends Controller
         $permissions = $this->request->post('permissions');
 
         if (!$role_id) {
-            $this->sendError('Une erreur est survenue', ['role_id' => $role_id]);
+            $this->sendError(Constants::ERROR_UNKNOWN, ['role_id' => $role_id]);
         }
         if (!$this->request->post('role_name')) {
             $this->sendError('Veuillez nommer le rôle');
         }
         if (empty($permissions)) {
             $this->sendError('Veuillez ajouter au moins une permission');
+        }
+
+        if ($this->repository->role->findByName($this->request->post('role_name'), ($role_id != -1 ? $role_id : null))) {
+            $this->sendError('Ce nom est déjà pris');
         }
 
         try {
@@ -362,7 +379,7 @@ class User extends Controller
             } else {
                 $this->repository->rolePermission->deleteAllByRole((int)$role_id);
                 $this->repository->role->update($role_id, ['name' => $this->request->post('role_name')]);
-                $success_msg = 'Informations sauvegardées';
+                $success_msg = Constants::SUCCESS_SAVED;
             }
 
             $role_permissions = array_map(fn($perm_id) => ['role_id' => $role_id, 'permission_id' => $perm_id], $permissions);
@@ -376,11 +393,11 @@ class User extends Controller
             Database::commit();
             $this->sendSuccess($success_msg, [
                 'url_next' => UrlBuilder::makeUrl('User', 'roleView', ['id' => $role_id]),
-                'url_next_delay' => 1
+                'url_next_delay' => Constants::DELAY_SUCCESS_REDIRECTION
             ]);
         } catch (\Exception $e) {
             Database::rollback();
-            $this->sendError("Une erreur est survenu", [$e->getMessage()]);
+            $this->sendError(Constants::ERROR_UNKNOWN, [$e->getMessage()]);
         }
 
     }

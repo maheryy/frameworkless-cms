@@ -35,7 +35,7 @@ class Formatter
             '$1',
             htmlentities($s, ENT_QUOTES, 'UTF-8')
         );
-        return strtolower(trim(preg_replace(
+        return '/' . strtolower(trim(preg_replace(
             '~[^0-9a-z]+~i',
             '-',
             html_entity_decode($s, ENT_QUOTES, 'UTF-8')

@@ -12,6 +12,8 @@ body {
   background: white;
   min-height: 100vh;
   padding-top: 70px;
+  display: flex;
+  flex-direction: column;
 }
 
 h1 {

@@ -26,7 +26,7 @@
                 <textarea id="review" name="review" rows="7" placeholder="Donnez votre avis..."></textarea>
             </div>
             <div class="form-field">
-                <input type="submit" class="form-action" value="Envoyer">
+                <button class="form-action">Envoyer</button>
             </div>
             <div class="info-box">
                 <span class="info-description"></span>

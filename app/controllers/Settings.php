@@ -49,15 +49,15 @@ class Settings extends Controller
             $form_data['public_signup'] = isset($form_data['public_signup']) ? 1 : 0;
             $validator = new Validator(FormRegistry::getSettingsGeneral());
             if (!$validator->validate($form_data)) {
-                $this->sendError('Veuillez vérifier les champs', $validator->getErrors());
+                $this->sendError('Veuillez vérifier les champs invalides', $validator->getErrors());
             }
             Database::beginTransaction();
             $this->repository->settings->updateSettings($form_data);
             Database::commit();
-            $this->sendSuccess('Informations sauvegardés');
+            $this->sendSuccess(Constants::SUCCESS_SAVED);
         } catch (\Exception $e) {
             Database::rollback();
-            $this->sendError('Une erreur est survenue', [$e->getMessage()]);
+            $this->sendError(Constants::ERROR_UNKNOWN, [$e->getMessage()]);
         }
     }
 
@@ -69,7 +69,7 @@ class Settings extends Controller
             $form_data = $this->request->allPost();
             $validator = new Validator();
             if (!$validator->validateRequiredOnly($form_data)) {
-                $this->sendError('Veuillez vérifier les champs', $validator->getErrors());
+                $this->sendError('Veuillez vérifier les champs invalides', $validator->getErrors());
             }
             $is_valid_config = Mailer::connect(
                 $form_data['smtp_host'],
@@ -97,9 +97,9 @@ class Settings extends Controller
                 'smtp_user' => $form_data['smtp_user'],
                 'smtp_password' => $form_data['smtp_password'],
             ]);
-            $this->sendSuccess('Informations sauvegardées');
+            $this->sendSuccess(Constants::SUCCESS_SAVED);
         } catch (\Exception $e) {
-            $this->sendError('Une erreur est survenue', [$e->getMessage()]);
+            $this->sendError(Constants::ERROR_UNKNOWN, [$e->getMessage()]);
         }
     }
 

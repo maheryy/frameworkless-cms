@@ -98,12 +98,11 @@ $bg-header: rgba(250, 250, 250, 0.95);
 
 /* FOOTER */
 footer {
-  padding: 2rem 5%;
+  padding: 2rem 5% 0;
   color: #f0f9ff;
   background-color: $bg-footer;
   font-family: "Montserrat", sans-serif;
-  position: relative;
-  bottom: 0;
+  margin-top: auto;
 
   h3 {
     margin-bottom: 1em;
@@ -133,6 +132,7 @@ footer {
   }
 
   .form-action {
+    position: relative;
     width: 100%;
     background: none;
     border: 1px solid #f0f9ff;
@@ -146,6 +146,32 @@ footer {
       color: #0c0c0c;
       cursor: pointer;
       transition: all .2s ease-in-out;
+    }
+
+    &.btn-loading {
+      color: $bg-footer;
+      background: $bg-footer;
+
+      &:hover {
+        cursor: wait;
+        border: 1px solid #f0f9ff;
+      }
+
+      &::after {
+        content: "";
+        position: absolute;
+        width: 13px;
+        height: 13px;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        margin: auto;
+        border: 4px solid transparent;
+        border-top-color: white;
+        border-radius: 50%;
+        animation: button-loading-spinner 1s linear infinite;
+      }
     }
   }
 
@@ -332,6 +358,7 @@ $border-active: #245dff;
 
       .form-action {
         appearance: none;
+        position: relative;
         background-color: transparent;
         border-radius: 0.6em;
         cursor: pointer;
@@ -345,6 +372,31 @@ $border-active: #245dff;
         &:hover {
           background-color: #3498db;
           color: whitesmoke;
+        }
+
+        &.btn-loading {
+          color: #3498db;
+          background-color: #3498db;
+
+          &:hover {
+            cursor: wait;
+          }
+
+          &::after {
+            content: "";
+            position: absolute;
+            width: 13px;
+            height: 13px;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            margin: auto;
+            border: 4px solid transparent;
+            border-top-color: white;
+            border-radius: 50%;
+            animation: button-loading-spinner 1s linear infinite;
+          }
         }
       }
     }
@@ -424,5 +476,15 @@ $color: slategray;
         text-align: left;
       }
     }
+  }
+}
+
+
+@keyframes button-loading-spinner {
+  from {
+    transform: rotate(0turn);
+  }
+  to {
+    transform: rotate(2turn);
   }
 }

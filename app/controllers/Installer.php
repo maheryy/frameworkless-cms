@@ -95,7 +95,7 @@ class Installer extends Controller
 
             $validator = new Validator(FormRegistry::getInstallerRegistration());
             if (!$validator->validate($form_data)) {
-                $this->sendError('Veuillez vérifier les champs', $validator->getErrors());
+                $this->sendError('Veuillez vérifier les champs invalides', $validator->getErrors());
             }
 
             $form_data['password'] = password_hash($form_data['password'], PASSWORD_DEFAULT);
@@ -148,12 +148,13 @@ class Installer extends Controller
             }
 
             Database::commit();
-            $this->sendSuccess('Installation terminé', [
-                'url_next' => UrlBuilder::makeUrl('Auth', 'loginView')
+            $this->sendSuccess('Installation terminée !', [
+                'url_next' => UrlBuilder::makeUrl('Auth', 'loginView'),
+                'url_next_delay' => Constants::DELAY_SUCCESS_REDIRECTION
             ]);
         } catch (Exception $e) {
             Database::rollback();
-            $this->sendError('Une erreur est survenue :' . $e->getMessage());
+            $this->sendError(Constants::ERROR_UNKNOWN, [$e->getMessage()]);
         }
     }
 
@@ -173,7 +174,7 @@ class Installer extends Controller
 
         $validator = new Validator();
         if (!$validator->validateRequiredOnly($data)) {
-            $this->sendError('Veuillez vérifier les champs', $validator->getErrors());
+            $this->sendError('Veuillez vérifier les champs invalides', $validator->getErrors());
         }
 
         try {
@@ -195,10 +196,11 @@ class Installer extends Controller
 
                 self::generateConfig($data);
                 $this->sendSuccess('La base de donnéees est prête', [
-                    'url_next' => UrlBuilder::makeUrl('Installer', 'installerView', ['step' => 2])
+                    'url_next' => UrlBuilder::makeUrl('Installer', 'installerView', ['step' => 2]),
+                    'url_next_delay' => Constants::DELAY_SUCCESS_REDIRECTION
                 ]);
             } catch (Exception $e) {
-                $this->sendError('Une erreur est survenue durant le traitement :' . $e->getMessage());
+                $this->sendError(Constants::ERROR_UNKNOWN, [$e->getMessage()]);
             }
         } catch (Exception $e) {
             $this->sendError('Veuillez vérifier les informations de connexion à la base de donnée');

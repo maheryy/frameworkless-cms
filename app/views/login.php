@@ -20,7 +20,7 @@
                     </label>
                 </div>
                 <div class="form-action center">
-                    <input type="submit" class="submit-btn btn-primary" data-role="submitDefault" value="Se connecter">
+                    <button class="submit-btn btn-primary" data-role="submitDefault">Se connecter</button>
                 </div>
             </form>
         </article>

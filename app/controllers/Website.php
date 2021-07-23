@@ -353,7 +353,7 @@ class Website extends Controller
                             <textarea class="form-control" name="message" placeholder="Message" rows="5"></textarea>
                         </div>
                         <div class="form-field">
-                            <input type="submit" class="form-action" value="Envoyer">
+                            <button class="form-action" value="Envoyer">Envoyer</button>
                         </div>
                         <div class="info-box">
                             <span class="info-description"></span>
@@ -372,7 +372,7 @@ class Website extends Controller
                     <form method="POST" action="newsletter">
                         <div class="form-field">
                             <input type="email" class="form-control" name="email" placeholder="Adresse email">
-                            <input type="submit" class="form-action" value="S\'inscrire">
+                            <button type="submit" class="form-action">S\'inscrire</button>
                         </div>
                         <div class="info-box">
                             <span class="info-description"></span>

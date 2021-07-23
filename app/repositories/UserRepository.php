@@ -43,4 +43,17 @@ class UserRepository extends BaseRepository
         $this->queryBuilder->where(Expr::like('email', $email));
         return $this->model->fetchOne($this->queryBuilder);
     }
+
+    public function findByUsernameOrEmail(string $username, string $email, int $ignore_id)
+    {
+        $this->queryBuilder
+            ->where(Expr::neq('id', $ignore_id))
+            ->where(Expr::neq('status', Constants::STATUS_DELETED))
+            ->where(
+                Expr::like('username', $username),
+                Expr::like('email', $email)
+            );
+
+        return $this->model->fetchOne($this->queryBuilder);
+    }
 }

@@ -91,6 +91,13 @@ class Constants
     const REVIEW_VALID = 1;
     const REVIEW_INVALID = -1;
 
+    # Validation message
+    const ERROR_UNKNOWN = 'Une erreur est survenue';
+    const ERROR_FORBIDDEN = 'Accès non autorisé';
+    const SUCCESS_SAVED = 'Informations sauvegardées avec succès';
+
+    const DELAY_SUCCESS_REDIRECTION = 1;
+
     public static function getPostStatuses()
     {
         return [

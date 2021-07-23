@@ -46,7 +46,7 @@
                         <label for="public_signup">Inscription public</label>
                     </div>
                     <div class="form-action">
-                        <input type="submit" class="btn-primary text-base <?= !$can_update ? 'hidden' : '' ?>" value="Enregistrer" data-role="submitDefault">
+                        <button class="btn-primary text-base <?= !$can_update ? 'hidden' : '' ?>" data-role="submitDefault">Enregistrer</button>
                     </div>
                 </form>
             </article>
@@ -66,7 +66,7 @@
                     </div>
                     <div class="form-action required">
                         <button class="btn-success text-base" data-role="submitDefault" data-options='<?= json_encode(['add_data' => ['try_connection' => 1]])?>'>Tester</button>
-                        <input type="submit" class="btn-primary text-base <?= !$can_update ? 'hidden' : '' ?>" value="Enregistrer" data-role="submitDefault">
+                        <button class="btn-primary text-base <?= !$can_update ? 'hidden' : '' ?>" data-role="submitDefault">Enregistrer</button>
                     </div>
                 </form>
             </article>
@@ -77,7 +77,7 @@
 <!--                        <label for="page_indexable">Serveur de messagerie</label>-->
 <!--                    </div>-->
 <!--                    <div class="form-action">-->
-<!--                        <input type="submit" class="btn-primary" value="Enregistrer" data-role="submitDefault">-->
+<!--                        <button class="btn-primary text-base <?= !$can_update ? 'hidden' : '' ?>" data-role="submitDefault">Enregistrer</button>-->
 <!--                    </div>-->
 <!--                </form>-->
 <!--            </article>-->

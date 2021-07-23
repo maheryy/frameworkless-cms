@@ -30,9 +30,8 @@
                     </ul>
                 </div>
                 <div class="form-action px-0 right">
-                    <input type="submit" class="<?= $referer == -1 ? 'btn-success' : 'btn-primary' ?> text-base <?= !$can_update ? 'hidden' : '' ?>"
-                           value="<?= $referer == -1 ? 'Ajouter' : 'Sauvegarder' ?>" data-role="submitPermissions"
-                           data-options=<?= json_encode(['add_data' => ['ref' => $referer]]) ?>>
+                    <button class="<?= $referer == -1 ? 'btn-success' : 'btn-primary' ?> text-base <?= !$can_update ? 'hidden' : '' ?>" data-role="submitPermissions"
+                           data-options=<?= json_encode(['add_data' => ['ref' => $referer]]) ?>><?= $referer == -1 ? 'Ajouter' : 'Sauvegarder' ?></button>
                 </div>
             </form>
         </article>

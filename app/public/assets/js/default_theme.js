@@ -63,6 +63,18 @@ function getFormData(form, options = null, with_validation = true) {
     return isValid ? data : false;
 }
 
+
+function startLoadingButton(button) {
+    $(button).addClass('btn-loading');
+    $(button).attr('disabled', true);
+}
+
+function resetLoadingButton(button) {
+    $(button).removeClass('btn-loading');
+    $(button).removeAttr('disabled');
+}
+
+
 function setHero(urlImage) {
     $('.hero-header').css('background-image', `url('${urlImage}')`);
     $('.hero-header').css('opacity', '1');
@@ -84,6 +96,12 @@ function setFormActions(inputElement) {
                 } else {
                     setInfo($(form).find('.info-box'), INFO_DANGER, res.message, 2);
                 }
+            },
+            beforeSend: function () {
+                startLoadingButton(e.currentTarget);
+            },
+            complete: function () {
+                resetLoadingButton(e.currentTarget);
             }
         });
     });

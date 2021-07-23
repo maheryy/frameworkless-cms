@@ -96,6 +96,20 @@ class PostRepository extends BaseRepository
         return $this->model->fetchOne($this->queryBuilder);
     }
 
+    public function findPageByTitleOrSlug(string $title, string $slug, int $ignore_id) {
+        $details_table = Formatter::getTableName('page_extra');
+        $this->queryBuilder
+            ->joinLeft($details_table, "$this->table.id = $details_table.post_id")
+            ->where(Expr::neq("$this->table.id", $ignore_id))
+            ->where(Expr::neq('status', Constants::STATUS_DELETED))
+            ->where(
+                Expr::like("$details_table.slug", $slug),
+                Expr::like("$this->table.title", $title)
+            );
+
+        return $this->model->fetchOne($this->queryBuilder);
+    }
+
     public function updateStatus(int $id, int $status)
     {
         return $this->update($id, ['status' => $status]);

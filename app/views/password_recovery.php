@@ -16,7 +16,7 @@
                     </label>
                 </div>
                 <div class="form-action center">
-                    <input type="submit" class="submit-btn btn-success" data-role="submitDefault" value="Envoyer">
+                    <button class="submit-btn btn-success" data-role="submitDefault">Envoyer</button>
                 </div>
             </form>
         </article>

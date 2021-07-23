@@ -131,6 +131,15 @@ function setInfo(type, text, delay = null) {
     }
 }
 
+function startLoadingButton(button) {
+    $(button).addClass('btn-loading');
+    $(button).attr('disabled', true);
+}
+
+function resetLoadingButton(button) {
+    $(button).removeClass('btn-loading');
+    $(button).removeAttr('disabled');
+}
 
 function getMenuItemBaseElement(data) {
     return $(
@@ -406,7 +415,7 @@ const roleFunctions = {
         const target_list = $(this).find('#transferable-target .list-elements');
 
         const sourceClick = e => {
-            if($('#transferable-target .transferable-element').length >= 4) return;
+            if ($('#transferable-target .transferable-element').length >= 4) return;
             const data = getOptions($(e.currentTarget));
 
             const element = createItemElement(data, moveUp, moveDown, remove);
@@ -450,7 +459,13 @@ const roleFunctions = {
                 headers: $('meta[name="csrf-token"]').length ? {'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')} : null,
                 url: $(form).attr('action'),
                 data: data,
-                success: ajaxFunctions.submitDefault
+                success: ajaxFunctions.submitDefault,
+                beforeSend: function () {
+                    startLoadingButton(e.currentTarget);
+                },
+                complete: function () {
+                    resetLoadingButton(e.currentTarget);
+                },
             });
         });
     },
@@ -465,7 +480,13 @@ const roleFunctions = {
                 headers: $('meta[name="csrf-token"]').length ? {'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')} : null,
                 url: $(form).attr('action'),
                 data: data,
-                success: ajaxFunctions.submitDefault
+                success: ajaxFunctions.submitDefault,
+                beforeSend: function () {
+                    startLoadingButton(e.currentTarget);
+                },
+                complete: function () {
+                    resetLoadingButton(e.currentTarget);
+                }
             });
         });
     },
@@ -487,7 +508,13 @@ const roleFunctions = {
                 headers: $('meta[name="csrf-token"]').length ? {'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')} : null,
                 url: $(form).attr('action'),
                 data: data,
-                success: ajaxFunctions.submitDefault
+                success: ajaxFunctions.submitDefault,
+                beforeSend: function () {
+                    startLoadingButton(e.currentTarget);
+                },
+                complete: function () {
+                    resetLoadingButton(e.currentTarget);
+                }
             });
         });
     },
@@ -497,9 +524,15 @@ const roleFunctions = {
             const url = $(this).attr('href') ?? getUrl(this);
             if (!url) return;
             $.ajax({
-                method: 'GET',
+                method: 'POST',
                 url: url,
                 success: ajaxFunctions.submitDefault,
+                beforeSend: function () {
+                    !$(this).attr('href') && startLoadingButton(e.currentTarget);
+                },
+                complete: function () {
+                    !$(this).attr('href') && resetLoadingButton(e.currentTarget);
+                }
             });
         });
     },
@@ -550,14 +583,14 @@ const ajaxFunctions = {
     },
     submitDefault: function (res) {
         if (res.success) {
-            setInfo(INFO_SUCCESS, res.message, 1);
             if (res.data && res.data.url_next) {
-                redirect(res.data.url_next, res.data.delay_url_next ?? 1.5);
+                if (res.data.url_next_delay) setInfo(INFO_SUCCESS, res.message, res.data.url_next_delay);
+                redirect(res.data.url_next, res.data.url_next_delay ?? null);
+                return;
             }
+            setInfo(INFO_SUCCESS, res.message, 1);
         } else {
-            if (res.data) {
-                displayErrorFields(res.data);
-            }
+            if (res.data) displayErrorFields(res.data);
             setInfo(INFO_DANGER, res.message, 4);
         }
     },
