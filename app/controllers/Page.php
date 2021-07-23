@@ -100,7 +100,7 @@ class Page extends Controller
             ]);
         } catch (\Exception $e) {
             Database::rollback();
-            $this->sendError("Une erreur est survenu", [$e->getMessage()]);
+            $this->sendError(Constants::ERROR_UNKNOWN, [$e->getMessage()]);
         }
     }
 
@@ -180,10 +180,10 @@ class Page extends Controller
             $this->repository->pageExtra->update($this->request->get('id'), $page_fields);
             Database::commit();
 
-            $this->sendSuccess('Informations sauvegardées');
+            $this->sendSuccess(Constants::SUCCESS_SAVED);
         } catch (\Exception $e) {
             Database::rollback();
-            $this->sendError("Une erreur est survenue", [$e->getMessage()]);
+            $this->sendError(Constants::ERROR_UNKNOWN, [$e->getMessage()]);
         }
     }
 
@@ -191,12 +191,12 @@ class Page extends Controller
     public function deleteAction()
     {
         if (!$this->request->get('id')) {
-            $this->sendError('Une erreur est survenue');
+            $this->sendError(Constants::ERROR_UNKNOWN);
         }
         $this->repository->post->remove($this->request->get('id'));
         $this->sendSuccess('Page supprimée', [
             'url_next' => UrlBuilder::makeUrl('Page', 'listView'),
-            'delay_url_next' => 0,
+            'url_next_delay' => Constants::DELAY_SUCCESS_REDIRECTION
         ]);
     }
 

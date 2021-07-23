@@ -111,6 +111,7 @@ function setErrorField(input, message) {
 }
 
 let delay_info;
+
 function setInfo(type, text, delay = null) {
     let extra_classes = $('#info-box').hasClass('center') ? ' center' : '';
 
@@ -128,6 +129,16 @@ function setInfo(type, text, delay = null) {
             $('#info-box').removeClass('active');
         }, delay * 1000);
     }
+}
+
+function startLoadingButton(button) {
+    $(button).addClass('btn-loading');
+    $(button).attr('disabled', true);
+}
+
+function resetLoadingButton(button) {
+    $(button).removeClass('btn-loading');
+    $(button).removeAttr('disabled');
 }
 
 function getMenuItemBaseElement(data) {
@@ -572,14 +583,14 @@ const ajaxFunctions = {
     },
     submitDefault: function (res) {
         if (res.success) {
-            setInfo(INFO_SUCCESS, res.message, 1);
             if (res.data && res.data.url_next) {
-                redirect(res.data.url_next, res.data.delay_url_next ?? 1.5);
+                if (res.data.url_next_delay) setInfo(INFO_SUCCESS, res.message, res.data.url_next_delay);
+                redirect(res.data.url_next, res.data.url_next_delay ?? null);
+                return;
             }
+            setInfo(INFO_SUCCESS, res.message, 1);
         } else {
-            if (res.data) {
-                displayErrorFields(res.data);
-            }
+            if (res.data) displayErrorFields(res.data);
             setInfo(INFO_DANGER, res.message, 4);
         }
     },

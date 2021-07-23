@@ -121,7 +121,7 @@
             CONTENT
         </article>
         <div class="form-action">
-            <input class="btn-primary <?= !$can_update ? 'hidden' : '' ?>" data-role="submitPermissions">Enregistrer</button>
+            <button class="btn-primary <?= !$can_update ? 'hidden' : '' ?>" data-role="submitPermissions">Enregistrer</button>
         </div>
     </form>
 </div>

@@ -86,7 +86,7 @@ class Appearance extends Controller
         $menu_items = $this->request->post('menu_items');
 
         if (!$menu_id) {
-            $this->sendError('Une erreur est survenue', ['menu_id' => $menu_id]);
+            $this->sendError(Constants::ERROR_UNKNOWN, ['menu_id' => $menu_id]);
         }
         if (!$this->request->post('menu_name')) {
             $this->sendError('Veuillez nommer le menu');
@@ -103,9 +103,9 @@ class Appearance extends Controller
         $labels = $items = [];
         $i = 0;
         while ($i < $data_length) {
-            if (empty($menu_items['labels'][$i])) $this->sendError('Le label d\'une page ne peut être vide.');
-            if (empty($menu_items['links'][$i])) $this->sendError('Le lien ne peut être vide.');
-            if (in_array($menu_items['labels'][$i], $labels)) $this->sendError('Un label doit être unique.');
+            if (empty($menu_items['labels'][$i])) $this->sendError('Le label d\'une page ne peut être vide');
+            if (empty($menu_items['links'][$i])) $this->sendError('Le lien ne peut être vide');
+            if (in_array($menu_items['labels'][$i], $labels)) $this->sendError('Un label doit être unique');
 
             $labels[] = $menu_items['labels'][$i];
             $items[] = [
@@ -138,7 +138,7 @@ class Appearance extends Controller
                     'title' => $this->request->post('menu_name'),
                     'type' => !empty($items[0]['icon']) ? Constants::MENU_SOCIALS : Constants::MENU_LINKS,
                 ]);
-                $success_msg = 'Informations sauvegardées';
+                $success_msg = Constants::SUCCESS_SAVED;
             }
 
             $this->repository->menuItem->create($items);
@@ -146,11 +146,11 @@ class Appearance extends Controller
             Database::commit();
             $this->sendSuccess($success_msg, [
                 'url_next' => UrlBuilder::makeUrl('Appearance', 'menuView', ['id' => $menu_id]),
-                'url_next_delay' => 1
+                'url_next_delay' => Constants::DELAY_SUCCESS_REDIRECTION
             ]);
         } catch (\Exception $e) {
             Database::rollback();
-            $this->sendError("Une erreur est survenue", [$e->getMessage()]);
+            $this->sendError(Constants::ERROR_UNKNOWN, [$e->getMessage()]);
         }
     }
 
@@ -158,12 +158,12 @@ class Appearance extends Controller
     public function deleteMenuAction()
     {
         if (!$this->request->get('id')) {
-            $this->sendError('Une erreur est survenue');
+            $this->sendError(Constants::ERROR_UNKNOWN);
         }
         $this->repository->menu->remove($this->request->get('id'));
-        $this->sendSuccess('Menu supprimée', [
+        $this->sendSuccess('Menu supprimé', [
             'url_next' => UrlBuilder::makeUrl('Appearance', 'menuView'),
-            'delay_url_next' => 0,
+            'url_next_delay' => Constants::DELAY_SUCCESS_REDIRECTION
         ]);
     }
 
@@ -229,12 +229,12 @@ class Appearance extends Controller
                     'image' => $this->request->post('hero_image'),
                 ]),
             ]);
-            $this->sendSuccess('Informations sauvegardées', [
+            $this->sendSuccess(Constants::SUCCESS_SAVED, [
                 'url_next' => UrlBuilder::makeUrl('Appearance', 'customizationView'),
-                'url_next_delay' => 1
+                'url_next_delay' => Constants::DELAY_SUCCESS_REDIRECTION
             ]);
         } catch (\Exception $e) {
-            $this->sendError('Une erreur est survenue : ' . $e->getMessage());
+            $this->sendError(Constants::ERROR_UNKNOWN, [$e->getMessage()]);
         }
     }
 

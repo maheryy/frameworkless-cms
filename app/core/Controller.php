@@ -3,6 +3,7 @@
 namespace App\Core;
 
 use App\Core\Exceptions\ForbiddenAccessException;
+use App\Core\Utils\Constants;
 use App\Core\Utils\LayoutManager;
 use App\Core\Utils\Repository;
 use App\Core\Utils\Request;
@@ -39,15 +40,15 @@ abstract class Controller
 
         # First check database is ready before taking any actions
         if (!Database::isReady()) {
-            if (Request::isPost()) $this->sendError("Une installation est nécessaire :" . UrlBuilder::makeAbsoluteUrl('Installer', 'installerView'));
+            if (Request::isPost()) $this->sendError("Une installation est nécessaire : " . UrlBuilder::makeAbsoluteUrl('Installer', 'installerView'));
 
             $this->router->redirect(UrlBuilder::makeUrl('Installer', 'installerView'));
         }
         # Check permission given in routes.yml
         if (isset($options['permission']) && !$this->hasPermission((int) $options['permission'])) {
-            if(Request::isPost()) $this->sendError('Accès non autorisé');
+            if(Request::isPost()) $this->sendError(Constants::ERROR_FORBIDDEN);
 
-            throw new ForbiddenAccessException('Accès non autorisé');
+            throw new ForbiddenAccessException(Constants::ERROR_FORBIDDEN);
         }
         # Display back office sidebar for rendering only
         if (!empty($options['display_back_office'])) {

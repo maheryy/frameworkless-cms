@@ -31,7 +31,7 @@ class Auth extends Controller
 
         # Database check before taking any actions
         if (!Database::isReady()) {
-            if (Request::isPost()) $this->sendError("Une installation est nécessaire :" . UrlBuilder::makeUrl('Installer', 'installerView'));
+            if (Request::isPost()) $this->sendError("Une installation est nécessaire : " . UrlBuilder::makeUrl('Installer', 'installerView'));
 
             $this->router->redirect(UrlBuilder::makeUrl('Installer', 'installerView'));
         }
@@ -68,7 +68,7 @@ class Auth extends Controller
         ];
         $validator = new Validator();
         if (!$validator->validateRequiredOnly($data)) {
-            $this->sendError('Veuillez vérifier les champs', $validator->getErrors());
+            $this->sendError('Veuillez vérifier les champs invalides', $validator->getErrors());
         }
 
         $user = $this->repository->user->findByLogin($data['login']);
@@ -81,7 +81,7 @@ class Auth extends Controller
         }
 
         $this->createSessionData($user);
-        $this->sendSuccess('Bien joué ! Tu es connecté', [
+        $this->sendSuccess('Vous êtes connecté', [
             'url_next' => $this->request->url('redirect') ?? UrlBuilder::makeUrl('Home', 'dashboardView'),
         ]);
     }
@@ -162,7 +162,7 @@ class Auth extends Controller
 
             $this->sendSuccess('Lien de réinitialisation envoyé');
         } catch (\Exception $e) {
-            $this->sendError("Une erreur est survenu", [$e->getMessage()]);
+            $this->sendError(Constants::ERROR_UNKNOWN, [$e->getMessage()]);
         }
     }
 
@@ -214,7 +214,7 @@ class Auth extends Controller
             $validation_token = $validation_token_repository->findByReference($this->request->post('reference'));
             $token = (new Token($this->request->post('token')))->decode();
             if (!$validation_token || !$token->equals($validation_token['token'])) {
-                $this->sendError("Une erreur est survenue");
+                $this->sendError(Constants::ERROR_UNKNOWN);
             }
 
             Database::beginTransaction();
@@ -234,12 +234,13 @@ class Auth extends Controller
 
 
             Database::commit();
-            $this->sendSuccess("Informations sauvegardées", [
+            $this->sendSuccess(Constants::SUCCESS_SAVED, [
                 'url_next' => UrlBuilder::makeUrl('Auth', 'loginView'),
+                'url_next_delay' => Constants::DELAY_SUCCESS_REDIRECTION
             ]);
         } catch (\Exception $e) {
             Database::rollback();
-            $this->sendError("Une erreur est survenu durant le traitement", [$e->getMessage()]);
+            $this->sendError(Constants::ERROR_UNKNOWN, [$e->getMessage()]);
         }
     }
 

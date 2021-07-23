@@ -63,7 +63,7 @@ class Newsletter extends Controller
             ]);
         } catch (\Exception $e) {
             Database::rollback();
-            $this->sendError("Une erreur est survenu", [$e->getMessage()]);
+            $this->sendError(Constants::ERROR_UNKNOWN, [$e->getMessage()]);
         }
     }
 
@@ -88,10 +88,10 @@ class Newsletter extends Controller
         $this->validateCSRF();
         try {
             Database::commit();
-            $this->sendSuccess('Informations sauvegardées');
+            $this->sendSuccess(Constants::SUCCESS_SAVED);
         } catch (\Exception $e) {
             Database::rollback();
-            $this->sendError("Une erreur est survenue", [$e->getMessage()]);
+            $this->sendError(Constants::ERROR_UNKNOWN, [$e->getMessage()]);
         }
     }
 
@@ -99,7 +99,7 @@ class Newsletter extends Controller
     public function deleteAction()
     {
         if (!$this->request->get('id')) {
-            $this->sendError('Une erreur est survenue');
+            $this->sendError(Constants::ERROR_UNKNOWN);
         }
         $this->repository->post->remove($this->request->get('id'));
         $this->sendSuccess('Page supprimée', [
