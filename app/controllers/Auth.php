@@ -23,12 +23,19 @@ class Auth extends Controller
 
     public function __construct(array $options = [])
     {
-//        parent::__construct($options);
         $this->router = Router::getInstance();
         $this->request = new Request();
         $this->repository = new Repository();
         $this->session = new Session();
         $this->setTemplate('default');
+
+        # Database check before taking any actions
+        if (!Database::isReady()) {
+            if (Request::isPost()) $this->sendError("Une installation est nécessaire :" . UrlBuilder::makeUrl('Installer', 'installerView'));
+
+            $this->router->redirect(UrlBuilder::makeUrl('Installer', 'installerView'));
+        }
+
     }
 
     # /login

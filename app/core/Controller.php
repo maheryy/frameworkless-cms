@@ -42,14 +42,12 @@ abstract class Controller
 
             $this->router->redirect(UrlBuilder::makeUrl('Installer', 'installerView'));
         }
-
-        # CHeck permission given in routes.yml
+        # Check permission given in routes.yml
         if (isset($options['permission']) && !$this->hasPermission((int) $options['permission'])) {
             if(Request::isPost()) $this->sendError('Accès non autorisé');
 
             throw new ForbiddenAccessException('Accès non autorisé');
         }
-
         # Display back office sidebar for rendering only
         if (!empty($options['display_back_office'])) {
             $this->setLayoutParams();

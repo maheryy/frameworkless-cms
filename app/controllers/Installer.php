@@ -68,7 +68,7 @@ class Installer extends Controller
             }
 
             $this->setParam('opts_try_connection', ['add_data' => ['try_connection' => 1]]);
-            $this->setParam('url_form', UrlBuilder::makeUrl('Installer', 'registerAction'));
+            $this->setParam('url_form', UrlBuilder::makeUrl('Installer', 'loadDatabaseAction'));
         }
 
         $this->render($view);
