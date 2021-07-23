@@ -95,6 +95,10 @@ class Appearance extends Controller
             $this->sendError('Veuillez ajouter au moins un élément');
         }
 
+        if ($this->repository->menu->findByTitle($this->request->post('menu_name'), ($menu_id != -1 ? $menu_id : null))) {
+            $this->sendError('Ce nom est déjà pris');
+        }
+
         $data_length = count($menu_items['pages']);
         $labels = $items = [];
         $i = 0;

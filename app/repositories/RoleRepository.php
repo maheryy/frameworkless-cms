@@ -12,4 +12,14 @@ class RoleRepository extends BaseRepository
     {
         parent::__construct($model);
     }
+
+    public function findByName(string $name, int $ignore_id = null)
+    {
+        $this->queryBuilder
+            ->where(Expr::like('name', $name));
+        if ($ignore_id) {
+            $this->queryBuilder->where(Expr::neq('id', $ignore_id));
+        }
+        return $this->model->fetchOne($this->queryBuilder);
+    }
 }

@@ -71,6 +71,10 @@ class User extends Controller
             if (!$validator->validate($form_data)) {
                 $this->sendError('Veuillez vérifier les champs', $validator->getErrors());
             }
+            # Check for duplicate
+            if ($found = $this->repository->user->findByUsernameOrEmail($form_data['username'], $form_data['email'], 0)) {
+                $this->sendError(($found['email'] === $form_data['email'] ? 'l\'adresse email ' : 'le nom d\'utilisateur') . ' est déjà pris');
+            }
 
             Database::beginTransaction();
             $user_id = $this->repository->user->create([
@@ -183,7 +187,7 @@ class User extends Controller
 
         # Custom permission check for user case
         if (!$this->hasPermission(Constants::PERM_READ_USER) && $this->request->get('id') != $this->session->getUserId()) {
-            if(Request::isPost()) $this->sendError('Accès non autorisé');
+            if (Request::isPost()) $this->sendError('Accès non autorisé');
 
             throw new ForbiddenAccessException('Accès non autorisé');
         }
@@ -215,9 +219,14 @@ class User extends Controller
 
         # Custom permission check for user case
         if (!$this->hasPermission(Constants::PERM_UPDATE_USER) && $form_data['user_id'] != $this->session->getUserId()) {
-            if(Request::isPost()) $this->sendError('Accès non autorisé');
+            if (Request::isPost()) $this->sendError('Accès non autorisé');
 
             throw new ForbiddenAccessException('Accès non autorisé');
+        }
+
+        # Check for duplicate
+        if ($found = $this->repository->user->findByUsernameOrEmail($form_data['username'], $form_data['email'], (int)$form_data['user_id'])) {
+            $this->sendError(($found['email'] === $form_data['email'] ? 'l\'adresse email ' : 'le nom d\'utilisateur') . ' est déjà pris');
         }
 
         try {
@@ -267,7 +276,7 @@ class User extends Controller
 
         $default_role = $this->request->get('id') ?? $this->session->getRole();
         $permissions = $this->repository->permission->findAll();
-        $role_permissions = $this->repository->rolePermission->findAllPermissionsByRole((int) $default_role);
+        $role_permissions = $this->repository->rolePermission->findAllPermissionsByRole((int)$default_role);
         $permissions = $this->getDiff2DArray($permissions, $role_permissions, 'id');
         $roles = $this->repository->role->findAll();
 
@@ -301,7 +310,7 @@ class User extends Controller
     # /role-tab
     public function roleTabView()
     {
-        $role_id = (int) $this->request->get('ref');
+        $role_id = (int)$this->request->get('ref');
         if (!$role_id) {
             throw new \Exception('ref ne peut pas être null');
         }
@@ -351,6 +360,10 @@ class User extends Controller
         }
         if (empty($permissions)) {
             $this->sendError('Veuillez ajouter au moins une permission');
+        }
+
+        if ($this->repository->role->findByName($this->request->post('role_name'), ($role_id != -1 ? $role_id : null))) {
+            $this->sendError('Ce nom est déjà pris');
         }
 
         try {

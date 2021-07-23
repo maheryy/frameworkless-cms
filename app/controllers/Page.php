@@ -67,6 +67,12 @@ class Page extends Controller
             if (!$validator->validateRequiredOnly(['title' => $this->request->post('title')])) {
                 $this->sendError('Le titre est obligatoire');
             }
+            $slug = Formatter::slugify($this->request->post('slug') ?? $this->request->post('title'));
+
+            # Check for duplicate
+            if ($found = $this->repository->post->findPageByTitleOrSlug($this->request->post('title'), $slug, 0)) {
+                $this->sendError('le ' . ($found['slug'] === $slug ? 'slug "' . $slug . '"' : 'titre "' . $this->request->post('title') . '"') . ' existe déjà');
+            }
 
             Database::beginTransaction();
             $page_id = $this->repository->post->create([
@@ -77,10 +83,10 @@ class Page extends Controller
                 'status' => $this->request->post('action_publish') ? Constants::STATUS_PUBLISHED : Constants::STATUS_DRAFT,
                 'published_at' => $this->request->post('action_publish') ? Formatter::getDateTime(null, Formatter::DATE_TIME_FORMAT) : null
             ]);
-            $slug = $this->request->post('slug') ?? Formatter::slugify($this->request->post('title'));
+
             $this->repository->pageExtra->create([
                 'post_id' => $page_id,
-                'slug' => strpos($slug, '/') === 0 ? $slug : '/' . $slug,
+                'slug' => $slug,
                 'visibility' => $this->request->post('visibility'),
                 'allow_comments' => $this->request->post('allow_comments') ? 1 : 0,
                 'meta_title' => $this->request->post('meta_title') ?? $this->request->post('title'),
@@ -144,17 +150,24 @@ class Page extends Controller
                 'updated_at' => Formatter::getDateTime()
             ];
 
-            if($this->request->post('action_publish')) {
+            $slug = Formatter::slugify($this->request->post('slug') ?? $this->request->post('title'));
+
+            # Check for duplicate
+            if ($found = $this->repository->post->findPageByTitleOrSlug($post_fields['title'], $slug, $this->request->get('id'))) {
+                $this->sendError('le ' . ($found['slug'] === $slug ? 'slug "' . $slug . '"' : 'titre "' . $post_fields['title'] . '"') . ' existe déjà');
+            }
+
+            if ($this->request->post('action_publish')) {
                 $post_fields['status'] = Constants::STATUS_PUBLISHED;
                 $post_fields['published_at'] = Formatter::getDateTime($this->request->post('published_at'), Formatter::DATE_TIME_FORMAT);
             }
 
-            if($this->request->post('published_at')) {
+            if ($this->request->post('published_at')) {
                 $post_fields['published_at'] = Formatter::getDateTime($this->request->post('published_at'), Formatter::DATE_TIME_FORMAT);
             }
 
             $page_fields = [
-                'slug' => strpos($this->request->post('slug'), '/') === 0 ? $this->request->post('slug') : '/' . $this->request->post('slug'),
+                'slug' => $slug,
                 'meta_title' => $this->request->post('meta_title'),
                 'meta_description' => $this->request->post('meta_description'),
                 'allow_comments' => $this->request->post('allow_comments') ? 1 : 0,
