@@ -98,13 +98,11 @@
   title: Profil
   require_auth: True
   display_back_office: True
-  permission: 1
 
 /user-save:
   controller: User
   method: userAction
   require_auth: True
-  permission: 3
 
 /delete-user:
   controller: User
@@ -173,7 +171,7 @@
 
 # Role management
 /role:
-  controller: Role
+  controller: User
   method: roleView
   title: Gestion des rôles
   require_auth: True
@@ -181,12 +179,12 @@
   permission: 18
 
 /role-tab:
-  controller: Role
+  controller: User
   method: roleTabView
   require_auth: True
 
 /role-save:
-  controller: Role
+  controller: User
   method: roleAction
   require_auth: True
   permission: 20

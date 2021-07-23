@@ -32,10 +32,11 @@ abstract class Controller
      * Initialize back office params, sessions and check database installation
      *
      * @param array $data
-     * @return bool
      */
     private function init(array $options)
     {
+        $this->session->init();
+
         # First check database is ready before taking any actions
         if (!Database::isReady()) {
             if (Request::isPost()) $this->sendError("Une installation est nécessaire :" . UrlBuilder::makeAbsoluteUrl('Installer', 'installerView'));
@@ -58,8 +59,6 @@ abstract class Controller
         }
         # Default back office template
         $this->setTemplate('back_office');
-
-        return $this->session->init();
     }
 
     /**

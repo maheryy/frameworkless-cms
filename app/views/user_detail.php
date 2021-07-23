@@ -33,11 +33,11 @@
         <?php endif; ?>
         <div class="form-action">
             <?php if ($hold_confirmation) : ?>
-                <input class="btn-primary" data-role="submitDefault" value="Renvoyer une confirmation">
+                <input class="btn-primary <?= !$can_update ? 'hidden' : '' ?>" data-role="submitDefault" value="Renvoyer une confirmation" >
             <?php else : ?>
-                <input type="submit" class="btn-success" data-role="submitDefault" value="Enregistrer">
+                <input type="submit" class="btn-success <?= !$can_update ? 'hidden' : '' ?>" data-role="submitDefault" value="Enregistrer">
             <?php endif; ?>
-            <button class="btn-danger" data-url="<?= $url_delete ?>" data-role="deleteItem">Supprimer</button>
+            <button class="btn-danger <?= !$can_delete ? 'hidden' : '' ?>" data-url="<?= $url_delete ?>" data-role="deleteItem">Supprimer</button>
         </div>
     </form>
 </div>
