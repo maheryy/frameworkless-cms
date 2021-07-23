@@ -185,8 +185,10 @@ class User extends Controller
             throw new \Exception('Cet utilisateur n\'existe pas');
         }
 
+        $is_current_user = $this->request->get('id') == $this->session->getUserId();
+
         # Custom permission check for user case
-        if (!$this->hasPermission(Constants::PERM_READ_USER) && $this->request->get('id') != $this->session->getUserId()) {
+        if (!$this->hasPermission(Constants::PERM_READ_USER) && !$is_current_user) {
             if (Request::isPost()) $this->sendError('Accès non autorisé');
 
             throw new ForbiddenAccessException('Accès non autorisé');
@@ -196,7 +198,7 @@ class User extends Controller
         if (!$user) {
             throw new NotFoundException('Cet utilisateur n\'est pas trouvé');
         }
-        $this->setContentTitle($user['username']);
+        $this->setContentTitle($is_current_user ? 'Mon profil' : $user['username']);
         $this->setCSRFToken();
         $view_data = [
             'roles' => $this->repository->role->findAll(),
@@ -205,7 +207,7 @@ class User extends Controller
             'is_current_user' => $this->session->getUserId() == $user['id'],
             'url_form' => $user['status'] == Constants::STATUS_INACTIVE ? UrlBuilder::makeUrl('User', 'reconfirmationAction') : UrlBuilder::makeUrl('User', 'userAction'),
             'url_delete' => UrlBuilder::makeUrl('User', 'deleteAction', ['id' => $user['id']]),
-            'can_update' => $user['id'] == $this->session->getUserId() ? true : $this->hasPermission(Constants::PERM_UPDATE_USER),
+            'can_update' => $is_current_user || $this->hasPermission(Constants::PERM_UPDATE_USER),
             'can_delete' => $this->hasPermission(Constants::PERM_DELETE_USER),
         ];
         $this->render('user_detail', $view_data);

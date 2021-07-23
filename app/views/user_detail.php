@@ -33,9 +33,9 @@
         <?php endif; ?>
         <div class="form-action">
             <?php if ($hold_confirmation) : ?>
-                <input class="btn-primary <?= !$can_update ? 'hidden' : '' ?>" data-role="submitDefault" value="Renvoyer une confirmation" >
+                <button class="btn-primary <?= !$can_update ? 'hidden' : '' ?>" data-role="submitDefault">Renvoyer une confirmation</button>
             <?php else : ?>
-                <input type="submit" class="btn-success <?= !$can_update ? 'hidden' : '' ?>" data-role="submitDefault" value="Enregistrer">
+                <button class="btn-success <?= !$can_update ? 'hidden' : '' ?>" data-role="submitDefault">Enregistrer</button>
             <?php endif; ?>
             <button class="btn-danger <?= !$can_delete ? 'hidden' : '' ?>" data-url="<?= $url_delete ?>" data-role="deleteItem">Supprimer</button>
         </div>

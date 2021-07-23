@@ -1,4 +1,7 @@
 <div class="card rounded">
+    <article id="info-box" class="info-primary center">
+        <span id="info-description"></span>
+    </article>
     <table data-role="initDataTable">
         <thead>
         <tr>

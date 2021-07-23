@@ -39,7 +39,7 @@
                         </label>
                     </div>
                     <div class="form-action center">
-                        <input type="submit" class="submit-btn btn-success" data-role="submitDefault" value="Valider">
+                        <button class="submit-btn btn-success" data-role="submitDefault">Valider</button>
                     </div>
                 </form>
             </article>

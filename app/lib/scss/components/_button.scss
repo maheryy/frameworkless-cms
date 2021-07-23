@@ -36,14 +36,15 @@ $btn-list: (
 // }
 
 @mixin base-btn($color) {
+  position: relative;
   display: inline-block;
-  padding: 0.5em 1.7em;
+  padding: 0 1.7em;
+  height: 2rem;
   border: 1px solid darken($color, 10);
   border-radius: 0.3em;
   background-color: $color;
   box-shadow: inset 0 -0.6em 1em -0.35em rgba(0, 0, 0, 0.17), inset 0 0.6em 2em -0.3em rgba(255, 255, 255, 0.15),
   inset 0 0 0em 0.05em rgba(255, 255, 255, 0.12);
-  cursor: pointer;
   font-family: "Roboto", sans-serif;
   font-weight: 400;
   color: reverse-color($color);
@@ -56,6 +57,45 @@ $btn-list: (
   }
   &:hover {
     background-color: darken($color, 5);
+    cursor: pointer;
+  }
+
+  & > span {
+    transition: all 0.2s;
+  }
+
+  &.btn-loading {
+    color: $color;
+
+    &:hover {
+      background-color: $color;
+      cursor: wait;
+    }
+
+    &::after {
+      content: "";
+      position: absolute;
+      width: 13px;
+      height: 13px;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      margin: auto;
+      border: 4px solid transparent;
+      border-top-color: #ffffff;
+      border-radius: 50%;
+      animation: button-loading-spinner 1s linear infinite;
+    }
+  }
+}
+
+@keyframes button-loading-spinner {
+  from {
+    transform: rotate(0turn);
+  }
+  to {
+    transform: rotate(2turn);
   }
 }
 

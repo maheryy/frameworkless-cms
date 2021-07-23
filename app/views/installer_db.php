@@ -39,7 +39,7 @@
             </div>
             <div class="form-action">
                 <button class="btn-primary" data-role="submitDefault" data-options='<?= json_encode($opts_try_connection) ?>'>Tester la connexion</button>
-                <input type="submit" class="btn-success" value="Passer à l'étape suivante" data-role="submitDefault">
+                <button class="btn-success" data-role="submitDefault">Passer à l'étape suivante</button>
             </div>
         </form>
     </section>

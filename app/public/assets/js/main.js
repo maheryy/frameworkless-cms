@@ -111,7 +111,6 @@ function setErrorField(input, message) {
 }
 
 let delay_info;
-
 function setInfo(type, text, delay = null) {
     let extra_classes = $('#info-box').hasClass('center') ? ' center' : '';
 
@@ -130,7 +129,6 @@ function setInfo(type, text, delay = null) {
         }, delay * 1000);
     }
 }
-
 
 function getMenuItemBaseElement(data) {
     return $(
@@ -406,7 +404,7 @@ const roleFunctions = {
         const target_list = $(this).find('#transferable-target .list-elements');
 
         const sourceClick = e => {
-            if($('#transferable-target .transferable-element').length >= 4) return;
+            if ($('#transferable-target .transferable-element').length >= 4) return;
             const data = getOptions($(e.currentTarget));
 
             const element = createItemElement(data, moveUp, moveDown, remove);
@@ -450,7 +448,13 @@ const roleFunctions = {
                 headers: $('meta[name="csrf-token"]').length ? {'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')} : null,
                 url: $(form).attr('action'),
                 data: data,
-                success: ajaxFunctions.submitDefault
+                success: ajaxFunctions.submitDefault,
+                beforeSend: function () {
+                    startLoadingButton(e.currentTarget);
+                },
+                complete: function () {
+                    resetLoadingButton(e.currentTarget);
+                },
             });
         });
     },
@@ -465,7 +469,13 @@ const roleFunctions = {
                 headers: $('meta[name="csrf-token"]').length ? {'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')} : null,
                 url: $(form).attr('action'),
                 data: data,
-                success: ajaxFunctions.submitDefault
+                success: ajaxFunctions.submitDefault,
+                beforeSend: function () {
+                    startLoadingButton(e.currentTarget);
+                },
+                complete: function () {
+                    resetLoadingButton(e.currentTarget);
+                }
             });
         });
     },
@@ -487,7 +497,13 @@ const roleFunctions = {
                 headers: $('meta[name="csrf-token"]').length ? {'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')} : null,
                 url: $(form).attr('action'),
                 data: data,
-                success: ajaxFunctions.submitDefault
+                success: ajaxFunctions.submitDefault,
+                beforeSend: function () {
+                    startLoadingButton(e.currentTarget);
+                },
+                complete: function () {
+                    resetLoadingButton(e.currentTarget);
+                }
             });
         });
     },
@@ -497,9 +513,15 @@ const roleFunctions = {
             const url = $(this).attr('href') ?? getUrl(this);
             if (!url) return;
             $.ajax({
-                method: 'GET',
+                method: 'POST',
                 url: url,
                 success: ajaxFunctions.submitDefault,
+                beforeSend: function () {
+                    !$(this).attr('href') && startLoadingButton(e.currentTarget);
+                },
+                complete: function () {
+                    !$(this).attr('href') && resetLoadingButton(e.currentTarget);
+                }
             });
         });
     },

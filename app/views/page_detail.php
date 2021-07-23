@@ -7,9 +7,9 @@
             <div class="row">
                 <div class="col-12 flex justify-end">
                     <article>
-                        <input type="submit" class="btn-primary <?= !$can_update ? 'hidden' : '' ?>" data-role="submitTextEditor" value="Enregistrer">
+                        <button class="btn-primary <?= !$can_update ? 'hidden' : '' ?>" data-role="submitTextEditor">Enregistrer</button>
                         <?php if ($page['status'] != \App\Core\Utils\Constants::STATUS_PUBLISHED && $can_publish) :?>
-                            <input type="submit" class="btn-success" value="Publier" data-role="submitTextEditor" data-options=<?= json_encode(['add_data' => ['action_publish' => 1]]) ?>>
+                            <button class="btn-success" data-role="submitTextEditor" data-options=<?= json_encode(['add_data' => ['action_publish' => 1]]) ?>>Publier</button>
                         <?php endif;?>
                         <button class="btn-danger <?= !$can_delete ? 'hidden' : '' ?>" data-url="<?= $url_delete ?>" data-role="deleteItem">Supprimer</button>
                     </article>

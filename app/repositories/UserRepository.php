@@ -48,6 +48,7 @@ class UserRepository extends BaseRepository
     {
         $this->queryBuilder
             ->where(Expr::neq('id', $ignore_id))
+            ->where(Expr::neq('status', Constants::STATUS_DELETED))
             ->where(
                 Expr::like('username', $username),
                 Expr::like('email', $email)

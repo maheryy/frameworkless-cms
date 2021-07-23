@@ -101,6 +101,7 @@ class PostRepository extends BaseRepository
         $this->queryBuilder
             ->joinLeft($details_table, "$this->table.id = $details_table.post_id")
             ->where(Expr::neq("$this->table.id", $ignore_id))
+            ->where(Expr::neq('status', Constants::STATUS_DELETED))
             ->where(
                 Expr::like("$details_table.slug", $slug),
                 Expr::like("$this->table.title", $title)
