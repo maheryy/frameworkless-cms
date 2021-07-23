@@ -6,7 +6,9 @@
         <div class="w-4/12">
             <select id="tab_view" class="form-control w-full text-base" name="tab_view" data-role="initSelectTabs"
                     data-options=<?= json_encode($tab_options) ?>>
-                <option value="-1">Ajouter un menu</option>
+                <?php if ($can_create) : ?>
+                    <option value="-1">Ajouter un menu</option>
+                <?php endif; ?>
                 <?php $last_type = null; ?>
                 <?php foreach ($menus as $menu) : ?>
                     <?php if (is_null($last_type)) : ?>
@@ -22,11 +24,13 @@
                 <?= $last_type ? '</optgroup>' : ''?>
             </select>
         </div>
-        <div>
-            <a href="#" class="text-3xl px-0.5" style="color: darkolivegreen" data-role="addRoleTabView">
-                <i class="fas fa-plus-circle"></i>
-            </a>
-        </div>
+        <?php if ($can_create) : ?>
+            <div>
+                <a href="#" class="text-3xl px-0.5" style="color: darkolivegreen" data-role="addRoleTabView">
+                    <i class="fas fa-plus-circle"></i>
+                </a>
+            </div>
+        <?php endif; ?>
     </div>
     <div id="tab-content">
         <?php include $default_tab_view ?>

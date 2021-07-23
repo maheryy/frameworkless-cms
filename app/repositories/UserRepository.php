@@ -43,12 +43,4 @@ class UserRepository extends BaseRepository
         $this->queryBuilder->where(Expr::like('email', $email));
         return $this->model->fetchOne($this->queryBuilder);
     }
-
-    public function updatePassword(int $id, string $password)
-    {
-        return $this->model->updateQuery(
-            ['password' => $password, 'updated_at' => Formatter::getDateTime()],
-            [Expr::eq('id', $id)]
-        );
-    }
 }

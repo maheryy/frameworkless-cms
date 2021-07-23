@@ -12,13 +12,9 @@
             <label for="email">Adresse email</label>
         </div>
         <div class="form-field required">
-            <input type="password" class="form-control" id="password" name="password">
-            <label for="password">Mot de passe</label>
-        </div>
-        <div class="form-field required">
             <select class="form-control" id="role" name="role">
                 <?php foreach ($roles as $role) : ?>
-                    <option value="<?= $role['id'] ?>"><?= $role['name'] ?></option>
+                    <option value="<?= $role['id'] ?>" <?= $role['id'] == $default_role ? 'selected=selected' : '' ?>><?= $role['name'] ?></option>
                 <?php endforeach; ?>
             </select>
             <label for="role">Role</label>

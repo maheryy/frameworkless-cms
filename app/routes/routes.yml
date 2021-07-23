@@ -12,56 +12,58 @@
   require_auth: True
   display_back_office: True
 
-# installer
-/installer-db:
+
+/seed: #TO REMOVE
   controller: Installer
-  method: installerDatabaseView
-  title: Configuration de la base de données
+  method: loadSeeders
+
+# installer
+/installer:
+  controller: Installer
+  method: installerView
 
 /installer-db-save:
   controller: Installer
   method: loadDatabaseAction
 
-/installer-register:
-  controller: Installer
-  method: installerRegisterView
-  title: Inscription
-
 /installer-register-save:
   controller: Installer
   method: registerAction
 
-# Authentification
+# Authentication
 /login:
-  controller: User
+  controller: Auth
   method: loginView
   title: Connexion
 
 /login-send:
-  controller: User
+  controller: Auth
   method: loginAction
 
 /logout:
-  controller: User
+  controller: Auth
   method: logoutAction
 
 /recover-password:
-  controller: User
+  controller: Auth
   method: passwordRecoveryView
   title: Mot de passe oublié
 
 /recover-password-send:
-  controller: User
+  controller: Auth
   method: passwordRecoveryAction
 
-/reset-password:
-  controller: User
-  method: passwordResetView
-  title: Réinitialisation du mot de passe
+/update-password:
+  controller: Auth
+  method: passwordUpdateView
 
-/reset-password-send:
-  controller: User
-  method: passwordResetAction
+/update-password-send:
+  controller: Auth
+  method: passwordUpdateAction
+
+/confirm-account:
+  controller: Auth
+  method: confirmAccountView
 
 # User management
 /users:
@@ -82,11 +84,13 @@
   title: Ajouter un utilisateur
   require_auth: True
   display_back_office: True
+  permission: 2
 
 /new-user-save:
   controller: User
   method: createAction
   require_auth: True
+  permission: 2
 
 /user:
   controller: User
@@ -104,11 +108,13 @@
   controller: User
   method: deleteAction
   require_auth: True
+  permission: 4
 
-/confirm-account:
+/user-reconfirmation:
   controller: User
-  method: confirmAccountView
-  title: Confirmation du compte
+  method: reconfirmationAction
+  require_auth: True
+  permission: 2
 
 
 # Page management
@@ -130,11 +136,13 @@
   title: Ajouter une page
   require_auth: True
   display_back_office: True
+  permission: 6
 
 /new-page-save:
   controller: Page
   method: createAction
   require_auth: True
+  permission: 6
 
 /page:
   controller: Page
@@ -142,16 +150,19 @@
   title: Page
   require_auth: True
   display_back_office: True
+  permission: 5
 
 /page-save:
   controller: Page
   method: pageAction
   require_auth: True
+  permission: 7
 
 /delete-page:
   controller: Page
   method: deleteAction
   require_auth: True
+  permission: 9
 
 /page-link-list:
   controller: Page
@@ -160,21 +171,23 @@
 
 # Role management
 /role:
-  controller: Role
+  controller: User
   method: roleView
   title: Gestion des rôles
   require_auth: True
   display_back_office: True
+  permission: 18
 
 /role-tab:
-  controller: Role
+  controller: User
   method: roleTabView
   require_auth: True
 
 /role-save:
-  controller: Role
+  controller: User
   method: roleAction
   require_auth: True
+  permission: 20
 
 
 # Webpage editor (appearance)
@@ -184,6 +197,7 @@
   title: Liste des menus
   require_auth: True
   display_back_office: True
+  permission: 10
 
 /menu-tab:
   controller: Appearance
@@ -195,11 +209,13 @@
   controller: Appearance
   method: menuAction
   require_auth: True
+  permission: 12
 
 /delete-menu:
   controller: Appearance
   method: deleteMenuAction
   require_auth: True
+  permission: 13
 
 /customization:
   controller: Appearance
@@ -207,11 +223,13 @@
   title: Personnalisation
   require_auth: True
   display_back_office: True
+  permission: 14
 
 /customization-save:
   controller: Appearance
   method: customizationAction
   require_auth: True
+  permission: 15
 
 
 # Settings
@@ -221,16 +239,19 @@
   title: Paramètres
   require_auth: True
   display_back_office: True
+  permission: 16
 
 /settings-general-save:
   controller: Settings
   method: settingsGeneralAction
   require_auth: True
+  permission: 17
 
 /settings-mail-save:
   controller: Settings
   method: settingsMailAction
   require_auth: True
+  permission: 17
 
 /settings-page-save:
   controller: Settings

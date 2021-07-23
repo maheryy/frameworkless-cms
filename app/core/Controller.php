@@ -2,7 +2,7 @@
 
 namespace App\Core;
 
-use App\Core\Utils\Formatter;
+use App\Core\Exceptions\ForbiddenAccessException;
 use App\Core\Utils\LayoutManager;
 use App\Core\Utils\Repository;
 use App\Core\Utils\Request;
@@ -32,17 +32,23 @@ abstract class Controller
      * Initialize back office params, sessions and check database installation
      *
      * @param array $data
-     * @return bool
      */
     private function init(array $options)
     {
+        $this->session->init();
+
         # First check database is ready before taking any actions
         if (!Database::isReady()) {
-            if (Request::isPost()) $this->sendError("Une installation est nécessaire :" . UrlBuilder::makeAbsoluteUrl('Installer', 'installerDatabaseView'));
+            if (Request::isPost()) $this->sendError("Une installation est nécessaire :" . UrlBuilder::makeAbsoluteUrl('Installer', 'installerView'));
 
-            $this->router->redirect(UrlBuilder::makeUrl('Installer', 'installerDatabaseView'));
+            $this->router->redirect(UrlBuilder::makeUrl('Installer', 'installerView'));
         }
+        # Check permission given in routes.yml
+        if (isset($options['permission']) && !$this->hasPermission((int) $options['permission'])) {
+            if(Request::isPost()) $this->sendError('Accès non autorisé');
 
+            throw new ForbiddenAccessException('Accès non autorisé');
+        }
         # Display back office sidebar for rendering only
         if (!empty($options['display_back_office'])) {
             $this->setLayoutParams();
@@ -53,8 +59,6 @@ abstract class Controller
         }
         # Default back office template
         $this->setTemplate('back_office');
-
-        return $this->session->init();
     }
 
     /**
@@ -177,19 +181,16 @@ abstract class Controller
      */
     protected function setLayoutParams()
     {
-        $layout = new LayoutManager();
-        $sidebar_links = $layout->getSidebarLinks();
-        $user_link = UrlBuilder::makeUrl('User', 'userView', ['id' => $this->session->getUserId()]);
-
+        $layout = new LayoutManager($this->session->get('permissions'));
 
         $this->setParam('current_route', $this->router->getFullUri());
-        $this->setParam('sidebar_links', $sidebar_links['main']);
-        $this->setParam('link_settings', $sidebar_links['bottom']['settings']);
+        $this->setParam('link_user',  UrlBuilder::makeUrl('User', 'userView', ['id' => $this->session->getUserId()]));
+        $this->setParam('link_logout', UrlBuilder::makeUrl('Auth', 'logoutAction'));
         $this->setParam('link_home', UrlBuilder::makeUrl('Home', 'dashboardView'));
-        $this->setParam('link_logout', UrlBuilder::makeUrl('User', 'logoutAction'));
         $this->setParam('link_website', '/');
-        $this->setParam('link_user', $user_link);
         $this->setParam('sidebar', $layout->getSidebarPath());
+        $this->setParam('sidebar_list', $layout->getSidebar());
+        $this->setParam('sidebar_settings', $layout->getSettings());
     }
 
     /**

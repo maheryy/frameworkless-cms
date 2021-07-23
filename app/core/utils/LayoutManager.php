@@ -2,33 +2,13 @@
 
 namespace App\Core\Utils;
 
-use App\Core\Exceptions\NotFoundException;
-
 class LayoutManager
 {
-    private $nav_path = '../routes/nav.yml';
-    private $sidebar_links;
+    private array $permissions;
 
-    public function __construct()
+    public function __construct(array $permissions)
     {
-        $this->loadData();
-    }
-
-    /**
-     * Parse nav.yml file to retrieve toolbar/sidebar links
-     */
-    private function loadData()
-    {
-        if (!file_exists($this->nav_path)) {
-            throw new NotFoundException('File no exist');
-        }
-
-        $nav_data = yaml_parse_file($this->nav_path);
-
-        $this->sidebar_links = [
-            'main' => $nav_data['sidebar-main'],
-            'bottom' => $nav_data['sidebar-bottom']
-        ];
+        $this->permissions = $permissions;
     }
 
     /**
@@ -39,11 +19,86 @@ class LayoutManager
         return PATH_TEMPLATES . 'layout/back_office_sidebar.php';
     }
 
-    /**
-     * @return array
-     */
-    public function getSidebarLinks()
+
+    public function getSidebar()
     {
-        return $this->sidebar_links;
+        return [
+            'dashboard' => [
+                'label' => 'Tableau de bord',
+                'icon' => 'fas fa-columns',
+                'route' => UrlBuilder::getUrl('dashboard'),
+            ],
+            'page' => [
+                'label' => 'Pages',
+                'icon' => 'far fa-file',
+                'route' => UrlBuilder::getUrl('pages'),
+                'sublinks' => [
+                    'list_page' => [
+                        'label' => 'Liste pages',
+                        'route' => UrlBuilder::getUrl('pages'),
+                        'is_visible' => true,
+                    ],
+                    'new_page' => [
+                        'label' => 'Ajouter page',
+                        'route' => UrlBuilder::getUrl('new-page'),
+                        'is_visible' => $this->hasPermission(Constants::PERM_CREATE_PAGE)
+                    ]
+                ]
+            ],
+            'appearance' => [
+                'label' => 'Apparance',
+                'icon' => 'fas fa-palette',
+                'route' => UrlBuilder::getUrl('menu'),
+                'sublinks' => [
+                    'menus' => [
+                        'label' => 'Menus',
+                        'route' => UrlBuilder::getUrl('menu'),
+                        'is_visible' => $this->hasPermission(Constants::PERM_READ_MENU)
+                    ],
+                    'customization' => [
+                        'label' => 'Personnalisation',
+                        'route' => UrlBuilder::getUrl('customization'),
+                        'is_visible' => $this->hasPermission(Constants::PERM_READ_CUSTOMIZATION)
+                    ],
+                ]
+            ],
+            'user' => [
+                'label' => 'Utilisateurs',
+                'icon' => 'fas fa-users',
+                'route' => '/admin/users',
+                'sublinks' => [
+                    'list_user' => [
+                        'label' => 'Liste utilisateurs',
+                        'route' => UrlBuilder::getUrl('users'),
+                        'is_visible' => true,
+                    ],
+                    'new_user' => [
+                        'label' => 'Ajouter utilisateur',
+                        'route' => UrlBuilder::getUrl('new-user'),
+                        'is_visible' => $this->hasPermission(Constants::PERM_CREATE_USER)
+                    ],
+                    'roles' => [
+                        'label' => 'Roles',
+                        'route' => UrlBuilder::getUrl('role'),
+                        'is_visible' => $this->hasPermission(Constants::PERM_READ_ROLE)
+                    ],
+                ]
+            ]
+        ];
+    }
+
+    public function getSettings()
+    {
+        return [
+            'label' => 'Paramètres',
+            'icon' => 'fas fa-cog',
+            'route' => UrlBuilder::getUrl('settings'),
+            'is_visible' => $this->hasPermission(Constants::PERM_READ_SETTINGS)
+        ];
+    }
+
+    private function hasPermission(int $permission)
+    {
+        return in_array($permission, $this->permissions);
     }
 }

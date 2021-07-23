@@ -16,15 +16,16 @@
         </span>
     </p>
     <ul class="sidebar-list">
-        <?php foreach ($sidebar_links as $link) : ?>
-            <li class="sidebar-link <?= !isset($link['sub-links']) && $current_route === $link['route'] ? 'selected' : '' ?>">
+        <?php foreach ($sidebar_list as $link) : ?>
+            <li class="sidebar-link <?= !isset($link['sublinks']) && $current_route === $link['route'] ? 'selected' : '' ?>">
                 <a href="<?= $link['route'] ?>">
                     <i class="link-icon <?= $link['icon'] ?>"></i>
                     <span class="label-item"><?= $link['label'] ?></span>
                 </a>
-                <?php if (isset($link['sub-links'])) : ?>
+                <?php if (isset($link['sublinks'])) : ?>
                     <ul class="sidebar-sub-list">
-                        <?php foreach ($link['sub-links'] as $sub_link) : ?>
+                        <?php foreach ($link['sublinks'] as $sub_link) : ?>
+                            <?php if (!$sub_link['is_visible']) continue; ?>
                             <li <?= $current_route === $sub_link['route']
                                 ? "class='sidebar-link selected' data-role='setActiveLink'"
                                 : "class='sidebar-link'" ?>>
@@ -39,11 +40,13 @@
         <?php endforeach; ?>
     </ul>
     <ul class="sidebar-list bottom">
-        <li>
-            <a href=" <?= $link_settings['route'] ?>">
-                <i class="link-icon  <?= $link_settings['icon'] ?>"></i>
-                <span class="label-item"> <?= $link_settings['label'] ?></span>
-            </a>
-        </li>
+        <?php if ($sidebar_settings['is_visible']) : ?>
+            <li class="sidebar-link <?= $current_route === $sidebar_settings['route'] ? 'selected' : '' ?>">
+                <a href=" <?= $sidebar_settings['route'] ?>">
+                    <i class="link-icon  <?= $sidebar_settings['icon'] ?>"></i>
+                    <span class="label-item"> <?= $sidebar_settings['label'] ?></span>
+                </a>
+            </li>
+        <?php endif; ?>
     </ul>
 </nav>

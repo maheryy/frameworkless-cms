@@ -97,11 +97,6 @@ class FormRegistry
                 'max' => 20,
                 'error_message' => 'Le nom d\'utilisateur ne doit pas faire plus de 20 caractères',
             ],
-            'password' => [
-                'type' => Validator::TYPE_PASSWORD,
-                'required' => true,
-                'error_message' => Validator::ERROR_PASSWORD_DEFAULT,
-            ],
             'email' => [
                 'type' => Validator::TYPE_EMAIL,
                 'required' => true,

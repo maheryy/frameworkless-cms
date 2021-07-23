@@ -41,7 +41,10 @@ class Appearance extends Controller
             'tab_options' => [
                 'url_tab_view' => UrlBuilder::makeUrl('Appearance', 'menuTabView'),
                 'container_id' => 'tab-content'
-            ]
+            ],
+            'can_create' => $this->hasPermission(Constants::PERM_CREATE_MENU),
+            'can_update' => $this->hasPermission(Constants::PERM_UPDATE_MENU),
+            'can_delete' => $this->hasPermission(Constants::PERM_DELETE_MENU),
         ];
         $this->render('menu_default', $view_data);
     }
@@ -69,6 +72,8 @@ class Appearance extends Controller
             'social_medias' => Constants::getSocialList(),
             'url_form' => UrlBuilder::makeUrl('Appearance', 'menuAction'),
             'url_delete' => $url_delete ?? null,
+            'can_update' => $this->hasPermission(Constants::PERM_UPDATE_MENU),
+            'can_delete' => $this->hasPermission(Constants::PERM_DELETE_MENU),
         ];
         $this->renderViewOnly('menu_tab_default', $view_data);
     }
@@ -171,6 +176,7 @@ class Appearance extends Controller
             'hero_data' => json_decode($this->getValue(Constants::STG_HERO_DATA), true),
             'link_menus' => $this->repository->menu->findMenuLinks(),
             'link_socials' => $this->repository->menu->findMenuSocials(),
+            'can_update' => $this->hasPermission(Constants::PERM_UPDATE_CUSTOMIZATION),
         ];
         $this->render('layout_custom', $view_data);
     }
@@ -213,10 +219,10 @@ class Appearance extends Controller
             $this->repository->settings->updateSettings([
                 Constants::STG_SITE_LAYOUT => json_encode($data),
                 Constants::STG_HERO_DATA => json_encode([
-                   'status' => $this->request->post('hero_status'),
-                   'title' => $this->request->post('hero_title'),
-                   'description' => $this->request->post('hero_description'),
-                   'image' => $this->request->post('hero_image'),
+                    'status' => $this->request->post('hero_status'),
+                    'title' => $this->request->post('hero_title'),
+                    'description' => $this->request->post('hero_description'),
+                    'image' => $this->request->post('hero_image'),
                 ]),
             ]);
             $this->sendSuccess('Informations sauvegardées', [

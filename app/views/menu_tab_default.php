@@ -101,10 +101,10 @@
                     </ul>
                 </div>
                 <div class="form-action px-0 right">
-                    <input type="submit" class="<?= isset($menu_data) ? 'btn-primary' : 'btn-success' ?> text-base"
+                    <input type="submit" class="<?= isset($menu_data) ? 'btn-primary' : 'btn-success' ?> text-base <?= !$can_update ? 'hidden' : '' ?>"
                            value="<?= isset($menu_data) ? 'Sauvegarder' : 'Ajouter' ?>" data-role="submitPermissions"
                            data-options=<?= json_encode(['add_data' => ['ref' => $referer]]) ?>>
-                    <?php if ($url_delete) : ?>
+                    <?php if ($can_delete && $url_delete) : ?>
                         <button class="btn-danger text-base" data-url="<?= $url_delete ?>" data-role="deleteItem">
                             Supprimer
                         </button>

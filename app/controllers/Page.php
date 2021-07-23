@@ -31,7 +31,9 @@ class Page extends Controller
         }
 
         $view_data = [
-            'pages' => $pages
+            'pages' => $pages,
+            'can_delete' => $this->hasPermission(Constants::PERM_DELETE_PAGE),
+            'can_read' => $this->hasPermission(Constants::PERM_READ_PAGE),
         ];
         $this->render('page_list', $view_data);
     }
@@ -119,6 +121,9 @@ class Page extends Controller
             'visibility_types' => Constants::getVisibilityTypes(),
             'url_form' => UrlBuilder::makeUrl('Page', 'pageAction', ['id' => $page['id']]),
             'url_delete' => UrlBuilder::makeUrl('Page', 'deleteAction', ['id' => $page['id']]),
+            'can_update' => $this->hasPermission(Constants::PERM_UPDATE_PAGE),
+            'can_delete' => $this->hasPermission(Constants::PERM_DELETE_PAGE),
+            'can_publish' => $this->hasPermission(Constants::PERM_PUBLISH_PAGE),
         ];
         $this->render('page_detail', $view_data);
     }

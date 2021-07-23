@@ -21,17 +21,16 @@ class Website extends Controller
 
     public function __construct(array $options = [])
     {
-        //parent::__construct($options);
         $this->router = Router::getInstance();
         $this->request = new Request();
         $this->repository = new Repository();
         $this->uri = $this->router->getUri();
 
-        # Database check is ready before taking any actions
+        # Database check before taking any actions
         if (!Database::isReady()) {
-            if (Request::isPost()) $this->sendError("Une installation est nécessaire : ${_SERVER['HTTP_HOST']}/admin/installer_db");
+            if (Request::isPost()) $this->sendError("Une installation est nécessaire : ${_SERVER['HTTP_HOST']}/admin/installer");
 
-            $this->router->redirect('/admin/installer_db');
+            $this->router->redirect('/admin/installer');
         }
 
         $this->setTemplate('website');

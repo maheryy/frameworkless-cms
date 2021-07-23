@@ -4,6 +4,7 @@ namespace App\Controllers;
 
 use App\Core\Controller;
 use App\Core\Database;
+use App\Core\Utils\Constants;
 use App\Core\Utils\FormRegistry;
 use App\Core\Utils\Mailer;
 use App\Core\Utils\UrlBuilder;
@@ -34,6 +35,7 @@ class Settings extends Controller
             'url_form_general' => UrlBuilder::makeUrl('Settings', 'settingsGeneralAction'),
             'url_form_mail' => UrlBuilder::makeUrl('Settings', 'settingsMailAction'),
             'url_form_page' => UrlBuilder::makeUrl('Settings', 'settingsPageAction'),
+            'can_update' => $this->hasPermission(Constants::PERM_UPDATE_SETTINGS),
         ];
         $this->render('settings', $view_data);
     }
