@@ -34,7 +34,7 @@ class PostRepository extends BaseRepository
         return $this->model->fetchAll($this->queryBuilder);
     }
 
-    public function findPublishedPages()
+    public function findPublishedPages(int $limit = null)
     {
         $details_table = Formatter::getTableName('page_extra');
         $this->queryBuilder
@@ -44,7 +44,35 @@ class PostRepository extends BaseRepository
             ])
             ->joinInner($details_table, "$this->table.id = $details_table.post_id")
             ->where(Expr::eq("$this->table.type", Constants::POST_TYPE_PAGE))
-            ->where(Expr::eq("$this->table.status", Constants::STATUS_PUBLISHED));
+            ->where(Expr::eq("$this->table.status", Constants::STATUS_PUBLISHED))
+            ->orderDesc("$this->table.created_at");
+
+        if ($limit) {
+            $this->queryBuilder->limit($limit);
+        }
+
+        return $this->model->fetchAll($this->queryBuilder);
+    }
+
+    public function findPublishedPagesWithUser(int $limit = null)
+    {
+        $details_table = Formatter::getTableName('page_extra');
+        $user_table = Formatter::getTableName('user');
+        $this->queryBuilder
+            ->select([
+                "$user_table" => ['author' => 'username'],
+                "$details_table.*",
+                "$this->table.*",
+            ])
+            ->joinInner($details_table, "$this->table.id = $details_table.post_id")
+            ->joinInner($user_table, "$this->table.author_id = $user_table.id")
+            ->where(Expr::eq("$this->table.type", Constants::POST_TYPE_PAGE))
+            ->where(Expr::eq("$this->table.status", Constants::STATUS_PUBLISHED))
+            ->orderDesc("$this->table.created_at");
+
+        if ($limit) {
+            $this->queryBuilder->limit($limit);
+        }
 
         return $this->model->fetchAll($this->queryBuilder);
     }
@@ -66,21 +94,20 @@ class PostRepository extends BaseRepository
 
     }
 
-    public function findPageByTitle(string $title)
+    public function findPublishedPagesByAuthor(string $user_id, int $limit = null)
     {
+        $details_table = Formatter::getTableName('page_extra');
         $this->queryBuilder
-            ->where(Expr::eq('type', Constants::POST_TYPE_PAGE))
-            ->where(Expr::like('title', $title));
-
-        return $this->model->fetchOne($this->queryBuilder);
-    }
-
-    public function findPagesByAuthor(string $user_id)
-    {
-        $this->queryBuilder
-            ->where(Expr::eq('type', Constants::POST_TYPE_PAGE))
+            ->select(["$details_table.slug", "$this->table.*",])
+            ->joinInner($details_table, "$this->table.id = $details_table.post_id")
             ->where(Expr::eq('author_id', $user_id))
-            ->where(Expr::neq('status', Constants::STATUS_DELETED));
+            ->where(Expr::eq('type', Constants::POST_TYPE_PAGE))
+            ->where(Expr::eq('status', Constants::STATUS_PUBLISHED))
+            ->orderDesc("$this->table.created_at");
+
+        if ($limit) {
+            $this->queryBuilder->limit($limit);
+        }
 
         return $this->model->fetchAll($this->queryBuilder);
     }
@@ -96,7 +123,8 @@ class PostRepository extends BaseRepository
         return $this->model->fetchOne($this->queryBuilder);
     }
 
-    public function findPageByTitleOrSlug(string $title, string $slug, int $ignore_id) {
+    public function findPageByTitleOrSlug(string $title, string $slug, int $ignore_id)
+    {
         $details_table = Formatter::getTableName('page_extra');
         $this->queryBuilder
             ->joinLeft($details_table, "$this->table.id = $details_table.post_id")

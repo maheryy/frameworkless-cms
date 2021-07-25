@@ -445,6 +445,30 @@ const roleFunctions = {
         $(this).find('#transferable-target .transferable-element .element-down').click(moveDown);
         $(this).find('#transferable-target .transferable-element .element-delete').click(remove);
     },
+    'initVisitorsChart': function () {
+        const options = getOptions(this);
+        const ctx = document.getElementById('visitor-chart').getContext('2d');
+        const chart = new Chart(ctx, {
+            type: 'line',
+            data: {
+                labels: options.x_axis,
+                datasets: [{
+                    label: 'Visites',
+                    data: options.y_axis,
+                    borderColor: 'rgb(54, 162, 235)',
+                    fill: false,
+                    tension: 0.1
+                }]
+            },
+            options: {
+                scales: {
+                    y: {
+                        beginAtZero: true
+                    }
+                }
+            }
+        });
+    },
     submitDefault: function () {
         $(this).click(function (e) {
             e.preventDefault();
