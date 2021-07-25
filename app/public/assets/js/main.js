@@ -542,14 +542,23 @@ const roleFunctions = {
             });
         });
     },
-    deleteItem: function () {
+    actionItem: function () {
         $(this).click(function (e) {
             e.preventDefault();
             const url = $(this).attr('href') ?? getUrl(this);
             if (!url) return;
+            const options = getOptions(this);
+            let additional_data = [];
+            if (options && options.add_data) {
+                for (const [k, v] of Object.entries(options.add_data)) {
+                    additional_data.push({name: k, value: v});
+                }
+            }
+
             $.ajax({
                 method: 'POST',
                 url: url,
+                data: additional_data,
                 success: ajaxFunctions.submitDefault,
                 beforeSend: function () {
                     !$(this).attr('href') && startLoadingButton(e.currentTarget);

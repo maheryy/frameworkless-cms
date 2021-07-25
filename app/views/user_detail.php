@@ -37,7 +37,7 @@
             <?php else : ?>
                 <button class="btn-success <?= !$can_update ? 'hidden' : '' ?>" data-role="submitDefault">Enregistrer</button>
             <?php endif; ?>
-            <button class="btn-danger <?= !$can_delete ? 'hidden' : '' ?>" data-url="<?= $url_delete ?>" data-role="deleteItem">Supprimer</button>
+            <button class="btn-danger <?= !$can_delete ? 'hidden' : '' ?>" data-url="<?= $url_delete ?>" data-role="actionItem">Supprimer</button>
         </div>
     </form>
 </div>

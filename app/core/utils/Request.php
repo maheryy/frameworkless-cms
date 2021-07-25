@@ -251,7 +251,7 @@ class Request
      * @param int $source $_COOKIE|$_POST|$_GET|$_REQUEST
      * @return array
      */
-    public function all(array $source)
+    private function all(array $source)
     {
         $res = [];
         foreach ($source as $key => $value) {

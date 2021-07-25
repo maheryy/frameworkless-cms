@@ -21,7 +21,7 @@
                 <td><?= $user['role_name'] ?></td>
                 <?php if ($can_delete) : ?>
                     <td>
-                        <a href="<?= $user['url_delete'] ?>" data-role="deleteItem">
+                        <a href="<?= $user['url_delete'] ?>" data-role="actionItem">
                             <i class="fas fa-trash-alt"></i>
                         </a>
                     </td>

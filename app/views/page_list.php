@@ -30,7 +30,7 @@
                 <td><?= $page['created_at'] ?></td>
                 <?php if ($can_delete) : ?>
                     <td>
-                        <a href="<?= $page['url_delete'] ?>" data-role="deleteItem">
+                        <a href="<?= $page['url_delete'] ?>" data-role="actionItem">
                             <i class="fas fa-trash-alt"></i>
                         </a>
                     </td>

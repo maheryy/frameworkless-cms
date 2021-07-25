@@ -298,3 +298,22 @@
 /unsubscribe:
   controller: Newsletter
   method: unsubscribeView
+
+
+# Reviews
+
+/reviews:
+  controller: Review
+  method: listView
+  title: Les avis
+  display_back_office: True
+  require_auth: True
+
+/delete-review:
+  controller: Review
+  method: deleteAction
+  require_auth: True
+/review-action:
+  controller: Review
+  method: reviewAction
+  require_auth: True

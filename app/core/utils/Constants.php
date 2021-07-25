@@ -89,7 +89,7 @@ class Constants
     # Review statuses
     const REVIEW_PENDING = 0;
     const REVIEW_VALID = 1;
-    const REVIEW_INVALID = -1;
+    const REVIEW_INVALID = 2;
 
     # Validation message
     const ERROR_UNKNOWN = 'Une erreur est survenue';
@@ -103,6 +103,15 @@ class Constants
         return [
             self::STATUS_DRAFT => 'Brouillon',
             self::STATUS_PUBLISHED => 'Publié',
+        ];
+    }
+
+    public static function getReviewStatuses()
+    {
+        return [
+            self::REVIEW_PENDING => 'En attente d\'approbation',
+            self::REVIEW_VALID => 'Approuvé',
+            self::REVIEW_INVALID => 'Inapproprié',
         ];
     }
 
