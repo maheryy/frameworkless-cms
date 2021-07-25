@@ -3,6 +3,8 @@
 namespace App\Controllers;
 
 use App\Core\Controller;
+use App\Core\Utils\Constants;
+use App\Core\Utils\Formatter;
 use App\Core\Utils\UrlBuilder;
 
 class Home extends Controller
@@ -14,22 +16,42 @@ class Home extends Controller
 
     public function dashboardView()
     {
-        # Quick monitoring
         $view_data = [
-            'pages' => count($this->repository->post->findAll()),
-            'users' => count($this->repository->user->findAll()),
-            'roles' => count($this->repository->role->findAll()),
-            'menus' => count($this->repository->menu->findAll()),
-            'debug' => $this->repository->settings->findAll(),
-            'visitors' => $this->repository->visitor->countTotalUniqueVisitors(),
+            'user_pages' => $this->getUserPublishedPages(),
+            'traffic' => $this->getTraffic(),
+            'popular_pages' => $this->getPopularPages(),
+            'latest_pages' => $this->getLatestPublishedPages(),
+            'quick_links' => $this->getQuickLinks(),
+            'can_edit_page' => $this->hasPermission(Constants::PERM_UPDATE_PAGE),
+            'username' => $this->repository->user->find($this->session->getUserId())['username'],
+            'count_visitors' => $this->repository->visitor->countTotalUniqueVisitors(),
+            'count_pages' => $this->getTotalPages(),
+            'link_all_pages' => UrlBuilder::makeUrl('Page', 'listView')
         ];
         $this->render('dashboard', $view_data);
     }
 
 
+    private function getTotalPages()
+    {
+        $pages = $this->repository->post->findAllPages();
+        $published = $draft = $total = 0;
+        foreach ($pages as $page) {
+            if ($page['status'] == Constants::STATUS_PUBLISHED) $published++;
+            elseif ($page['status'] == Constants::STATUS_DRAFT) $draft++;
+            $total++;
+        }
+
+        return [
+            'total' => $total,
+            'published' => $published,
+            'draft' => $draft,
+        ];
+    }
+
     private function getUserPublishedPages()
     {
-        $pages = $this->repository->post->findPublishedPagesByAuthor($this->session->getUserId());
+        $pages = $this->repository->post->findPublishedPagesByAuthor($this->session->getUserId(), 5);
         $res = [];
         foreach ($pages as $key => $page) {
             $res[$key]['title'] = $page['title'];
@@ -39,9 +61,28 @@ class Home extends Controller
         return $res;
     }
 
+    private function getLatestPublishedPages()
+    {
+        $pages = $this->repository->post->findPublishedPagesWithUser(5);
+        $res = [];
+        foreach ($pages as $key => $page) {
+            $res[$key]['author'] = $page['author'];
+            $res[$key]['title'] = $page['title'];
+            $res[$key]['link_edit'] = UrlBuilder::makeUrl('Page', 'pageView', ['id' => $page['id']]);
+            $res[$key]['link'] = $page['slug'];
+        }
+        return $res;
+    }
+
     private function getTraffic()
     {
-        $res = $this->repository->visitor->findUniqueVisitorsPerDay(date('Y-m-d', strtotime('-5 days')));
+        $visitors = $this->repository->visitor->findUniqueVisitorsPerDay(date('Y-m-d', strtotime('-5 days')));
+
+        $res = [];
+        foreach ($visitors as $item) {
+            $res['x_axis'][] = Formatter::getDateTime($item['date'], Formatter::DATE_DISPLAY_FORMAT);
+            $res['y_axis'][] = (int)$item['count'];
+        }
         return $res;
     }
 
@@ -55,24 +96,24 @@ class Home extends Controller
     {
         return [
             [
+                'label' => 'Voir mon site',
                 'icon' => '',
-                'label' => 'Ajouter une page',
-                'link' => '#',
+                'link' => '/',
             ],
             [
-                'icon' => '',
-                'label' => 'Ajouter un menu',
-                'link' => '#',
-            ],
-            [
-                'icon' => '',
                 'label' => 'Personnaliser mon site',
-                'link' => '#',
+                'icon' => '',
+                'link' => UrlBuilder::makeUrl('Appearance', 'customizationView'),
             ],
             [
+                'label' => 'Ajouter une page',
                 'icon' => '',
-                'label' => '',
-                'link' => '#',
+                'link' => UrlBuilder::makeUrl('Page', 'createView'),
+            ],
+            [
+                'label' => 'Ajouter un menu',
+                'icon' => '',
+                'link' => UrlBuilder::makeUrl('Appearance', 'menuView'),
             ],
         ];
     }

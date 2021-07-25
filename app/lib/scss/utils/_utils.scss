@@ -16,8 +16,25 @@ li {
   border-bottom: 1px solid #dcdcde;
 }
 
+.border-top-default {
+  border-top: 1px solid #dcdcde;
+}
+
+.form-collapse {
+  border-collapse: collapse;
+}
+
 .hidden {
   display: none;
+}
+
+.link-default {
+  text-decoration: none;
+  color : #0a68c2;
+
+  &:visited {
+    color : #0a68c2;
+  }
 }
 
 /* Text */
