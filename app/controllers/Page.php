@@ -88,7 +88,6 @@ class Page extends Controller
                 'post_id' => $page_id,
                 'slug' => $slug,
                 'visibility' => $this->request->post('visibility'),
-                'allow_comments' => $this->request->post('allow_comments') ? 1 : 0,
                 'meta_title' => $this->request->post('meta_title') ?? $this->request->post('title'),
                 'meta_description' => $this->request->post('meta_description'),
                 'meta_indexable' => $this->request->post('display_search_engine') ? 1 : 0,
@@ -170,7 +169,6 @@ class Page extends Controller
                 'slug' => $slug,
                 'meta_title' => $this->request->post('meta_title'),
                 'meta_description' => $this->request->post('meta_description'),
-                'allow_comments' => $this->request->post('allow_comments') ? 1 : 0,
                 'meta_indexable' => $this->request->post('display_search_engine') ? 1 : 0,
                 'visibility' => $this->request->post('visibility'),
             ];
@@ -180,7 +178,9 @@ class Page extends Controller
             $this->repository->pageExtra->update($this->request->get('id'), $page_fields);
             Database::commit();
 
-            $this->sendSuccess(Constants::SUCCESS_SAVED);
+            $this->sendSuccess(Constants::SUCCESS_SAVED, [
+                'url_next' => UrlBuilder::makeUrl('Page', 'listView')
+            ]);
         } catch (\Exception $e) {
             Database::rollback();
             $this->sendError(Constants::ERROR_UNKNOWN, [$e->getMessage()]);

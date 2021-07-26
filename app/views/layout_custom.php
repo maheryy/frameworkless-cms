@@ -116,10 +116,6 @@
                 </div>
             </div>
         </article>
-        <article class="card custom-main rounded mb-1">
-            <h3 class="font-normal mb-1">Contenu principale</h3>
-            CONTENT
-        </article>
         <div class="form-action">
             <button class="btn-primary <?= !$can_update ? 'hidden' : '' ?>" data-role="submitPermissions">Enregistrer</button>
         </div>

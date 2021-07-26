@@ -10,7 +10,6 @@ class PageExtra extends Model
     protected $post_id;
     protected $slug;
     protected $visibility;
-    protected $allow_comments;
     protected $meta_title;
     protected $meta_description;
     protected $meta_indexable;
@@ -78,22 +77,6 @@ class PageExtra extends Model
     public function getVisibility()
     {
         return $this->visibility;
-    }
-
-    /**
-     * @param mixed $allow_comments
-     */
-    public function setAllowComments($allow_comments): void
-    {
-        $this->allow_comments = $allow_comments;
-    }
-
-    /**
-     * @return mixed
-     */
-    public function getAllowComments()
-    {
-        return $this->allow_comments;
     }
 
     /**

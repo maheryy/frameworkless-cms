@@ -65,7 +65,7 @@ abstract class BaseRepository
         if (!is_callable($callable)) {
             throw new NotFoundException('Seed data does not exist for ' . $this->model->getModelName());
         }
-        $this->model->truncate();
+//        $this->model->truncate();
         return $this->create(call_user_func($callable));
     }
 }

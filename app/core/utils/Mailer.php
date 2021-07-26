@@ -59,7 +59,7 @@ class Mailer
             if (empty($data['content']))
                 throw new Exception($mailer->ErrorInfo = 'Le corps du message ne peut pas être vide.');
 
-            $mailer->setFrom('from@example.com', 'Mailer');
+            $mailer->setFrom('from@example.com', 'Munkee');
             $mailer->Subject = $data['subject'];
             $mailer->Body = $data['content'];
 

@@ -243,19 +243,6 @@ class Website extends Controller
                 'date' => date('Y-m-d'),
             ]);
 
-            # Send confirmation email to the reviewer
-//            $mail = Mailer::send([
-//                'to' => $email,
-//                'subject' => 'Confirmation de votre inscription à notre newsletter',
-//                'content' => View::getHtml('email/newsletter_confirmation', [
-//                    'message' => nl2br("Votre inscription a bien été pris en compte."),
-//                    'unsubscribe_link' => 'http://' . $_SERVER['HTTP_HOST'] . '/admin/unsubscribe?subscriber=' . $subscriber_id,
-//                ]),
-//            ]);
-//
-//            if (!$mail['success']) {
-//                throw new \Exception($mail['message']);
-//            }
 
             Database::commit();
         } catch (\Exception $e) {
@@ -263,7 +250,7 @@ class Website extends Controller
             return ['success' => false, 'message' => "Une erreur est survenue : " . $e->getMessage()];
         }
 
-        return ['success' => true, 'message' => 'Votre avis a bien été pris en compte'];
+        return ['success' => true, 'message' => 'Merci pour votre avis !', 'url_next' => '/', 'url_next_delay' => 1];
     }
 
     private function getLayoutData()

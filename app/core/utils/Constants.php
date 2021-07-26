@@ -147,7 +147,7 @@ class Constants
         return [
             'facebook' => [
                 'label' => 'Facebook',
-                'icon' => 'fab fa-facebook blue',
+                'icon' => 'fab fa-facebook',
             ],
             'instagram' => [
                 'label' => 'Instagram',
