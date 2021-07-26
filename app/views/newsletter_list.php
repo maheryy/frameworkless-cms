@@ -19,7 +19,7 @@
                         <button class="btn-success" data-role="submitPermissions"
                                 data-options='<?= json_encode(['add_data' => ['send_all' => true]]) ?>'>Envoyer à tous
                         </button>
-                        <button class="btn-primary" data-role="submitPermissions">Envoyer au sélectionné</button>
+                        <button class="btn-primary" data-role="submitPermissions">Envoyer à la sélection</button>
                     </div>
                 </div>
                 <div class="col2 w-3/5 p-1">
@@ -50,7 +50,7 @@
             <tr>
                 <th>Sujet</th>
                 <th>Statut</th>
-                <th>Créé le</th>
+                <th>Créée le</th>
                 <?php if ($can_read) : ?>
                     <th></th>
                 <?php endif; ?>

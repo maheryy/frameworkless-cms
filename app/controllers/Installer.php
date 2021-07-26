@@ -61,13 +61,13 @@ class Installer extends Controller
         $step = $this->request->get('step') ?? 1;
 
         if ($step == 2) {
-            $view = 'installer_register';
+            $view = 'installer_install';
             if (!ConstantManager::isConfigLoaded()) {
                 $this->router->redirect(UrlBuilder::makeUrl('Installer', 'installerView', ['step' => 1]));
             }
             $this->setParam('url_form', UrlBuilder::makeUrl('Installer', 'registerAction'));
         } else {
-            $view = 'installer_db';
+            $view = 'installer_database';
             if (ConstantManager::isConfigLoaded()) {
                 $this->setParam('config', [
                     'db_host' => DB_HOST,

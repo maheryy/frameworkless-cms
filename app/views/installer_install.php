@@ -1,10 +1,10 @@
-<main id="installer-content">
-    <section class="installer-container">
-        <h3 class="text-center">Bienvenue sur Munkee</h3>
+<main class="flex items-center" style="width: 100%; height: 100vh">
+    <section class="w-6/12 m-auto card rounded" style=" background-color: #fbfbfb">
+        <h3 class="font-light text-2xl text-center">Une dernière chose...</h3>
         <article id="info-box" class="info-primary center">
             <span id="info-description"></span>
         </article>
-        <form class="form-default" method="POST" action="<?= $url_form ?>">
+        <form class="m-auto flex flex-col px-4 py-2 w-11/12" method="POST" action="<?= $url_form ?>">
             <div class="form-field required">
                 <input type="text" class="form-control" id="website_title" name="website_title">
                 <label for="website_title">Titre du site</label>
@@ -29,8 +29,8 @@
                 <input type="email" class="form-control" id="email_contact" name="email_contact">
                 <label for="email_contact">Adresse de contact</label>
             </div>
-            <div class="form-action center btn">
-                <button class="btn-success" data-role="submitDefault">Valider</button>
+            <div class="form-action right pt-2">
+                <button class="btn-success text-base" data-role="submitDefault">Installer et terminer</button>
             </div>
         </form>
     </section>

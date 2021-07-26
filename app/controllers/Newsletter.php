@@ -143,9 +143,8 @@ class Newsletter extends Controller
     # /send-newsletter
     public function sendNewsletterAction()
     {
-
-        $newsletter = $this->repository->post->findNewsletter($this->request->post('newsletter'));
-        if (!$newsletter) $this->sendError(Constants::ERROR_UNKNOWN);
+        $newsletter = $this->repository->post->findNewsletter((int)$this->request->post('newsletter'));
+        if (!$newsletter) $this->sendError('La newsletter n\'est pas trouvé');
 
         if ($this->request->post('send_all')) {
             $subscribers = $this->repository->subscriber->findAll();
