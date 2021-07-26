@@ -43,7 +43,11 @@ class ConstantManager
         include self::$conf_path;
 
         # Constants in .env.
-        self::parseEnvFile(self::$env_path);
+        try {
+            self::parseEnvFile(self::$env_path);
+        } catch (\Exception $e) {
+            die('Failed to load constants : ' . $e->getMessage());
+        }
     }
 
     private static function parseEnvFile(string $path, bool $required = false)
