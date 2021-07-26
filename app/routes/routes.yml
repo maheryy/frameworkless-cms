@@ -295,13 +295,24 @@
   method: deleteAction
   require_auth: True
 
+/send-newsletter:
+  controller: Newsletter
+  method: sendNewsletterView
+  title: Newsletter
+  require_auth: True
+  display_back_office: True
+
+/send-newsletter-send:
+  controller: Newsletter
+  method: sendNewsletterAction
+  require_auth: True
+
 /unsubscribe:
   controller: Newsletter
   method: unsubscribeView
 
 
 # Reviews
-
 /reviews:
   controller: Review
   method: listView

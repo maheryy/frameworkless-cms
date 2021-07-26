@@ -42,10 +42,6 @@
                             </select>
                             <label for="visibility">Visibilité</label>
                         </div>
-                        <div class="form-field-inline">
-                            <input type="checkbox" class="form-control-check" name="allow_comments" id="allow_comments">
-                            <label for="allow_comments">Autoriser les commentaires</label>
-                        </div>
                     </article>
                 </div>
                 <div class="col-6">

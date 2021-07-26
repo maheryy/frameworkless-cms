@@ -23,7 +23,7 @@ class Page extends Controller
     public function listView()
     {
         $pages = $this->repository->post->findAllPages();
-        $statuses = Constants::getPostStatuses();
+        $statuses = Constants::getPageStatuses();
         foreach ($pages as $key => $page) {
             $pages[$key]['url_detail'] = UrlBuilder::makeUrl('Page', 'pageView', ['id' => $page['id']]);
             $pages[$key]['url_delete'] = UrlBuilder::makeUrl('Page', 'deleteAction', ['id' => $page['id']]);
@@ -76,7 +76,7 @@ class Page extends Controller
 
             Database::beginTransaction();
             $page_id = $this->repository->post->create([
-                'author_id' => $this->session->getUserId(),
+                'author_id' => $this->request->post('author'),
                 'title' => $this->request->post('title'),
                 'content' => $_POST['post_content'],
                 'type' => Constants::POST_TYPE_PAGE,
@@ -96,7 +96,7 @@ class Page extends Controller
 
             Database::commit();
             $this->sendSuccess('Page créée', [
-                'url_next' => UrlBuilder::makeUrl('Page', 'pageView', ['id' => $page_id])
+                'url_next' => UrlBuilder::makeUrl('Page', 'listView')
             ]);
         } catch (\Exception $e) {
             Database::rollback();

@@ -25,7 +25,7 @@ class LayoutManager
         return [
             'dashboard' => [
                 'label' => 'Tableau de bord',
-                'icon' => 'fas fa-columns',
+                'icon' => 'fas fa-home',
                 'route' => UrlBuilder::getUrl('dashboard'),
             ],
             'page' => [
@@ -43,6 +43,33 @@ class LayoutManager
                         'route' => UrlBuilder::getUrl('new-page'),
                         'is_visible' => $this->hasPermission(Constants::PERM_CREATE_PAGE)
                     ]
+                ]
+            ],
+            'newsletter' => [
+                'label' => 'Newsletter',
+                'icon' => 'fas fa-newspaper',
+                'route' => UrlBuilder::getUrl('newsletters'),
+                'sublinks' => [
+                    'list_newsletter' => [
+                        'label' => 'Liste newsletter',
+                        'route' => UrlBuilder::getUrl('newsletters'),
+                        'is_visible' => true
+                    ],
+                    'new_newsletter' => [
+                        'label' => 'Ajouter newsletter',
+                        'route' => UrlBuilder::getUrl('new-newsletter'),
+                        'is_visible' => true
+                    ],
+                    'send_newsletter' => [
+                        'label' => 'Envoyer newsletter',
+                        'route' => UrlBuilder::getUrl('send-newsletter'),
+                        'is_visible' => true,
+                    ],
+//                    'list_subscriber' => [
+//                        'label' => 'Abonnés',
+//                        'route' => UrlBuilder::getUrl('pages'),
+//                        'is_visible' => true,
+//                    ]
                 ]
             ],
             'reviews' => [
