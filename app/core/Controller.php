@@ -73,7 +73,8 @@ abstract class Controller
         if (!empty($this->view_data)) {
             $data = array_merge($this->view_data, $data);
         }
-        return new View($view, $this->template, $data);
+        new View($view, $this->template, $data);
+        exit;
     }
 
     /**
@@ -87,7 +88,8 @@ abstract class Controller
         if (!empty($this->view_data)) {
             $data = !empty($data) ? array_merge($this->view_data, $data) : $this->view_data;
         }
-        return new View($view, null, $data);
+        new View($view, null, $data);
+        exit;
     }
 
     /**

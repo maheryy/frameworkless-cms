@@ -161,7 +161,7 @@ abstract class Model
      */
     public function insertQuery(array $data)
     {
-        if(empty($data)) return false;
+        if (empty($data)) return false;
 
         # Check if there is multiple insertion
         if (is_int(array_key_first($data))) {
@@ -201,7 +201,7 @@ abstract class Model
         $update_fields = $clauses = [];
         $params = $fields;
 
-        if(empty($fields)) return false;
+        if (empty($fields)) return false;
 
         foreach ($fields as $column => $value) {
             $update_fields[] = $column . " = :" . $column;
@@ -351,5 +351,27 @@ abstract class Model
         }
 
         return $res;
+    }
+
+    /**
+     * Get all existing tables from database
+     */
+    public static function getAllTables()
+    {
+        return [
+            'validation_token',
+            'page_extra',
+            'menu_item',
+            'post',
+            'role_permission',
+            'permission',
+            'user',
+            'role',
+            'menu',
+            'settings',
+            'visitor',
+            'subscriber',
+            'review',
+        ];
     }
 }

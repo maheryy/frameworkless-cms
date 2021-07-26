@@ -30,6 +30,10 @@
   controller: Installer
   method: registerAction
 
+/installer-drop-all:
+  controller: Installer
+  method: dropAllAction
+
 # Authentication
 /login:
   controller: Auth
