@@ -267,7 +267,7 @@ class Auth extends Controller
             $this->repository->user->update($validation_token['user_id'], ['status' => Constants::STATUS_ACTIVE]);
         }
 
-        $view_data['url_login'] = UrlBuilder::makeUrl('User', 'loginView');
+        $view_data['url_login'] = UrlBuilder::makeUrl('Auth', 'loginView');
         $this->render('account_confirm', $view_data);
     }
 

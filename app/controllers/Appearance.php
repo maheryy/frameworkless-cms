@@ -22,7 +22,7 @@ class Appearance extends Controller
 
         $menus = $this->repository->menu->findAll();
         $default_menu_id = $this->request->get('id') ?? $menus[0]['id'] ?? -1;
-        $menu_items = $this->repository->menuItem->findMenuItems($default_menu_id);
+        $menu_items = $this->repository->menuItem->findMenuItems((int)$default_menu_id);
         $is_empty_table = empty($menu_items);
         $menu_data = !$is_empty_table ? ($menu_items[0] ?? null) : null;
 
@@ -160,7 +160,7 @@ class Appearance extends Controller
         if (!$this->request->get('id')) {
             $this->sendError(Constants::ERROR_UNKNOWN);
         }
-        $this->repository->menu->remove($this->request->get('id'));
+        $this->repository->menu->remove((int)$this->request->get('id'));
         $this->sendSuccess('Menu supprimé', [
             'url_next' => UrlBuilder::makeUrl('Appearance', 'menuView'),
             'url_next_delay' => Constants::DELAY_SUCCESS_REDIRECTION

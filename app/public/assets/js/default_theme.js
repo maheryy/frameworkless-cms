@@ -29,6 +29,16 @@ const INFO_DATA = [
     },
 ];
 
+function redirect(url, delay = null) {
+    if (!delay) {
+        window.location.href = url;
+        return;
+    }
+    setTimeout(function () {
+        window.location.href = url;
+    }, delay * 1000);
+}
+
 function setInfo(parent, type, text, delay = null) {
     $(parent).attr('class', INFO_DATA[type].class + ' active info-box');
     $(parent).find('.info-description').html(text);
@@ -93,6 +103,9 @@ function setFormActions(inputElement) {
             success: function (res) {
                 if (res.success) {
                     setInfo($(form).find('.info-box'), INFO_SUCCESS, res.message, 2);
+                    if (res.url_next) {
+                        redirect(res.url_next, res.url_next_delay ?? null);
+                    }
                 } else {
                     setInfo($(form).find('.info-box'), INFO_DANGER, res.message, 2);
                 }

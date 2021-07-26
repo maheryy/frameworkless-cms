@@ -88,7 +88,6 @@ class Page extends Controller
                 'post_id' => $page_id,
                 'slug' => $slug,
                 'visibility' => $this->request->post('visibility'),
-                'allow_comments' => $this->request->post('allow_comments') ? 1 : 0,
                 'meta_title' => $this->request->post('meta_title') ?? $this->request->post('title'),
                 'meta_description' => $this->request->post('meta_description'),
                 'meta_indexable' => $this->request->post('display_search_engine') ? 1 : 0,
@@ -108,9 +107,9 @@ class Page extends Controller
     public function pageView()
     {
         if (!$this->request->get('id')) {
-            throw new \Exception('Cette page n\'existe pas');
+            throw new NotFoundException('Cette page n\'existe pas');
         }
-        $page = $this->repository->post->findPage($this->request->get('id'));
+        $page = $this->repository->post->findPage((int)$this->request->get('id'));
         if (!$page) {
             throw new NotFoundException('Cette page n\'est pas trouvé');
         }
@@ -153,7 +152,7 @@ class Page extends Controller
             $slug = Formatter::slugify($this->request->post('slug') ?? $this->request->post('title'));
 
             # Check for duplicate
-            if ($found = $this->repository->post->findPageByTitleOrSlug($post_fields['title'], $slug, $this->request->get('id'))) {
+            if ($found = $this->repository->post->findPageByTitleOrSlug($post_fields['title'], $slug, (int)$this->request->get('id'))) {
                 $this->sendError('le ' . ($found['slug'] === $slug ? 'slug "' . $slug . '"' : 'titre "' . $post_fields['title'] . '"') . ' existe déjà');
             }
 
@@ -170,17 +169,18 @@ class Page extends Controller
                 'slug' => $slug,
                 'meta_title' => $this->request->post('meta_title'),
                 'meta_description' => $this->request->post('meta_description'),
-                'allow_comments' => $this->request->post('allow_comments') ? 1 : 0,
                 'meta_indexable' => $this->request->post('display_search_engine') ? 1 : 0,
                 'visibility' => $this->request->post('visibility'),
             ];
 
             Database::beginTransaction();
-            $this->repository->post->update($this->request->get('id'), $post_fields);
-            $this->repository->pageExtra->update($this->request->get('id'), $page_fields);
+            $this->repository->post->update((int)$this->request->get('id'), $post_fields);
+            $this->repository->pageExtra->update((int)$this->request->get('id'), $page_fields);
             Database::commit();
 
-            $this->sendSuccess(Constants::SUCCESS_SAVED);
+            $this->sendSuccess(Constants::SUCCESS_SAVED, [
+                'url_next' => UrlBuilder::makeUrl('Page', 'listView')
+            ]);
         } catch (\Exception $e) {
             Database::rollback();
             $this->sendError(Constants::ERROR_UNKNOWN, [$e->getMessage()]);
@@ -193,7 +193,7 @@ class Page extends Controller
         if (!$this->request->get('id')) {
             $this->sendError(Constants::ERROR_UNKNOWN);
         }
-        $this->repository->post->remove($this->request->get('id'));
+        $this->repository->post->remove((int)$this->request->get('id'));
         $this->sendSuccess('Page supprimée', [
             'url_next' => UrlBuilder::makeUrl('Page', 'listView'),
             'url_next_delay' => Constants::DELAY_SUCCESS_REDIRECTION

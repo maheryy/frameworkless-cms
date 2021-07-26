@@ -8,7 +8,7 @@
             <th>Titre</th>
             <th>Auteur</th>
             <th>Statut</th>
-            <th>Créé le</th>
+            <th>Créée le</th>
             <th></th>
             <?php if ($can_read) : ?>
                 <th></th>

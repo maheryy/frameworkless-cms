@@ -558,6 +558,7 @@ const roleFunctions = {
             $.ajax({
                 method: 'POST',
                 url: url,
+                headers: $('meta[name="csrf-token"]').length ? {'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')} : null,
                 data: additional_data,
                 success: ajaxFunctions.submitDefault,
                 beforeSend: function () {

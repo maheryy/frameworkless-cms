@@ -4,6 +4,8 @@ namespace App\Controllers;
 
 use App\Core\Controller;
 use App\Core\Database;
+use App\Core\Exceptions\ForbiddenAccessException;
+use App\Core\Model;
 use App\Core\Router;
 use App\Core\Utils\Formatter;
 use App\Core\Utils\Mailer;
@@ -13,6 +15,7 @@ use App\Core\Utils\FormRegistry;
 use App\Core\Utils\Repository;
 use App\Core\Utils\Request;
 use App\Core\Utils\Seeder;
+use App\Core\Utils\Session;
 use App\Core\Utils\Token;
 use App\Core\Utils\UrlBuilder;
 use App\Core\Utils\Validator;
@@ -24,17 +27,32 @@ class Installer extends Controller
 
     public function __construct(array $options = [])
     {
-        //parent::__construct($options);
         $this->router = Router::getInstance();
         $this->request = new Request();
         $this->repository = new Repository();
         $this->setTemplate('default');
 
         # Redirect to app reset when everything is setup
-        //if (Database::isReady()) {
-        //    $this->installerResetView();
-        //}
+        if (!Request::isPost() && Database::isReady()) {
+            $this->installerResetView();
+        }
 
+    }
+
+
+    public function installerResetView()
+    {
+        $session = new Session(true);
+        $session->init();
+        if (!$session->isLoggedIn() || !$session->isSuperAdmin()) {
+            throw new ForbiddenAccessException(Constants::ERROR_FORBIDDEN);
+        }
+
+        $this->setParam('csrf_token', $session->getCSRFToken());
+        $this->setParam('url_drop', UrlBuilder::makeUrl('Installer', 'dropAllAction'));
+        $this->setParam('url_back', UrlBuilder::makeUrl('Home', 'dashboardView'));
+
+        $this->render('installer_reset');
     }
 
     # /installer
@@ -43,17 +61,13 @@ class Installer extends Controller
         $step = $this->request->get('step') ?? 1;
 
         if ($step == 2) {
-            $view = 'installer_register';
-
-            if (!Database::isReady()) {
+            $view = 'installer_install';
+            if (!ConstantManager::isConfigLoaded()) {
                 $this->router->redirect(UrlBuilder::makeUrl('Installer', 'installerView', ['step' => 1]));
             }
             $this->setParam('url_form', UrlBuilder::makeUrl('Installer', 'registerAction'));
-
-
         } else {
-            $view = 'installer_db';
-
+            $view = 'installer_database';
             if (ConstantManager::isConfigLoaded()) {
                 $this->setParam('config', [
                     'db_host' => DB_HOST,
@@ -72,12 +86,6 @@ class Installer extends Controller
         }
 
         $this->render($view);
-    }
-
-    public function installerResetView()
-    {
-        throw new Exception('Already installed');
-        $this->render('installer_reset');
     }
 
     # /installer-register-save
@@ -101,13 +109,21 @@ class Installer extends Controller
             $form_data['password'] = password_hash($form_data['password'], PASSWORD_DEFAULT);
 
             Database::beginTransaction();
+
+            # Create tables
+            $sql = preg_replace("/{PREFIX[0-9]*}/", DB_PREFIX, file_get_contents(PATH_SQL_DUMP));
+            Database::execute($sql);
+
+            # Load seeders
             $this->loadSeeders();
+            # Set main settings
             $this->repository->settings->updateSettings([
                 Constants::STG_TITLE => $form_data['website_title'],
                 Constants::STG_EMAIL_ADMIN => $form_data['email'],
                 Constants::STG_EMAIL_CONTACT => $form_data['email_contact'],
             ]);
 
+            # Create user
             $user_id = $this->repository->user->create([
                 'username' => $form_data['username'],
                 'email' => $form_data['email'],
@@ -136,7 +152,7 @@ class Installer extends Controller
                 'subject' => 'Confirmation de votre compte',
                 'content' => View::getHtml('email/confirmation_email', [
                     'email' => $form_data['email'],
-                    'link_confirm' => UrlBuilder::makeAbsoluteUrl('User', 'confirmAccountView', [
+                    'link_confirm' => UrlBuilder::makeAbsoluteUrl('Auth', 'confirmAccountView', [
                         'ref' => $token_reference->get(),
                         'token' => $token->getEncoded()
                     ]),
@@ -178,7 +194,7 @@ class Installer extends Controller
         }
 
         try {
-            $pdo = Database::connect($data['db_host'], $data['db_name'], $data['db_user'], $data['db_password']);
+            Database::connect($data['db_host'], $data['db_name'], $data['db_user'], $data['db_password']);
 
             if (!Mailer::connect($data['smtp_host'], 587, $data['smtp_user'], $data['smtp_password'])) {
                 $this->sendError('Impossible de se connecter au serveur SMTP');
@@ -187,34 +203,18 @@ class Installer extends Controller
                 $this->sendSuccess('Connexion réussie !');
             }
 
-            try {
-                $sql = preg_replace("/{PREFIX[0-9]*}/", $data['db_prefix'], file_get_contents(PATH_SQL_DUMP));
-                $pdo->prepare($sql)->execute();
+            $data['app_debug'] = 1;
+            $data['app_dev'] = 1;
 
-                $data['app_debug'] = 1;
-                $data['app_dev'] = 1;
-
-                self::generateConfig($data);
-                $this->sendSuccess('La base de donnéees est prête', [
-                    'url_next' => UrlBuilder::makeUrl('Installer', 'installerView', ['step' => 2]),
-                    'url_next_delay' => Constants::DELAY_SUCCESS_REDIRECTION
-                ]);
-            } catch (Exception $e) {
-                $this->sendError(Constants::ERROR_UNKNOWN, [$e->getMessage()]);
-            }
+            self::generateConfig($data);
+            $this->sendSuccess('La base de donnéees est prête', [
+                'url_next' => UrlBuilder::makeUrl('Installer', 'installerView', ['step' => 2]),
+                'url_next_delay' => Constants::DELAY_SUCCESS_REDIRECTION
+            ]);
         } catch (Exception $e) {
-            $this->sendError('Veuillez vérifier les informations de connexion à la base de donnée');
+            $this->sendError('Veuillez vérifier les informations de connexion à la base de données');
         }
 
-    }
-
-    # /seed
-    public function loadSeeders()
-    {
-        $seeders = Seeder::getAvailableSeeders();
-        foreach ($seeders as $seeder) {
-            $this->repository->{$seeder}->runSeed();
-        }
     }
 
     public static function generateConfig(array $data)
@@ -236,5 +236,41 @@ SMTP_PASSWORD={$data['smtp_password']}
 CONF;
 
         file_put_contents(ConstantManager::$env_path, $content, LOCK_EX);
+    }
+
+    # /seed
+    public function loadSeeders()
+    {
+        $seeders = Seeder::getAvailableSeeders();
+        foreach ($seeders as $seeder) {
+            $this->repository->{$seeder}->runSeed();
+        }
+    }
+
+    # /installer-drop-all
+    public function dropAllAction()
+    {
+        $this->session = new Session();
+        if (!$this->session->isLoggedIn() || !$this->session->isSuperAdmin()) $this->sendError(Constants::ERROR_FORBIDDEN);
+        $this->validateCSRF();
+
+        $tables = Model::getAllTables();
+        try {
+            foreach ($tables as $table) {
+                Database::execute('DROP TABLE IF EXISTS ' . Formatter::getTableName($table));
+            }
+
+            if ($this->request->getCookie(session_name())) {
+                $this->request->deleteCookie(session_name());
+                $this->session->stop();
+            }
+
+            $this->sendSuccess('Base de données réinitialisé !', [
+                'url_next' => UrlBuilder::makeUrl('Installer', 'installerView'),
+                'url_next_delay' => Constants::DELAY_SUCCESS_REDIRECTION,
+            ]);
+        } catch (\Exception $e) {
+            $this->sendError(Constants::ERROR_UNKNOWN);
+        }
     }
 }

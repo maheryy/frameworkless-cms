@@ -24,7 +24,7 @@ class Error extends Controller
     public function displayErrorDefault(Exception $error)
     {
         $view_data = [
-            'error_title' => 'Error',
+            'error_title' => 'Unknown error',
             'error_message' => $error->getMessage()
         ];
         $this->render('error_default', $view_data);
@@ -33,7 +33,7 @@ class Error extends Controller
     public function displayErrorNotFound(NotFoundException $error)
     {
         $view_data = [
-            'error_title' => 'Not found',
+            'error_title' => '404 Not found',
         ];
         if ($this->debug) {
             $view_data['error_message'] = $error->getMessageDetails();
@@ -46,7 +46,7 @@ class Error extends Controller
     public function displayErrorNoAccess(ForbiddenAccessException $error)
     {
         $view_data = [
-            'error_title' => 'No access',
+            'error_title' => '403 Forbidden access',
         ];
         if ($this->debug) {
             $view_data['error_message'] = $error->getMessageDetails();
