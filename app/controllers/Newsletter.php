@@ -81,7 +81,7 @@ class Newsletter extends Controller
     public function newsletterView()
     {
         if (!$this->request->get('id')) {
-            throw new \Exception('Cette newsletter n\'existe pas');
+            throw new NotFoundException('Cette newsletter n\'existe pas');
         }
 
         if ((!$newsletter = $this->repository->post->find($this->request->get('id')))) {

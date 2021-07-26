@@ -10,9 +10,6 @@
             <li class="tab-item">
                 <button class="tab-btn <?= $active_tab === 2 ? 'active' : '' ?>" data-id="2">Messagerie</button>
             </li>
-<!--            <li class="tab-item">-->
-<!--                <button class="tab-btn --><?//= $active_tab === 3 ? 'active' : '' ?><!--" data-id="3">Page</button>-->
-<!--            </li>-->
         </ul>
         <div id="content-container" class="w-full">
             <article id="content-1" class="tab-content <?= $active_tab === 1 ? 'active' : 'hidden' ?>">
@@ -70,17 +67,6 @@
                     </div>
                 </form>
             </article>
-<!--            <article id="content-3" class="tab-content --><?//= $active_tab === 3 ? 'active' : 'hidden' ?><!--">-->
-<!--                <form id="form-page" class="form-default" method="POST" action="--><?//= $url_form_mail ?><!--">-->
-<!--                    <div class="form-field">-->
-<!--                        <input type="text" class="form-control" id="page_indexable" name="page_indexable">-->
-<!--                        <label for="page_indexable">Serveur de messagerie</label>-->
-<!--                    </div>-->
-<!--                    <div class="form-action">-->
-<!--                        <button class="btn-primary text-base <?= !$can_update ? 'hidden' : '' ?>" data-role="submitDefault">Enregistrer</button>-->
-<!--                    </div>-->
-<!--                </form>-->
-<!--            </article>-->
         </div>
     </article>
 </div>

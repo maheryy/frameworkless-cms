@@ -183,7 +183,7 @@ class User extends Controller
     public function userView()
     {
         if (!$this->request->get('id')) {
-            throw new \Exception('Cet utilisateur n\'existe pas');
+            throw new NotFoundException('Cet utilisateur n\'existe pas');
         }
 
         $is_current_user = $this->request->get('id') == $this->session->getUserId();
@@ -332,7 +332,7 @@ class User extends Controller
                 }
             }
             if (!isset($role_name)) {
-                throw new \Exception("le role $role_id n'existe pas");
+                throw new NotFoundException("le role $role_id n'existe pas");
             }
         } else {
             $role_name = 'Nouveau rôle';

@@ -63,7 +63,7 @@ class Website extends Controller
                 break;
         }
         # Unexpected case
-        if (empty($view)) throw new \Exception("Une erreur est survenue, la page demandée n'est pas disponible");
+        if (empty($view)) $this->handleUnexpectedError('Une erreur est survenue, la page demandée n\'est pas disponible');
 
         $layout = $this->getLayoutData();
         $view['context']['header_menu'] = $layout['header_menu'] ?? [];
@@ -95,22 +95,47 @@ class Website extends Controller
     private function getUserDefinedPage()
     {
         $page = $this->repository->post->findPageBySlug($this->uri);
-        if (!$page) throw new HttpNotFoundException($this->uri);
+        if (!$page) $this->handle404NotFound();
         $hero_data = json_decode($this->getValue(Constants::STG_HERO_DATA), true);
         return [
-            'view' => 'website_default',
+            'view' => $page ? 'website_default' : 'error_404',
             'context' => [
                 'site_title' => $this->getValue(Constants::STG_TITLE),
                 'site_description' => $this->getValue(Constants::STG_DESCRIPTION),
-                'meta_title' => $page['meta_title'],
-                'meta_description' => $page['meta_description'],
-                'is_indexable' => $page['meta_indexable'],
-                'content_title' => $page['title'],
-                'content' => $page['content'],
+                'meta_title' => $page['meta_title'] ?? null,
+                'meta_description' => $page['meta_description'] ?? null,
+                'is_indexable' => $page['meta_indexable'] ?? null,
+                'content_title' => $page['title'] ?? null,
+                'content' => $page['content'] ?? null,
                 'display_hero' => !empty($hero_data) && ($hero_data['status'] == 1 && $this->uri === '/' || $hero_data['status'] == 2),
                 'hero_data' => $hero_data ?? [],
             ]
         ];
+    }
+
+    private function handle404NotFound()
+    {
+        $layout = $this->getLayoutData();
+        $this->render('error_404', [
+            'site_title' => $this->getValue(Constants::STG_TITLE),
+            'is_indexable' => false,
+            'header_menu' => $layout['header_menu'] ?? [],
+            'footer_sections' => $layout['footer_data']['sections'] ?? [],
+            'footer_socials' => $layout['footer_data']['socials'] ?? [],
+        ]);
+    }
+
+    private function handleUnexpectedError(string $error)
+    {
+        $layout = $this->getLayoutData();
+        $this->render('error_default', [
+            'error_message' => $error,
+            'site_title' => $this->getValue(Constants::STG_TITLE),
+            'is_indexable' => false,
+            'header_menu' => $layout['header_menu'] ?? [],
+            'footer_sections' => $layout['footer_data']['sections'] ?? [],
+            'footer_socials' => $layout['footer_data']['socials'] ?? [],
+        ]);
     }
 
     private function getReviewsPage()

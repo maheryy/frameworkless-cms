@@ -107,7 +107,7 @@ class Page extends Controller
     public function pageView()
     {
         if (!$this->request->get('id')) {
-            throw new \Exception('Cette page n\'existe pas');
+            throw new NotFoundException('Cette page n\'existe pas');
         }
         $page = $this->repository->post->findPage($this->request->get('id'));
         if (!$page) {
