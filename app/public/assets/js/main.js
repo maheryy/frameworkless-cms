@@ -601,6 +601,15 @@ const roleFunctions = {
             }
             $('#transferable-target .list-elements').html('');
         });
+    },
+    listCheckAll: function () {
+        const list = $(this);
+        $('#ref_check_all').change(function () {
+            const checked = $(this).is(':checked');
+            $(list).find('li.list-element input').each(function () {
+                $(this).prop('checked', checked);
+            });
+        })
     }
 };
 

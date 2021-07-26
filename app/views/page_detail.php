@@ -51,11 +51,6 @@
                                 <label for="published_at">Publié le</label>
                             </div>
                         <?php endif; ?>
-                        <div class="form-field-inline">
-                            <input type="checkbox" class="form-control-check" name="allow_comments" id="allow_comments"
-                                <?= isset($page['allow_comments']) && $page['allow_comments'] ? 'checked=checked' : ''?>>
-                            <label for="allow_comments">Autoriser les commentaires</label>
-                        </div>
                     </article>
                 </div>
                 <div class="col-6">

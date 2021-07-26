@@ -290,6 +290,11 @@
   method: newsletterAction
   require_auth: True
 
+/send-newsletter:
+  controller: Newsletter
+  method: sendNewsletterAction
+  require_auth: True
+
 /delete-newsletter:
   controller: Newsletter
   method: deleteAction
@@ -301,7 +306,6 @@
 
 
 # Reviews
-
 /reviews:
   controller: Review
   method: listView

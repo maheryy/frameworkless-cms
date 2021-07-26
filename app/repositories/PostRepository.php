@@ -130,6 +130,7 @@ class PostRepository extends BaseRepository
             ->joinLeft($details_table, "$this->table.id = $details_table.post_id")
             ->where(Expr::neq("$this->table.id", $ignore_id))
             ->where(Expr::neq('status', Constants::STATUS_DELETED))
+            ->where(Expr::eq('type', Constants::POST_TYPE_PAGE))
             ->where(
                 Expr::like("$details_table.slug", $slug),
                 Expr::like("$this->table.title", $title)
@@ -137,6 +138,31 @@ class PostRepository extends BaseRepository
 
         return $this->model->fetchOne($this->queryBuilder);
     }
+
+    public function findAllNewsletters()
+    {
+        $user_table = Formatter::getTableName('user');
+        $this->queryBuilder
+            ->select(["$user_table.username AS author", "$this->table.*"])
+            ->joinInner($user_table, "$this->table.author_id = $user_table.id")
+            ->where(Expr::eq("$this->table.type", Constants::POST_TYPE_NEWSLETTER))
+            ->where(Expr::neq("$this->table.status", Constants::STATUS_DELETED))
+            ->orderDesc("$this->table.created_at");
+
+        return $this->model->fetchAll($this->queryBuilder);
+    }
+
+    public function findNewsletterByTitle(string $title, int $ignore_id)
+    {
+        $this->queryBuilder
+            ->where(Expr::like('title', $title))
+            ->where(Expr::neq('id', $ignore_id))
+            ->where(Expr::neq('status', Constants::STATUS_DELETED))
+            ->where(Expr::eq('type', Constants::POST_TYPE_NEWSLETTER));
+
+        return $this->model->fetchOne($this->queryBuilder);
+    }
+
 
     public function updateStatus(int $id, int $status)
     {

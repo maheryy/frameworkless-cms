@@ -8,8 +8,10 @@ use App\Core\Exceptions\NotFoundException;
 use App\Core\Utils\Constants;
 use App\Core\Utils\Formatter;
 use App\Core\Utils\FormRegistry;
+use App\Core\Utils\Mailer;
 use App\Core\Utils\UrlBuilder;
 use App\Core\Utils\Validator;
+use App\Core\View;
 
 class Newsletter extends Controller
 {
@@ -22,18 +24,18 @@ class Newsletter extends Controller
     # /newsletters
     public function listView()
     {
-        $pages = $this->repository->post->findAllPages();
-        $statuses = Constants::getPostStatuses();
-        foreach ($pages as $key => $page) {
-            $pages[$key]['url_detail'] = UrlBuilder::makeUrl('Page', 'pageView', ['id' => $page['id']]);
-            $pages[$key]['url_delete'] = UrlBuilder::makeUrl('Page', 'deleteAction', ['id' => $page['id']]);
-            $pages[$key]['status_label'] = $statuses[$page['status']];
-        }
 
         $view_data = [
-            'pages' => $pages
+            'newsletters' => $this->repository->post->findAllNewsletters(),
+            'subscribers' => $this->repository->subscriber->findAll(),
+            'statuses' => Constants::getNewsletterStatuses(),
+//            'can_delete' => $this->hasPermission(Constants::PERM_DELETE_PAGE),
+//            'can_read' => $this->hasPermission(Constants::PERM_READ_PAGE),
+            'url_form' => UrlBuilder::makeUrl('Newsletter', 'sendNewsletterAction'),
+            'can_delete' => true,
+            'can_read' => true,
         ];
-        $this->render('page_list', $view_data);
+        $this->render('newsletter_list', $view_data);
     }
 
 
@@ -41,14 +43,10 @@ class Newsletter extends Controller
     public function createView()
     {
         $this->setCSRFToken();
-        $users = $this->repository->user->findAll();
         $view_data = [
-            'users' => $users,
-            'current_user_id' => $this->session->getUserId(),
-            'visibility_types' => Constants::getVisibilityTypes(),
-            'url_form' => UrlBuilder::makeUrl('Page', 'createAction')
+            'url_form' => UrlBuilder::makeUrl('Newsletter', 'createAction')
         ];
-        $this->render('page_new', $view_data);
+        $this->render('newsletter_new', $view_data);
     }
 
     # /new-newsletter-save
@@ -56,10 +54,22 @@ class Newsletter extends Controller
     {
         $this->validateCSRF();
         try {
+            if (!Validator::isValid($this->request->post('title'))) {
+                $this->sendError('Le sujet est obligatoire');
+            }
+
+            Database::beginTransaction();
+            $this->repository->post->create([
+                'author_id' => $this->session->getUserId(),
+                'title' => $this->request->post('title'),
+                'content' => $_POST['post_content'],
+                'type' => Constants::POST_TYPE_NEWSLETTER,
+                'status' => Constants::STATUS_DRAFT,
+            ]);
 
             Database::commit();
-            $this->sendSuccess('Page créée', [
-                'url_next' => UrlBuilder::makeUrl('Page', 'pageView', ['id' => $page_id])
+            $this->sendSuccess('Newsletter créée', [
+                'url_next' => UrlBuilder::makeUrl('Newsletter', 'listView')
             ]);
         } catch (\Exception $e) {
             Database::rollback();
@@ -70,16 +80,26 @@ class Newsletter extends Controller
     # /newsletter
     public function newsletterView()
     {
-        $this->setContentTitle($page['title']);
+        if (!$this->request->get('id')) {
+            throw new \Exception('Cette newsletter n\'existe pas');
+        }
+
+        if ((!$newsletter = $this->repository->post->find($this->request->get('id')))) {
+            throw new NotFoundException('Cette newsletter n\'est pas trouvé');
+        }
+
+        $this->setContentTitle($newsletter['title']);
         $this->setCSRFToken();
         $view_data = [
-            'page' => $page,
-            'users' => $users,
-            'visibility_types' => Constants::getVisibilityTypes(),
-            'url_form' => UrlBuilder::makeUrl('Page', 'pageAction', ['id' => $page['id']]),
-            'url_delete' => UrlBuilder::makeUrl('Page', 'deleteAction', ['id' => $page['id']]),
+            'newsletter' => $newsletter,
+            'url_form' => UrlBuilder::makeUrl('Newsletter', 'newsletterAction', ['id' => $newsletter['id']]),
+            'url_delete' => UrlBuilder::makeUrl('Newsletter', 'deleteAction', ['id' => $newsletter['id']]),
+//            'can_delete' => $this->hasPermission(Constants::PERM_DELETE_PAGE),
+//            'can_update' => $this->hasPermission(Constants::PERM_READ_PAGE),
+            'can_delete' => true,
+            'can_update' => true,
         ];
-        $this->render('page_detail', $view_data);
+        $this->render('newsletter_detail', $view_data);
     }
 
     # /newsletter-save
@@ -87,8 +107,20 @@ class Newsletter extends Controller
     {
         $this->validateCSRF();
         try {
+            if (!Validator::isValid($this->request->post('title'))) {
+                $this->sendError('Le sujet est obligatoire');
+            }
+
+            Database::beginTransaction();
+            $this->repository->post->update($this->request->get('id'), [
+                'title' => $this->request->post('title'),
+                'content' => $_POST['post_content'],
+            ]);
+
             Database::commit();
-            $this->sendSuccess(Constants::SUCCESS_SAVED);
+            $this->sendSuccess(Constants::SUCCESS_SAVED, [
+                'url_next' => UrlBuilder::makeUrl('Newsletter', 'listView')
+            ]);
         } catch (\Exception $e) {
             Database::rollback();
             $this->sendError(Constants::ERROR_UNKNOWN, [$e->getMessage()]);
@@ -102,15 +134,55 @@ class Newsletter extends Controller
             $this->sendError(Constants::ERROR_UNKNOWN);
         }
         $this->repository->post->remove($this->request->get('id'));
-        $this->sendSuccess('Page supprimée', [
-            'url_next' => UrlBuilder::makeUrl('Page', 'listView'),
-            'delay_url_next' => 0,
+        $this->sendSuccess('Newsletter supprimée', [
+            'url_next' => UrlBuilder::makeUrl('Newsletter', 'listView'),
         ]);
+    }
+
+
+    # /send-newsletter
+    public function sendNewsletterAction()
+    {
+
+        $newsletter = $this->repository->post->find($this->request->post('newsletter'));
+        if (!$newsletter) $this->sendError(Constants::ERROR_UNKNOWN);
+
+        if ($this->request->post('send_all')) {
+            $subscribers = $this->repository->subscriber->findAll();
+            if (!$subscribers) $this->sendError('Vous n\'avez aucun abonné pour le moment');
+            $selected = false;
+        } else {
+            if (!$this->request->post('subscribers')) $this->sendError('Veuillez sélectionner au moins un abonné');
+            $subscribers = $this->request->post('subscribers');
+            $selected = true;
+        }
+
+        foreach ($subscribers as $subscriber) {
+            $id = $selected ? $subscriber : $subscriber['id'];
+            $email = $selected ? $this->repository->subscriber->find((int)$subscriber)['email'] : $subscriber['email'];
+
+            $mail = Mailer::send([
+                'to' => $email,
+                'subject' => $newsletter['title'],
+                'content' => View::getHtml('email/newsletter', [
+                    'content' => $newsletter['content'],
+                    'unsubscribe_link' => UrlBuilder::makeAbsoluteUrl('Newsletter', 'unsubscribeView', ['subscriber' => $id]),
+                ]),
+            ]);
+
+            if (!$mail['success']) {
+                $this->sendError($mail['message']);
+            }
+        }
+
+        $this->repository->post->update($this->request->post('newsletter'), ['status' => Constants::STATUS_PUBLISHED]);
+        $this->sendSuccess('Newsletter envoyée !');
     }
 
     # /unsubscribe
     public function unsubscribeView()
     {
+        $this->setTemplate('default');
         if (!$this->request->get('subscriber') || !is_numeric($this->request->get('subscriber'))) {
             $error_ref = true;
         } else {

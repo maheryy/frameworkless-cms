@@ -16,7 +16,8 @@ class Constants
 
     # Post types
     const POST_TYPE_PAGE = 1;
-    const POST_TYPE_POST = 2;
+    const POST_TYPE_NEWSLETTER = 2;
+    const POST_TYPE_POST = 3;
 
     # Token types
     const TOKEN_EMAIL_CONFIRM = 1;
@@ -100,11 +101,19 @@ class Constants
 
     const DELAY_SUCCESS_REDIRECTION = 1;
 
-    public static function getPostStatuses()
+    public static function getPageStatuses()
     {
         return [
             self::STATUS_DRAFT => 'Brouillon',
             self::STATUS_PUBLISHED => 'Publié',
+        ];
+    }
+
+    public static function getNewsletterStatuses()
+    {
+        return [
+            self::STATUS_DRAFT => 'En attente',
+            self::STATUS_PUBLISHED => 'Envoyé',
         ];
     }
 
