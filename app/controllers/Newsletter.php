@@ -84,7 +84,7 @@ class Newsletter extends Controller
             throw new NotFoundException('Cette newsletter n\'existe pas');
         }
 
-        if ((!$newsletter = $this->repository->post->find($this->request->get('id')))) {
+        if ((!$newsletter = $this->repository->post->findNewsletter((int)$this->request->get('id')))) {
             throw new NotFoundException('Cette newsletter n\'est pas trouvé');
         }
 
@@ -112,7 +112,7 @@ class Newsletter extends Controller
             }
 
             Database::beginTransaction();
-            $this->repository->post->update($this->request->get('id'), [
+            $this->repository->post->update((int)$this->request->get('id'), [
                 'title' => $this->request->post('title'),
                 'content' => $_POST['post_content'],
             ]);
@@ -133,7 +133,7 @@ class Newsletter extends Controller
         if (!$this->request->get('id')) {
             $this->sendError(Constants::ERROR_UNKNOWN);
         }
-        $this->repository->post->remove($this->request->get('id'));
+        $this->repository->post->remove((int)$this->request->get('id'));
         $this->sendSuccess('Newsletter supprimée', [
             'url_next' => UrlBuilder::makeUrl('Newsletter', 'listView'),
         ]);
@@ -144,7 +144,7 @@ class Newsletter extends Controller
     public function sendNewsletterAction()
     {
 
-        $newsletter = $this->repository->post->find($this->request->post('newsletter'));
+        $newsletter = $this->repository->post->findNewsletter($this->request->post('newsletter'));
         if (!$newsletter) $this->sendError(Constants::ERROR_UNKNOWN);
 
         if ($this->request->post('send_all')) {

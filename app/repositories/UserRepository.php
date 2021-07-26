@@ -16,6 +16,15 @@ class UserRepository extends BaseRepository
         parent::__construct($model);
     }
 
+    public function find(int $id)
+    {
+        $this->queryBuilder
+            ->where(Expr::eq('id', $id))
+            ->where(Expr::neq('status', Constants::STATUS_DELETED));
+
+        return $this->model->fetchOne($this->queryBuilder);
+    }
+
     public function findAll()
     {
         $role_table = Formatter::getTableName('role');

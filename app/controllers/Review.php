@@ -43,7 +43,7 @@ class Review extends Controller
             case 'delete': $status = Constants::STATUS_DELETED; break;
         }
 
-        $this->repository->review->update($this->request->get('id'), ['status' => $status]);
+        $this->repository->review->update((int)$this->request->get('id'), ['status' => $status]);
         $this->sendSuccess('', [
             'url_next' => UrlBuilder::makeUrl('Review', 'listView'),
         ]);

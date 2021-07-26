@@ -109,7 +109,7 @@ class Page extends Controller
         if (!$this->request->get('id')) {
             throw new NotFoundException('Cette page n\'existe pas');
         }
-        $page = $this->repository->post->findPage($this->request->get('id'));
+        $page = $this->repository->post->findPage((int)$this->request->get('id'));
         if (!$page) {
             throw new NotFoundException('Cette page n\'est pas trouvé');
         }
@@ -152,7 +152,7 @@ class Page extends Controller
             $slug = Formatter::slugify($this->request->post('slug') ?? $this->request->post('title'));
 
             # Check for duplicate
-            if ($found = $this->repository->post->findPageByTitleOrSlug($post_fields['title'], $slug, $this->request->get('id'))) {
+            if ($found = $this->repository->post->findPageByTitleOrSlug($post_fields['title'], $slug, (int)$this->request->get('id'))) {
                 $this->sendError('le ' . ($found['slug'] === $slug ? 'slug "' . $slug . '"' : 'titre "' . $post_fields['title'] . '"') . ' existe déjà');
             }
 
@@ -174,8 +174,8 @@ class Page extends Controller
             ];
 
             Database::beginTransaction();
-            $this->repository->post->update($this->request->get('id'), $post_fields);
-            $this->repository->pageExtra->update($this->request->get('id'), $page_fields);
+            $this->repository->post->update((int)$this->request->get('id'), $post_fields);
+            $this->repository->pageExtra->update((int)$this->request->get('id'), $page_fields);
             Database::commit();
 
             $this->sendSuccess(Constants::SUCCESS_SAVED, [
@@ -193,7 +193,7 @@ class Page extends Controller
         if (!$this->request->get('id')) {
             $this->sendError(Constants::ERROR_UNKNOWN);
         }
-        $this->repository->post->remove($this->request->get('id'));
+        $this->repository->post->remove((int)$this->request->get('id'));
         $this->sendSuccess('Page supprimée', [
             'url_next' => UrlBuilder::makeUrl('Page', 'listView'),
             'url_next_delay' => Constants::DELAY_SUCCESS_REDIRECTION

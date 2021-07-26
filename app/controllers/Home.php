@@ -65,7 +65,7 @@ class Home extends Controller
 
     private function getLatestReviews()
     {
-        $res = $this->repository->review->findAllPending(5);
+        $res = $this->repository->review->findAll(5);
         return $res;
     }
 

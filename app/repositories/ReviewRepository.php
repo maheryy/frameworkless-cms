@@ -14,11 +14,15 @@ class ReviewRepository extends BaseRepository
         parent::__construct($model);
     }
 
-    public function findAll()
+    public function findAll(int $limit = null)
     {
         $this->queryBuilder
             ->where(Expr::neq('status', Constants::STATUS_DELETED))
             ->orderAsc('status');
+
+        if($limit) {
+            $this->queryBuilder->limit($limit);
+        }
 
         return $this->model->fetchAll($this->queryBuilder);
     }

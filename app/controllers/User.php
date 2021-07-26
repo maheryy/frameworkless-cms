@@ -195,7 +195,7 @@ class User extends Controller
             throw new ForbiddenAccessException(Constants::ERROR_FORBIDDEN);
         }
 
-        $user = $this->repository->user->find($this->request->get('id'));
+        $user = $this->repository->user->find((int)$this->request->get('id'));
         if (!$user) {
             throw new NotFoundException('Cet utilisateur n\'est pas trouvé');
         }
@@ -266,7 +266,7 @@ class User extends Controller
             $this->sendError(Constants::ERROR_UNKNOWN);
         }
 
-        $this->repository->user->remove($this->request->get('id'));
+        $this->repository->user->remove((int)$this->request->get('id'));
         $this->sendSuccess('Utilisateur supprimé', [
             'url_next' => UrlBuilder::makeUrl('User', 'listView'),
             'url_next_delay' => Constants::DELAY_SUCCESS_REDIRECTION

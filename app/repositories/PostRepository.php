@@ -139,6 +139,15 @@ class PostRepository extends BaseRepository
         return $this->model->fetchOne($this->queryBuilder);
     }
 
+    public function findNewsletter(int $id)
+    {
+        $this->queryBuilder
+            ->where(Expr::eq('id', $id))
+            ->where(Expr::neq('status', Constants::STATUS_DELETED));
+
+        return $this->model->fetchOne($this->queryBuilder);
+    }
+    
     public function findAllNewsletters()
     {
         $user_table = Formatter::getTableName('user');
