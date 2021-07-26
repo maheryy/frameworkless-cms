@@ -18,7 +18,7 @@ class UrlBuilder
      */
     public static function makeAbsoluteUrl(string $controller, string $method, array $params = [])
     {
-        return 'http://' . $_SERVER['HTTP_HOST'] . self::makeUrl($controller, $method, $params);
+        return (isset($_SERVER['HTTPS']) ? 'https' : 'http') . '://' . $_SERVER['HTTP_HOST'] . self::makeUrl($controller, $method, $params);
     }
 
     /**
