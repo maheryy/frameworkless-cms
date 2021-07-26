@@ -106,7 +106,7 @@
                     <button class="<?= isset($menu_data) ? 'btn-primary' : 'btn-success' ?> text-base <?= !$can_update ? 'hidden' : '' ?>" data-role="submitPermissions"
                             data-options=<?= json_encode(['add_data' => ['ref' => $referer]]) ?>><?= isset($menu_data) ? 'Sauvegarder' : 'Ajouter' ?></button>
                     <?php if ($can_delete && $url_delete) : ?>
-                        <button class="btn-danger text-base" data-url="<?= $url_delete ?>" data-role="deleteItem">Supprimer</button>
+                        <button class="btn-danger text-base" data-url="<?= $url_delete ?>" data-role="actionItem">Supprimer</button>
                     <?php endif; ?>
                 </div>
             </form>

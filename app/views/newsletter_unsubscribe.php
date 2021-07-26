@@ -9,7 +9,7 @@
                 <h3 class="text-center">Vous n'êtes plus abonné à notre newsletter</h3>
             <?php endif; ?>
             <label class="link-back">
-                <a href="/">Retour au site</a>
+                <a class="link-default" href="/">Retour au site</a>
             </label>
         </article>
     </section>

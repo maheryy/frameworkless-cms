@@ -12,7 +12,7 @@
                 </div>
                 <div class="form-info center">
                     <label class="link-back">
-                        <a href="<?= $url_back ?>">Retour</a>
+                        <a class="link-default" href="<?= $url_back ?>">Retour</a>
                     </label>
                 </div>
                 <div class="form-action center">

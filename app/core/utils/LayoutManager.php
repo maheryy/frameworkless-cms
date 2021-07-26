@@ -45,6 +45,11 @@ class LayoutManager
                     ]
                 ]
             ],
+            'reviews' => [
+                'label' => 'Avis',
+                'icon' => 'fas fa-star',
+                'route' => UrlBuilder::getUrl('reviews'),
+            ],
             'appearance' => [
                 'label' => 'Apparance',
                 'icon' => 'fas fa-palette',

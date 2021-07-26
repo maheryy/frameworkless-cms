@@ -20,13 +20,15 @@ class Home extends Controller
             'user_pages' => $this->getUserPublishedPages(),
             'traffic' => $this->getTraffic(),
             'popular_pages' => $this->getPopularPages(),
-            'latest_pages' => $this->getLatestPublishedPages(),
+            'latest_reviews' => $this->getLatestReviews(),
             'quick_links' => $this->getQuickLinks(),
             'can_edit_page' => $this->hasPermission(Constants::PERM_UPDATE_PAGE),
             'username' => $this->repository->user->find($this->session->getUserId())['username'],
             'count_visitors' => $this->repository->visitor->countTotalUniqueVisitors(),
             'count_pages' => $this->getTotalPages(),
-            'link_all_pages' => UrlBuilder::makeUrl('Page', 'listView')
+            'count_pending_reviews' => count($this->repository->review->findAllPending()),
+            'link_all_pages' => UrlBuilder::makeUrl('Page', 'listView'),
+            'link_all_reviews' => UrlBuilder::makeUrl('Review', 'listView')
         ];
         $this->render('dashboard', $view_data);
     }
@@ -61,16 +63,9 @@ class Home extends Controller
         return $res;
     }
 
-    private function getLatestPublishedPages()
+    private function getLatestReviews()
     {
-        $pages = $this->repository->post->findPublishedPagesWithUser(5);
-        $res = [];
-        foreach ($pages as $key => $page) {
-            $res[$key]['author'] = $page['author'];
-            $res[$key]['title'] = $page['title'];
-            $res[$key]['link_edit'] = UrlBuilder::makeUrl('Page', 'pageView', ['id' => $page['id']]);
-            $res[$key]['link'] = $page['slug'];
-        }
+        $res = $this->repository->review->findAllPending(5);
         return $res;
     }
 

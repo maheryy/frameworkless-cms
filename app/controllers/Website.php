@@ -122,7 +122,7 @@ class Website extends Controller
                 'meta_title' => 'Les avis de nos clients',
                 'meta_description' => 'Les avis de nos clients',
                 'is_indexable' => false,
-                'reviews' => $this->repository->review->findAll()
+                'reviews' => $this->repository->review->findAllApproved()
             ]
         ];
     }
