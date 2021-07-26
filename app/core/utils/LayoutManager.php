@@ -60,16 +60,6 @@ class LayoutManager
                         'route' => UrlBuilder::getUrl('new-newsletter'),
                         'is_visible' => true
                     ],
-                    'send_newsletter' => [
-                        'label' => 'Envoyer newsletter',
-                        'route' => UrlBuilder::getUrl('send-newsletter'),
-                        'is_visible' => true,
-                    ],
-//                    'list_subscriber' => [
-//                        'label' => 'Abonnés',
-//                        'route' => UrlBuilder::getUrl('pages'),
-//                        'is_visible' => true,
-//                    ]
                 ]
             ],
             'reviews' => [

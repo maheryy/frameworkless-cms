@@ -8,8 +8,10 @@ use App\Core\Exceptions\NotFoundException;
 use App\Core\Utils\Constants;
 use App\Core\Utils\Formatter;
 use App\Core\Utils\FormRegistry;
+use App\Core\Utils\Mailer;
 use App\Core\Utils\UrlBuilder;
 use App\Core\Utils\Validator;
+use App\Core\View;
 
 class Newsletter extends Controller
 {
@@ -22,12 +24,14 @@ class Newsletter extends Controller
     # /newsletters
     public function listView()
     {
-        $newsletters = $this->repository->post->findAllNewsletters();
+
         $view_data = [
-            'newsletters' => $newsletters,
+            'newsletters' => $this->repository->post->findAllNewsletters(),
+            'subscribers' => $this->repository->subscriber->findAll(),
             'statuses' => Constants::getNewsletterStatuses(),
 //            'can_delete' => $this->hasPermission(Constants::PERM_DELETE_PAGE),
 //            'can_read' => $this->hasPermission(Constants::PERM_READ_PAGE),
+            'url_form' => UrlBuilder::makeUrl('Newsletter', 'sendNewsletterAction'),
             'can_delete' => true,
             'can_read' => true,
         ];
@@ -55,7 +59,7 @@ class Newsletter extends Controller
             }
 
             Database::beginTransaction();
-            $newsletter_id = $this->repository->post->create([
+            $this->repository->post->create([
                 'author_id' => $this->session->getUserId(),
                 'title' => $this->request->post('title'),
                 'content' => $_POST['post_content'],
@@ -108,14 +112,14 @@ class Newsletter extends Controller
             }
 
             Database::beginTransaction();
-            $this->repository->post->update($this->request->get('id'),[
+            $this->repository->post->update($this->request->get('id'), [
                 'title' => $this->request->post('title'),
                 'content' => $_POST['post_content'],
             ]);
 
             Database::commit();
             $this->sendSuccess(Constants::SUCCESS_SAVED, [
-                'url_next' => UrlBuilder::makeUrl('Newsletter', 'newsletterView', ['id' => $this->request->get('id')])
+                'url_next' => UrlBuilder::makeUrl('Newsletter', 'listView')
             ]);
         } catch (\Exception $e) {
             Database::rollback();
@@ -137,20 +141,48 @@ class Newsletter extends Controller
 
 
     # /send-newsletter
-    public function sendNewsletterView()
-    {
-
-    }
-
-    # /send-newsletter-send
     public function sendNewsletterAction()
     {
 
+        $newsletter = $this->repository->post->find($this->request->post('newsletter'));
+        if (!$newsletter) $this->sendError(Constants::ERROR_UNKNOWN);
+
+        if ($this->request->post('send_all')) {
+            $subscribers = $this->repository->subscriber->findAll();
+            if (!$subscribers) $this->sendError('Vous n\'avez aucun abonné pour le moment');
+            $selected = false;
+        } else {
+            if (!$this->request->post('subscribers')) $this->sendError('Veuillez sélectionner au moins un abonné');
+            $subscribers = $this->request->post('subscribers');
+            $selected = true;
+        }
+
+        foreach ($subscribers as $subscriber) {
+            $id = $selected ? $subscriber : $subscriber['id'];
+            $email = $selected ? $this->repository->subscriber->find((int)$subscriber)['email'] : $subscriber['email'];
+
+            $mail = Mailer::send([
+                'to' => $email,
+                'subject' => $newsletter['title'],
+                'content' => View::getHtml('email/newsletter', [
+                    'content' => $newsletter['content'],
+                    'unsubscribe_link' => UrlBuilder::makeAbsoluteUrl('Newsletter', 'unsubscribeView', ['subscriber' => $id]),
+                ]),
+            ]);
+
+            if (!$mail['success']) {
+                $this->sendError($mail['message']);
+            }
+        }
+
+        $this->repository->post->update($this->request->post('newsletter'), ['status' => Constants::STATUS_PUBLISHED]);
+        $this->sendSuccess('Newsletter envoyée !');
     }
 
     # /unsubscribe
     public function unsubscribeView()
     {
+        $this->setTemplate('default');
         if (!$this->request->get('subscriber') || !is_numeric($this->request->get('subscriber'))) {
             $error_ref = true;
         } else {

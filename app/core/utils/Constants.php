@@ -108,6 +108,7 @@ class Constants
             self::STATUS_PUBLISHED => 'Publié',
         ];
     }
+
     public static function getNewsletterStatuses()
     {
         return [

@@ -146,7 +146,8 @@ class PostRepository extends BaseRepository
             ->select(["$user_table.username AS author", "$this->table.*"])
             ->joinInner($user_table, "$this->table.author_id = $user_table.id")
             ->where(Expr::eq("$this->table.type", Constants::POST_TYPE_NEWSLETTER))
-            ->where(Expr::neq("$this->table.status", Constants::STATUS_DELETED));
+            ->where(Expr::neq("$this->table.status", Constants::STATUS_DELETED))
+            ->orderDesc("$this->table.created_at");
 
         return $this->model->fetchAll($this->queryBuilder);
     }
