@@ -23,11 +23,28 @@ class ReviewRepository extends BaseRepository
         return $this->model->fetchAll($this->queryBuilder);
     }
 
-    public function findAllApproved()
+    public function findAllApproved(int $limit = null)
     {
         $this->queryBuilder
             ->where(Expr::eq('status', Constants::REVIEW_VALID))
             ->orderDesc('date');
+
+        if($limit) {
+            $this->queryBuilder->limit($limit);
+        }
+
+        return $this->model->fetchAll($this->queryBuilder);
+    }
+
+    public function findAllPending(int $limit = null)
+    {
+        $this->queryBuilder
+            ->where(Expr::eq('status', Constants::REVIEW_PENDING))
+            ->orderDesc('date');
+
+        if($limit) {
+            $this->queryBuilder->limit($limit);
+        }
 
         return $this->model->fetchAll($this->queryBuilder);
     }

@@ -25,7 +25,7 @@ class Seeder
             'role',
             'permission',
             'rolePermission',
-//            'settings',
+            'settings',
         ];
     }
 
@@ -35,7 +35,7 @@ class Seeder
             Constants::ROLE_SUPER_ADMIN => ['name' => 'Super Administrateur'],
             Constants::ROLE_ADMIN => ['name' => 'Administrateur'],
             Constants::ROLE_EDITOR => ['name' => 'Editeur'],
-            Constants::ROLE_CONTRIBUTOR => ['name' => 'Contributeur'],
+            Constants::ROLE_MODERATOR => ['name' => 'Modérateur'],
             Constants::ROLE_SUBSCRIBER => ['name' => 'Abonné'],
         ];
     }
@@ -119,8 +119,12 @@ class Seeder
                 'name' => 'Création d\'un rôle',
                 'description' => ''
             ],
-            Constants::PERM_UPDATE_ROLE => [
-                'name' => 'Modification d\'un rôle',
+            Constants::PERM_MANAGE_REVIEW => [
+                'name' => 'Approbation/désapprobation d\'un avis',
+                'description' => ''
+            ],
+            Constants::PERM_DELETE_REVIEW => [
+                'name' => 'Suppression d\'un avis',
                 'description' => ''
             ],
         ];
@@ -149,6 +153,8 @@ class Seeder
             ['role_id' => Constants::ROLE_SUPER_ADMIN, 'permission_id' => Constants::PERM_READ_ROLE],
             ['role_id' => Constants::ROLE_SUPER_ADMIN, 'permission_id' => Constants::PERM_CREATE_ROLE],
             ['role_id' => Constants::ROLE_SUPER_ADMIN, 'permission_id' => Constants::PERM_UPDATE_ROLE],
+            ['role_id' => Constants::ROLE_SUPER_ADMIN, 'permission_id' => Constants::PERM_MANAGE_REVIEW],
+            ['role_id' => Constants::ROLE_SUPER_ADMIN, 'permission_id' => Constants::PERM_DELETE_REVIEW],
 
             ['role_id' => Constants::ROLE_ADMIN, 'permission_id' => Constants::PERM_READ_USER],
             ['role_id' => Constants::ROLE_ADMIN, 'permission_id' => Constants::PERM_CREATE_USER],
@@ -167,6 +173,8 @@ class Seeder
             ['role_id' => Constants::ROLE_ADMIN, 'permission_id' => Constants::PERM_UPDATE_SETTINGS],
             ['role_id' => Constants::ROLE_ADMIN, 'permission_id' => Constants::PERM_READ_ROLE],
             ['role_id' => Constants::ROLE_ADMIN, 'permission_id' => Constants::PERM_CREATE_ROLE],
+            ['role_id' => Constants::ROLE_ADMIN, 'permission_id' => Constants::PERM_MANAGE_REVIEW],
+            ['role_id' => Constants::ROLE_ADMIN, 'permission_id' => Constants::PERM_DELETE_REVIEW],
 
             ['role_id' => Constants::ROLE_EDITOR, 'permission_id' => Constants::PERM_READ_PAGE],
             ['role_id' => Constants::ROLE_EDITOR, 'permission_id' => Constants::PERM_CREATE_PAGE],
@@ -180,10 +188,12 @@ class Seeder
             ['role_id' => Constants::ROLE_EDITOR, 'permission_id' => Constants::PERM_UPDATE_CUSTOMIZATION],
             ['role_id' => Constants::ROLE_EDITOR, 'permission_id' => Constants::PERM_READ_ROLE],
 
-            ['role_id' => Constants::ROLE_CONTRIBUTOR, 'permission_id' => Constants::PERM_READ_PAGE],
-            ['role_id' => Constants::ROLE_CONTRIBUTOR, 'permission_id' => Constants::PERM_CREATE_PAGE],
-            ['role_id' => Constants::ROLE_CONTRIBUTOR, 'permission_id' => Constants::PERM_UPDATE_PAGE],
-            ['role_id' => Constants::ROLE_CONTRIBUTOR, 'permission_id' => Constants::PERM_READ_CUSTOMIZATION],
+            ['role_id' => Constants::ROLE_MODERATOR, 'permission_id' => Constants::PERM_READ_PAGE],
+            ['role_id' => Constants::ROLE_MODERATOR, 'permission_id' => Constants::PERM_READ_MENU],
+            ['role_id' => Constants::ROLE_MODERATOR, 'permission_id' => Constants::PERM_READ_SETTINGS],
+            ['role_id' => Constants::ROLE_MODERATOR, 'permission_id' => Constants::PERM_READ_CUSTOMIZATION],
+            ['role_id' => Constants::ROLE_MODERATOR, 'permission_id' => Constants::PERM_MANAGE_REVIEW],
+            ['role_id' => Constants::ROLE_MODERATOR, 'permission_id' => Constants::PERM_DELETE_REVIEW],
 
             ['role_id' => Constants::ROLE_SUBSCRIBER, 'permission_id' => Constants::PERM_READ_PAGE],
             ['role_id' => Constants::ROLE_SUBSCRIBER, 'permission_id' => Constants::PERM_CREATE_PAGE],
@@ -197,7 +207,7 @@ class Seeder
             ['name' => Constants::STG_DESCRIPTION, 'value' => null],
             ['name' => Constants::STG_EMAIL_ADMIN, 'value' => null],
             ['name' => Constants::STG_EMAIL_CONTACT, 'value' => null],
-            ['name' => Constants::STG_ROLE, 'value' => Constants::ROLE_CONTRIBUTOR],
+            ['name' => Constants::STG_ROLE, 'value' => Constants::ROLE_EDITOR],
             ['name' => Constants::STG_PUBLIC_SIGNUP, 'value' => 0],
             ['name' => Constants::STG_SITE_LAYOUT, 'value' => null],
             ['name' => Constants::STG_HERO_DATA, 'value' => null],

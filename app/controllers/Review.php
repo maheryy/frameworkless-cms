@@ -21,7 +21,9 @@ class Review extends Controller
         $view_data = [
             'reviews' => $reviews,
             'review_statuses' => Constants::getReviewStatuses(),
-            'url_action' => UrlBuilder::makeUrl('Review', 'reviewAction')
+            'url_action' => UrlBuilder::makeUrl('Review', 'reviewAction'),
+            'can_manage' => $this->hasPermission(Constants::PERM_MANAGE_REVIEW),
+            'can_delete' => $this->hasPermission(Constants::PERM_DELETE_REVIEW)
         ];
         $this->render('review_list', $view_data);
     }
