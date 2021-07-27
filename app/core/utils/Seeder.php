@@ -125,12 +125,40 @@ class Seeder
                 'name' => 'Création d\'un rôle',
                 'description' => ''
             ],
+            Constants::PERM_UPDATE_ROLE => [
+                'name' => 'Modification d\'un rôle',
+                'description' => ''
+            ],
+            Constants::PERM_READ_REVIEW => [
+                'name' => 'Visibilité des avis',
+                'description' => ''
+            ],
             Constants::PERM_MANAGE_REVIEW => [
                 'name' => 'Approbation/désapprobation d\'un avis',
                 'description' => ''
             ],
             Constants::PERM_DELETE_REVIEW => [
                 'name' => 'Suppression d\'un avis',
+                'description' => ''
+            ],
+            Constants::PERM_READ_NEWSLETTER => [
+                'name' => 'Visibilité d\'une newsletter',
+                'description' => ''
+            ],
+            Constants::PERM_CREATE_NEWSLETTER => [
+                'name' => 'Création d\'une newsletter',
+                'description' => ''
+            ],
+            Constants::PERM_UPDATE_NEWSLETTER => [
+                'name' => 'Modification d\'une newsletter',
+                'description' => ''
+            ],
+            Constants::PERM_DELETE_NEWSLETTER => [
+                'name' => 'Suppression d\'une newsletter',
+                'description' => ''
+            ],
+            Constants::PERM_SEND_NEWSLETTER => [
+                'name' => 'Envoie d\'une newsletter',
                 'description' => ''
             ],
         ];
@@ -159,8 +187,14 @@ class Seeder
             ['role_id' => Constants::ROLE_SUPER_ADMIN, 'permission_id' => Constants::PERM_READ_ROLE],
             ['role_id' => Constants::ROLE_SUPER_ADMIN, 'permission_id' => Constants::PERM_CREATE_ROLE],
             ['role_id' => Constants::ROLE_SUPER_ADMIN, 'permission_id' => Constants::PERM_UPDATE_ROLE],
+            ['role_id' => Constants::ROLE_SUPER_ADMIN, 'permission_id' => Constants::PERM_READ_REVIEW],
             ['role_id' => Constants::ROLE_SUPER_ADMIN, 'permission_id' => Constants::PERM_MANAGE_REVIEW],
             ['role_id' => Constants::ROLE_SUPER_ADMIN, 'permission_id' => Constants::PERM_DELETE_REVIEW],
+            ['role_id' => Constants::ROLE_SUPER_ADMIN, 'permission_id' => Constants::PERM_READ_NEWSLETTER],
+            ['role_id' => Constants::ROLE_SUPER_ADMIN, 'permission_id' => Constants::PERM_CREATE_NEWSLETTER],
+            ['role_id' => Constants::ROLE_SUPER_ADMIN, 'permission_id' => Constants::PERM_UPDATE_NEWSLETTER],
+            ['role_id' => Constants::ROLE_SUPER_ADMIN, 'permission_id' => Constants::PERM_DELETE_NEWSLETTER],
+            ['role_id' => Constants::ROLE_SUPER_ADMIN, 'permission_id' => Constants::PERM_SEND_NEWSLETTER],
 
             ['role_id' => Constants::ROLE_ADMIN, 'permission_id' => Constants::PERM_READ_USER],
             ['role_id' => Constants::ROLE_ADMIN, 'permission_id' => Constants::PERM_CREATE_USER],
@@ -179,8 +213,14 @@ class Seeder
             ['role_id' => Constants::ROLE_ADMIN, 'permission_id' => Constants::PERM_UPDATE_SETTINGS],
             ['role_id' => Constants::ROLE_ADMIN, 'permission_id' => Constants::PERM_READ_ROLE],
             ['role_id' => Constants::ROLE_ADMIN, 'permission_id' => Constants::PERM_CREATE_ROLE],
+            ['role_id' => Constants::ROLE_ADMIN, 'permission_id' => Constants::PERM_READ_REVIEW],
             ['role_id' => Constants::ROLE_ADMIN, 'permission_id' => Constants::PERM_MANAGE_REVIEW],
             ['role_id' => Constants::ROLE_ADMIN, 'permission_id' => Constants::PERM_DELETE_REVIEW],
+            ['role_id' => Constants::ROLE_ADMIN, 'permission_id' => Constants::PERM_READ_NEWSLETTER],
+            ['role_id' => Constants::ROLE_ADMIN, 'permission_id' => Constants::PERM_CREATE_NEWSLETTER],
+            ['role_id' => Constants::ROLE_ADMIN, 'permission_id' => Constants::PERM_UPDATE_NEWSLETTER],
+            ['role_id' => Constants::ROLE_ADMIN, 'permission_id' => Constants::PERM_DELETE_NEWSLETTER],
+            ['role_id' => Constants::ROLE_ADMIN, 'permission_id' => Constants::PERM_SEND_NEWSLETTER],
 
             ['role_id' => Constants::ROLE_EDITOR, 'permission_id' => Constants::PERM_READ_PAGE],
             ['role_id' => Constants::ROLE_EDITOR, 'permission_id' => Constants::PERM_CREATE_PAGE],
@@ -193,13 +233,13 @@ class Seeder
             ['role_id' => Constants::ROLE_EDITOR, 'permission_id' => Constants::PERM_READ_CUSTOMIZATION],
             ['role_id' => Constants::ROLE_EDITOR, 'permission_id' => Constants::PERM_UPDATE_CUSTOMIZATION],
             ['role_id' => Constants::ROLE_EDITOR, 'permission_id' => Constants::PERM_READ_ROLE],
+            ['role_id' => Constants::ROLE_EDITOR, 'permission_id' => Constants::PERM_READ_REVIEW],
 
             ['role_id' => Constants::ROLE_MODERATOR, 'permission_id' => Constants::PERM_READ_PAGE],
-            ['role_id' => Constants::ROLE_MODERATOR, 'permission_id' => Constants::PERM_READ_MENU],
-            ['role_id' => Constants::ROLE_MODERATOR, 'permission_id' => Constants::PERM_READ_SETTINGS],
-            ['role_id' => Constants::ROLE_MODERATOR, 'permission_id' => Constants::PERM_READ_CUSTOMIZATION],
+            ['role_id' => Constants::ROLE_MODERATOR, 'permission_id' => Constants::PERM_READ_REVIEW],
             ['role_id' => Constants::ROLE_MODERATOR, 'permission_id' => Constants::PERM_MANAGE_REVIEW],
             ['role_id' => Constants::ROLE_MODERATOR, 'permission_id' => Constants::PERM_DELETE_REVIEW],
+            ['role_id' => Constants::ROLE_MODERATOR, 'permission_id' => Constants::PERM_READ_NEWSLETTER],
 
             ['role_id' => Constants::ROLE_SUBSCRIBER, 'permission_id' => Constants::PERM_READ_PAGE],
             ['role_id' => Constants::ROLE_SUBSCRIBER, 'permission_id' => Constants::PERM_CREATE_PAGE],
@@ -278,10 +318,10 @@ Sed dictum lorem vel lacinia placerat. Donec maximus feugiat scelerisque.',
     {
         return [
             [
-                'username' => '_unknown_',
+                'username' => 'temp_user',
                 'email' => 'mail@mail.com',
                 'role' => Constants::ROLE_SUPER_ADMIN,
-                'status' => Constants::STATUS_DELETED,
+                'status' => Constants::STATUS_ACTIVE,
             ]
         ];
     }

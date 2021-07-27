@@ -8,7 +8,9 @@
                 <div class="col-12 flex justify-end">
                     <article>
                         <button class="btn-primary" data-role="submitTextEditor">Enregistrer</button>
-                        <button class="btn-success" data-role="submitTextEditor" data-options=<?= json_encode(['add_data' => ['action_publish' => 1]]) ?>>Publier</button>
+                        <?php if ($can_publish) :?>
+                            <button class="btn-success" data-role="submitTextEditor" data-options=<?= json_encode(['add_data' => ['action_publish' => 1]]) ?>>Publier</button>
+                        <?php endif;?>
                     </article>
                 </div>
             </div>

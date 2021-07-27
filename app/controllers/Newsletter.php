@@ -29,11 +29,10 @@ class Newsletter extends Controller
             'newsletters' => $this->repository->post->findAllNewsletters(),
             'subscribers' => $this->repository->subscriber->findAll(),
             'statuses' => Constants::getNewsletterStatuses(),
-//            'can_delete' => $this->hasPermission(Constants::PERM_DELETE_PAGE),
-//            'can_read' => $this->hasPermission(Constants::PERM_READ_PAGE),
             'url_form' => UrlBuilder::makeUrl('Newsletter', 'sendNewsletterAction'),
-            'can_delete' => true,
-            'can_read' => true,
+            'can_read' => $this->hasPermission(Constants::PERM_READ_NEWSLETTER),
+            'can_delete' => $this->hasPermission(Constants::PERM_DELETE_NEWSLETTER),
+            'can_send' => $this->hasPermission(Constants::PERM_SEND_NEWSLETTER),
         ];
         $this->render('newsletter_list', $view_data);
     }
@@ -94,10 +93,8 @@ class Newsletter extends Controller
             'newsletter' => $newsletter,
             'url_form' => UrlBuilder::makeUrl('Newsletter', 'newsletterAction', ['id' => $newsletter['id']]),
             'url_delete' => UrlBuilder::makeUrl('Newsletter', 'deleteAction', ['id' => $newsletter['id']]),
-//            'can_delete' => $this->hasPermission(Constants::PERM_DELETE_PAGE),
-//            'can_update' => $this->hasPermission(Constants::PERM_READ_PAGE),
-            'can_delete' => true,
-            'can_update' => true,
+            'can_update' => $this->hasPermission(Constants::PERM_UPDATE_NEWSLETTER),
+            'can_delete' => $this->hasPermission(Constants::PERM_DELETE_NEWSLETTER),
         ];
         $this->render('newsletter_detail', $view_data);
     }

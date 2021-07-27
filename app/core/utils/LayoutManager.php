@@ -36,12 +36,11 @@ class LayoutManager
                     'list_page' => [
                         'label' => 'Liste pages',
                         'route' => UrlBuilder::getUrl('pages'),
-                        'is_visible' => true,
                     ],
                     'new_page' => [
                         'label' => 'Ajouter page',
                         'route' => UrlBuilder::getUrl('new-page'),
-                        'is_visible' => $this->hasPermission(Constants::PERM_CREATE_PAGE)
+                        'hidden' => !$this->hasPermission(Constants::PERM_CREATE_PAGE)
                     ]
                 ]
             ],
@@ -53,12 +52,11 @@ class LayoutManager
                     'list_newsletter' => [
                         'label' => 'Liste newsletter',
                         'route' => UrlBuilder::getUrl('newsletters'),
-                        'is_visible' => true
                     ],
                     'new_newsletter' => [
                         'label' => 'Ajouter newsletter',
                         'route' => UrlBuilder::getUrl('new-newsletter'),
-                        'is_visible' => true
+                        'hidden' => !$this->hasPermission(Constants::PERM_CREATE_NEWSLETTER)
                     ],
                 ]
             ],
@@ -66,6 +64,7 @@ class LayoutManager
                 'label' => 'Avis',
                 'icon' => 'fas fa-star',
                 'route' => UrlBuilder::getUrl('reviews'),
+                'hidden' => !$this->hasPermission(Constants::PERM_READ_REVIEW)
             ],
             'appearance' => [
                 'label' => 'Apparance',
@@ -75,12 +74,12 @@ class LayoutManager
                     'menus' => [
                         'label' => 'Menus',
                         'route' => UrlBuilder::getUrl('menu'),
-                        'is_visible' => $this->hasPermission(Constants::PERM_READ_MENU)
+                        'hidden' => !$this->hasPermission(Constants::PERM_READ_MENU)
                     ],
                     'customization' => [
                         'label' => 'Personnalisation',
                         'route' => UrlBuilder::getUrl('customization'),
-                        'is_visible' => $this->hasPermission(Constants::PERM_READ_CUSTOMIZATION)
+                        'hidden' => !$this->hasPermission(Constants::PERM_READ_CUSTOMIZATION)
                     ],
                 ]
             ],
@@ -92,17 +91,16 @@ class LayoutManager
                     'list_user' => [
                         'label' => 'Liste utilisateurs',
                         'route' => UrlBuilder::getUrl('users'),
-                        'is_visible' => true,
                     ],
                     'new_user' => [
                         'label' => 'Ajouter utilisateur',
                         'route' => UrlBuilder::getUrl('new-user'),
-                        'is_visible' => $this->hasPermission(Constants::PERM_CREATE_USER)
+                        'hidden' => !$this->hasPermission(Constants::PERM_CREATE_USER)
                     ],
                     'roles' => [
                         'label' => 'Roles',
                         'route' => UrlBuilder::getUrl('role'),
-                        'is_visible' => $this->hasPermission(Constants::PERM_READ_ROLE)
+                        'hidden' => !$this->hasPermission(Constants::PERM_READ_ROLE)
                     ],
                 ]
             ]
@@ -115,7 +113,7 @@ class LayoutManager
             'label' => 'Paramètres',
             'icon' => 'fas fa-cog',
             'route' => UrlBuilder::getUrl('settings'),
-            'is_visible' => $this->hasPermission(Constants::PERM_READ_SETTINGS)
+            'hidden' => $this->hasPermission(Constants::PERM_READ_SETTINGS)
         ];
     }
 

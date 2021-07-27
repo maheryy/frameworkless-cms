@@ -353,11 +353,18 @@ class User extends Controller
     public function roleAction()
     {
         $this->validateCSRF();
-        $role_id = $this->request->post('ref');
+        $role_id = (int)$this->request->post('ref');
         $permissions = $this->request->post('permissions');
 
+        # Double check permissions
+        if ($role_id === -1 && !$this->hasPermission(Constants::PERM_CREATE_ROLE)
+            || $role_id !== -1 && !$this->hasPermission(Constants::PERM_UPDATE_ROLE)
+        ) {
+            $this->sendError(Constants::ERROR_FORBIDDEN);
+        }
+
         if (!$role_id) {
-            $this->sendError(Constants::ERROR_UNKNOWN, ['role_id' => $role_id]);
+            $this->sendError(Constants::ERROR_UNKNOWN);
         }
         if (!$this->request->post('role_name')) {
             $this->sendError('Veuillez nommer le rôle');
@@ -366,14 +373,14 @@ class User extends Controller
             $this->sendError('Veuillez ajouter au moins une permission');
         }
 
-        if ($this->repository->role->findByName($this->request->post('role_name'), ($role_id != -1 ? $role_id : null))) {
+        if ($this->repository->role->findByName($this->request->post('role_name'), ($role_id !== -1 ? $role_id : null))) {
             $this->sendError('Ce nom est déjà pris');
         }
 
         try {
             Database::beginTransaction();
             # New role
-            if ($role_id == -1) {
+            if ($role_id === -1) {
                 $role_id = $this->repository->role->create(['name' => $this->request->post('role_name')]);
                 $success_msg = 'Un nouveau rôle a été ajouté';
             } else {

@@ -82,11 +82,19 @@ class Appearance extends Controller
     public function menuAction()
     {
         $this->validateCSRF();
-        $menu_id = $this->request->post('ref');
+        $menu_id = (int)$this->request->post('ref');
         $menu_items = $this->request->post('menu_items');
 
+        # Double check permissions
+        if ($menu_id === -1 && !$this->hasPermission(Constants::PERM_CREATE_MENU)
+            || $menu_id !== -1 && !$this->hasPermission(Constants::PERM_UPDATE_MENU)
+        ) {
+            $this->sendError(Constants::ERROR_FORBIDDEN);
+        }
+
+
         if (!$menu_id) {
-            $this->sendError(Constants::ERROR_UNKNOWN, ['menu_id' => $menu_id]);
+            $this->sendError(Constants::ERROR_UNKNOWN);
         }
         if (!$this->request->post('menu_name')) {
             $this->sendError('Veuillez nommer le menu');
@@ -95,7 +103,7 @@ class Appearance extends Controller
             $this->sendError('Veuillez ajouter au moins un élément');
         }
 
-        if ($this->repository->menu->findByTitle($this->request->post('menu_name'), ($menu_id != -1 ? $menu_id : null))) {
+        if ($this->repository->menu->findByTitle($this->request->post('menu_name'), ($menu_id !== -1 ? $menu_id : null))) {
             $this->sendError('Ce nom est déjà pris');
         }
 
@@ -122,7 +130,7 @@ class Appearance extends Controller
             Database::beginTransaction();
 
             # New menu
-            if ($menu_id == -1) {
+            if ($menu_id === -1) {
                 $menu_id = $this->repository->menu->create([
                     'title' => $this->request->post('menu_name'),
                     'type' => !empty($items[0]['icon']) ? Constants::MENU_SOCIALS : Constants::MENU_LINKS,

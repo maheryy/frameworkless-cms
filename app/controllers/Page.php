@@ -4,6 +4,7 @@ namespace App\Controllers;
 
 use App\Core\Controller;
 use App\Core\Database;
+use App\Core\Exceptions\ForbiddenAccessException;
 use App\Core\Exceptions\NotFoundException;
 use App\Core\Utils\Constants;
 use App\Core\Utils\Formatter;
@@ -53,6 +54,7 @@ class Page extends Controller
             'users' => $users,
             'current_user_id' => $this->session->getUserId(),
             'visibility_types' => Constants::getVisibilityTypes(),
+            'can_publish' => $this->hasPermission(Constants::PERM_PUBLISH_PAGE),
             'url_form' => UrlBuilder::makeUrl('Page', 'createAction')
         ];
         $this->render('page_new', $view_data);
@@ -62,6 +64,13 @@ class Page extends Controller
     public function createAction()
     {
         $this->validateCSRF();
+
+        if ($this->request->post('action_publish') && !$this->hasPermission(Constants::PERM_PUBLISH_PAGE)
+            || !$this->request->post('action_publish') && !$this->hasPermission(Constants::PERM_CREATE_PAGE)
+        ) {
+            $this->sendError(Constants::ERROR_FORBIDDEN);
+        }
+
         try {
             $validator = new Validator();
             if (!$validator->validateRequiredOnly(['title' => $this->request->post('title')])) {
@@ -137,6 +146,14 @@ class Page extends Controller
     public function pageAction()
     {
         $this->validateCSRF();
+
+        # Double check permissions
+        if ($this->request->post('action_publish') && !$this->hasPermission(Constants::PERM_PUBLISH_PAGE)
+            || !$this->request->post('action_publish') && !$this->hasPermission(Constants::PERM_UPDATE_PAGE)
+        ) {
+            $this->sendError(Constants::ERROR_FORBIDDEN);
+        }
+
         try {
             $validator = new Validator();
             if (!$validator->validateRequiredOnly(['title' => $this->request->post('title')])) {

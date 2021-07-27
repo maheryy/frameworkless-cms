@@ -35,6 +35,13 @@ class Review extends Controller
             $this->sendError(Constants::ERROR_UNKNOWN);
         }
 
+        # Double check permissions
+        if ($this->request->get('action') === 'delete' && !$this->hasPermission(Constants::PERM_DELETE_REVIEW)
+            || $this->request->get('action') !== 'delete' && !$this->hasPermission(Constants::PERM_MANAGE_REVIEW)
+        ) {
+            $this->sendError(Constants::ERROR_FORBIDDEN);
+        }
+
         $status = null;
         switch ($this->request->get('action')) {
             case 'hold': $status = Constants::REVIEW_PENDING; break;
