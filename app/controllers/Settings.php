@@ -37,7 +37,7 @@ class Settings extends Controller
             'url_form_mail' => UrlBuilder::makeUrl('Settings', 'settingsMailAction'),
             'url_form_review' => UrlBuilder::makeUrl('Settings', 'settingsReviewAction'),
             'url_form_newsletter' => UrlBuilder::makeUrl('Settings', 'settingsNewsletterAction'),
-//            'url_form_page' => UrlBuilder::makeUrl('Settings', 'settingsPageAction'),
+            'url_reset' => $this->session->isSuperAdmin() ? UrlBuilder::makeUrl('Installer', 'installerView') : null,
             'can_update' => $this->hasPermission(Constants::PERM_UPDATE_SETTINGS),
         ];
         $this->render('settings', $view_data);

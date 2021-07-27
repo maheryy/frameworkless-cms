@@ -13,17 +13,17 @@ class Formatter
     const TIME_FORMAT = 'H:i:s';
     const DATE_DISPLAY_FORMAT = 'd/m/Y';
 
-    public static function sanitizeInput(string $s)
+    public static function sanitizeInput(?string $s)
     {
         return !empty($s = trim($s)) ? htmlspecialchars($s) : null;
     }
 
-    public static function encodeUrlQuery(string $s)
+    public static function encodeUrlQuery(?string $s)
     {
         return urlencode(json_encode(['uri' => $s]));
     }
 
-    public static function decodeUrlQuery(string $s)
+    public static function decodeUrlQuery(?string $s)
     {
         return json_decode(urldecode($s))->uri ?? null;
     }
@@ -90,11 +90,6 @@ class Formatter
     public static function getTableName(string $table)
     {
         return DB_PREFIX . '_' . $table;
-    }
-
-    public static function getDateTimeObject()
-    {
-        return new DateTime('now', new DateTimeZone(self::DATE_TIME_ZONE));
     }
 
     public static function getDateTime(string $datetime = null, string $format = self::DATE_TIME_FORMAT)

@@ -151,7 +151,7 @@ function getMenuItemBaseElement(data) {
         (
             data.type === 1
                 ? `<span class="description">Page ${data.page_title} : <input type="text" class="link" name="menu_items[links][]" value="${data.page_link}" readonly></span>`
-                : `<span class="description">${data.icon !== undefined ? '<i class="' + data.icon + ' px-0.25"></i>' : 'Lien personnalisé :'} <input type="text" class="link" name="menu_items[links][]" placeholder="www.example.com" value="${data.page_link ?? ''}" ${data.link_readonly ? 'readonly' : ''}></span>`
+                : `<span class="description">${data.icon !== undefined ? '<i class="' + data.icon + ' px-0.25"></i>' : 'Lien personnalisé :'} <input type="text" class="link" name="menu_items[links][]" placeholder="https://www.example.com" value="${data.page_link ?? ''}" ${data.link_readonly ? 'readonly' : ''}></span>`
         ) +
         '</div>' +
         '</li>'
@@ -548,8 +548,10 @@ const roleFunctions = {
             e.preventDefault();
             const url = $(this).attr('href') ?? getUrl(this);
             if (!url) return;
-            const options = getOptions(this);
             let additional_data = [];
+            const options = getOptions(this);
+
+            if (options.confirm && !confirm("Êtes-vous sûr de vouloir effectuer cette ation ?")) return;
             if (options && options.add_data) {
                 for (const [k, v] of Object.entries(options.add_data)) {
                     additional_data.push({name: k, value: v});

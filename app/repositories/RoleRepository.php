@@ -13,7 +13,7 @@ class RoleRepository extends BaseRepository
         parent::__construct($model);
     }
 
-    public function findByName(string $name, int $ignore_id = null)
+    public function findByName(string $name, ?int $ignore_id = null)
     {
         $this->queryBuilder
             ->where(Expr::like('name', $name));

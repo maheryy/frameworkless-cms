@@ -30,8 +30,13 @@
                     </ul>
                 </div>
                 <div class="form-action px-0 right">
-                    <button class="<?= $referer == -1 ? 'btn-success' : 'btn-primary' ?> text-base <?= !$can_update ? 'hidden' : '' ?>" data-role="submitPermissions"
-                           data-options=<?= json_encode(['add_data' => ['ref' => $referer]]) ?>><?= $referer == -1 ? 'Ajouter' : 'Sauvegarder' ?></button>
+                    <?php if($referer == -1) : ?>
+                        <button class="btn-success text-base <?= !$can_create ? 'hidden' : '' ?>" data-role="submitPermissions"
+                                data-options='<?= json_encode(['add_data' => ['ref' => $referer]]) ?>'>Ajouter</button>
+                    <?php else : ?>
+                        <button class="btn-primary text-base <?= !$can_update ? 'hidden' : '' ?>" data-role="submitPermissions"
+                                data-options='<?= json_encode(['add_data' => ['ref' => $referer]]) ?>'>Sauvegarder</button>
+                    <?php endif; ?>
                 </div>
             </form>
         </article>

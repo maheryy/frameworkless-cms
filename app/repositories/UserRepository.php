@@ -49,7 +49,7 @@ class UserRepository extends BaseRepository
     }
 
 
-    public function findByUsernameOrEmail(string $username, string $email, int $ignore_id)
+    public function findByUsernameOrEmail(string $username, string $email, ?int $ignore_id)
     {
         $this->queryBuilder
             ->where(Expr::neq('id', $ignore_id))
@@ -60,5 +60,15 @@ class UserRepository extends BaseRepository
             );
 
         return $this->model->fetchOne($this->queryBuilder);
+    }
+
+
+    public function countSuperAdmin()
+    {
+        $this->queryBuilder
+            ->where(Expr::eq('role', Constants::ROLE_SUPER_ADMIN))
+            ->where(Expr::eq('status', Constants::STATUS_ACTIVE));
+
+        return count($this->model->fetchAll($this->queryBuilder));
     }
 }

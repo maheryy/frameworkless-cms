@@ -5,6 +5,7 @@ namespace App\Controllers;
 use App\Core\Controller;
 use App\Core\Database;
 use App\Core\Utils\Constants;
+use App\Core\Utils\Formatter;
 use App\Core\Utils\UrlBuilder;
 
 class Appearance extends Controller
@@ -38,7 +39,7 @@ class Appearance extends Controller
             'default_tab' => $default_menu_id,
             'default_tab_view' => PATH_VIEWS . 'menu_tab_default.php',
             'social_medias' => Constants::getSocialList(),
-            'display_review_links' => (bool) $this->getValue(Constants::STG_REVIEW_ACTIVE),
+            'display_review_links' => (bool)$this->getValue(Constants::STG_REVIEW_ACTIVE),
             'tab_options' => [
                 'url_tab_view' => UrlBuilder::makeUrl('Appearance', 'menuTabView'),
                 'container_id' => 'tab-content'
@@ -71,9 +72,10 @@ class Appearance extends Controller
             'menu_types' => Constants::getMenusTypes(),
             'menu_items' => $menu_items,
             'social_medias' => Constants::getSocialList(),
-            'display_review_links' => (bool) $this->getValue(Constants::STG_REVIEW_ACTIVE),
+            'display_review_links' => (bool)$this->getValue(Constants::STG_REVIEW_ACTIVE),
             'url_form' => UrlBuilder::makeUrl('Appearance', 'menuAction'),
             'url_delete' => $url_delete ?? null,
+            'can_create' => $this->hasPermission(Constants::PERM_CREATE_MENU),
             'can_update' => $this->hasPermission(Constants::PERM_UPDATE_MENU),
             'can_delete' => $this->hasPermission(Constants::PERM_DELETE_MENU),
         ];
@@ -113,17 +115,19 @@ class Appearance extends Controller
         $labels = $items = [];
         $i = 0;
         while ($i < $data_length) {
-            if (empty($menu_items['labels'][$i])) $this->sendError('Le label d\'une page ne peut être vide');
-            if (empty($menu_items['links'][$i])) $this->sendError('Le lien ne peut être vide');
-            if (in_array($menu_items['labels'][$i], $labels)) $this->sendError('Un label doit être unique');
+            $label = Formatter::sanitizeInput($menu_items['labels'][$i]);
+            $link = Formatter::sanitizeInput($menu_items['links'][$i]);
+            if (!$label) $this->sendError('Le label d\'une page ne peut être vide');
+            if (in_array($label, $labels)) $this->sendError('Un label doit être unique');
+            if (!$link) $this->sendError('Le lien ne peut être vide');
 
-            $labels[] = $menu_items['labels'][$i];
+            $labels[] = $label;
             $items[] = [
                 'menu_id' => $menu_id,
                 'post_id' => !empty($menu_items['pages'][$i]) ? $menu_items['pages'][$i] : null,
-                'label' => $menu_items['labels'][$i],
+                'label' => $label,
                 'icon' => !empty($menu_items['icons'][$i]) ? $menu_items['icons'][$i] : null,
-                'url' => !empty($menu_items['pages'][$i]) ? null : $menu_items['links'][$i],
+                'url' => !empty($menu_items['pages'][$i]) ? null : $link,
             ];
             $i++;
         }
@@ -167,6 +171,7 @@ class Appearance extends Controller
     # /delete-menu
     public function deleteMenuAction()
     {
+        $this->validateCSRF();
         if (!$this->request->get('id')) {
             $this->sendError(Constants::ERROR_UNKNOWN);
         }
@@ -190,7 +195,7 @@ class Appearance extends Controller
             'hero_data' => json_decode($this->getValue(Constants::STG_HERO_DATA), true),
             'link_menus' => $this->repository->menu->findMenuLinks(),
             'link_socials' => $this->repository->menu->findMenuSocials(),
-            'display_newsletter' => (bool) $this->getValue(Constants::STG_NEWSLETTER_ACTIVE),
+            'display_newsletter' => (bool)$this->getValue(Constants::STG_NEWSLETTER_ACTIVE),
             'can_update' => $this->hasPermission(Constants::PERM_UPDATE_CUSTOMIZATION),
         ];
         $this->render('layout_custom', $view_data);
@@ -207,13 +212,14 @@ class Appearance extends Controller
         $i = 0;
         $data = [];
         while ($i < $data_length) {
-            if (empty($footer_items['labels'][$i])) $this->sendError('Le label d\'une section ne peut être vide.');
+            $label = Formatter::sanitizeInput($footer_items['labels'][$i]);
+            if (!$label) $this->sendError('Le label d\'une section ne peut être vide.');
 
             $data[] = [
                 'type' => $footer_items['types'][$i],
                 'menu_id' => $footer_items['types'][$i] == Constants::LS_FOOTER_LINKS ? $footer_items['menus'][$i] : null,
-                'label' => $footer_items['labels'][$i],
-                'data' => $footer_items['types'][$i] == Constants::LS_FOOTER_LINKS ? null : $footer_items['data'][$i],
+                'label' => $label,
+                'data' => Formatter::sanitizeInput($footer_items['data'][$i]),
             ];
             $i++;
         }
