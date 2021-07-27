@@ -32,6 +32,8 @@ class Seeder
             'menu',
             'menuItem',
             'review',
+            'visitor',
+            'subscriber',
         ];
     }
 
@@ -324,7 +326,15 @@ Sed dictum lorem vel lacinia placerat. Donec maximus feugiat scelerisque.',
             [
                 'username' => 'temp_user',
                 'email' => 'mail@mail.com',
+                'password' => null,
                 'role' => Constants::ROLE_SUPER_ADMIN,
+                'status' => Constants::STATUS_ACTIVE,
+            ],
+            [
+                'username' => 'tester',
+                'email' => 'tester@esgix.com',
+                'password' => password_hash('tester123', PASSWORD_DEFAULT),
+                'role' => Constants::ROLE_ADMIN,
                 'status' => Constants::STATUS_ACTIVE,
             ]
         ];
@@ -347,6 +357,7 @@ Sed dictum lorem vel lacinia placerat. Donec maximus feugiat scelerisque.',
 <p>&nbsp;</p>',
                 'type' => Constants::POST_TYPE_PAGE,
                 'status' => Constants::STATUS_PUBLISHED,
+                'published_at' => date('Y-m-d H:i:s'),
             ],
             [
                 'author_id' => 1,
@@ -373,6 +384,24 @@ Sed dictum lorem vel lacinia placerat. Donec maximus feugiat scelerisque.',
 </ul>',
                 'type' => Constants::POST_TYPE_PAGE,
                 'status' => Constants::STATUS_DRAFT,
+                'published_at' => null,
+            ],
+            [
+                'author_id' => 1,
+                'title' => 'Evenement surprise du 29/07 !',
+                'content' => '<h1 style="text-align: center;">A ne surtout pas manquer !</h1>
+<p>&nbsp;</p>
+<h2>Au programme :</h2>
+<p>- Jeux</p>
+<p>- Activit&eacute;s</p>
+<p>- Animation</p>
+<p>- Soir&eacute;e</p>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<p style="text-align: center;">Pellentesque venenatis sapien vitae elementum vestibulum. Integer vitae odio vitae mi faucibus facilisis sed id est. Fusce maximus turpis ante, vel consectetur orci euismod ut. Duis tincidunt facilisis maximus. Mauris ligula diam, sodales quis ante vel, dignissim gravida neque. Maecenas a ex interdum, eleifend ex et, sollicitudin mi. Nulla nec rutrum justo, a ornare sem. Ut iaculis tristique elit, mollis malesuada eros pretium aliquam. Mauris placerat in sapien vel consequat. Mauris finibus fermentum nibh, a malesuada diam rutrum quis. Donec eu mattis odio. Proin sem turpis, bibendum non arcu vitae, varius faucibus orci. Nullam eleifend odio iaculis magna vulputate aliquam. Interdum et malesuada fames ac ante ipsum primis in faucibus. Nullam aliquam fringilla felis ac condimentum.</p>',
+                'type' => Constants::POST_TYPE_NEWSLETTER,
+                'status' => Constants::STATUS_DRAFT,
+                'published_at' => null,
             ],
         ];
     }
@@ -477,7 +506,7 @@ Sed dictum lorem vel lacinia placerat. Donec maximus feugiat scelerisque.',
                 'email' => 'david.kaliz@mail.com',
                 'review' => 'Incroyable expérience !!',
                 'status' => Constants::REVIEW_VALID,
-                'date' => date('Y-m-d'),
+                'date' => date('Y-m-d', strtotime('-3 days')),
             ],
             [
                 'rate' => 2,
@@ -486,9 +515,88 @@ Sed dictum lorem vel lacinia placerat. Donec maximus feugiat scelerisque.',
                 'review' => 'C\'est pas super !
                 Service indisponible tous les jours...',
                 'status' => Constants::REVIEW_VALID,
-                'date' => date('Y-m-d'),
+                'date' => date('Y-m-d', strtotime('-2 days')),
+            ],
+            [
+                'rate' => 2,
+                'author' => 'Logan',
+                'email' => 'logan.sartelle@mail.com',
+                'review' => 'Bof bof, il y a mieux quand même.',
+                'status' => Constants::REVIEW_VALID,
+                'date' => date('Y-m-d', strtotime('-1 days')),
             ],
         ];
     }
 
+    public static function visitor()
+    {
+        return [
+            [
+                'ip' => '172.18.0.26',
+                'agent' => 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) XXXXX',
+                'uri' => '/',
+                'date' => date('Y-m-d', strtotime('-2 days')),
+            ],
+            [
+                'ip' => '172.18.0.25',
+                'agent' => 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) XXXXX',
+                'uri' => '/',
+                'date' => date('Y-m-d', strtotime('-2 days')),
+            ],
+            [
+                'ip' => '172.18.0.24',
+                'agent' => 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) XXXXX',
+                'uri' => '/',
+                'date' => date('Y-m-d', strtotime('-2 days')),
+            ],
+            [
+                'ip' => '172.18.0.23',
+                'agent' => 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) XXXXX',
+                'uri' => '/',
+                'date' => date('Y-m-d', strtotime('-2 days')),
+            ],
+            [
+                'ip' => '172.18.0.26',
+                'agent' => 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) XXXXX',
+                'uri' => '/',
+                'date' => date('Y-m-d', strtotime('-1 days')),
+            ],
+            [
+                'ip' => '172.18.0.25',
+                'agent' => 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) XXXXX',
+                'uri' => '/',
+                'date' => date('Y-m-d', strtotime('-1 days')),
+            ],
+        ];
+    }
+
+    public static function subscriber()
+    {
+        return [
+            [
+                'email' => 'mahery.rsh@gmail.com',
+                'status' => Constants::STATUS_ACTIVE
+            ],
+            [
+                'email' => 'mahery.rsh@gmail.com',
+                'status' => Constants::STATUS_ACTIVE
+            ],
+            [
+                'email' => 'mahery.rsh@gmail.com',
+                'status' => Constants::STATUS_ACTIVE
+            ],
+            [
+                'email' => 'mahery.rsh@gmail.com',
+                'status' => Constants::STATUS_ACTIVE
+            ],
+            [
+                'email' => 'mahery.rsh@gmail.com',
+                'status' => Constants::STATUS_ACTIVE
+            ],
+            [
+                'email' => 'mahery.rsh@gmail.com',
+                'status' => Constants::STATUS_ACTIVE
+            ],
+        ];
+    }
 }
