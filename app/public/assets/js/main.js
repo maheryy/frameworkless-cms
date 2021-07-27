@@ -151,7 +151,7 @@ function getMenuItemBaseElement(data) {
         (
             data.type === 1
                 ? `<span class="description">Page ${data.page_title} : <input type="text" class="link" name="menu_items[links][]" value="${data.page_link}" readonly></span>`
-                : `<span class="description">${data.icon !== undefined ? '<i class="' + data.icon + ' px-0.25"></i>' : 'Lien personnalisé :'} <input type="text" class="link" name="menu_items[links][]" placeholder="www.example.com" value="${data.page_link ?? ''}" ${data.link_readonly ? 'readonly' : ''}></span>`
+                : `<span class="description">${data.icon !== undefined ? '<i class="' + data.icon + ' px-0.25"></i>' : 'Lien personnalisé :'} <input type="text" class="link" name="menu_items[links][]" placeholder="https://www.example.com" value="${data.page_link ?? ''}" ${data.link_readonly ? 'readonly' : ''}></span>`
         ) +
         '</div>' +
         '</li>'

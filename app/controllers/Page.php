@@ -48,7 +48,6 @@ class Page extends Controller
         $view_data = [
             'users' => $users,
             'current_user_id' => $this->session->getUserId(),
-            'visibility_types' => Constants::getVisibilityTypes(),
             'can_publish' => $this->hasPermission(Constants::PERM_PUBLISH_PAGE),
             'url_form' => UrlBuilder::makeUrl('Page', 'createAction')
         ];
@@ -91,7 +90,6 @@ class Page extends Controller
             $this->repository->pageExtra->create([
                 'post_id' => $page_id,
                 'slug' => $slug,
-                'visibility' => $this->request->post('visibility'),
                 'meta_title' => $this->request->post('meta_title') ?? $this->request->post('title'),
                 'meta_description' => $this->request->post('meta_description'),
                 'meta_indexable' => $this->request->post('display_search_engine') ? 1 : 0,
@@ -127,7 +125,6 @@ class Page extends Controller
         $view_data = [
             'page' => $page,
             'users' => $users,
-            'visibility_types' => Constants::getVisibilityTypes(),
             'url_form' => UrlBuilder::makeUrl('Page', 'pageAction', ['id' => $page['id']]),
             'url_delete' => UrlBuilder::makeUrl('Page', 'deleteAction', ['id' => $page['id']]),
             'can_update' => $this->hasPermission(Constants::PERM_UPDATE_PAGE),
@@ -182,7 +179,6 @@ class Page extends Controller
                 'meta_title' => $this->request->post('meta_title'),
                 'meta_description' => $this->request->post('meta_description'),
                 'meta_indexable' => $this->request->post('display_search_engine') ? 1 : 0,
-                'visibility' => $this->request->post('visibility'),
             ];
 
             Database::beginTransaction();

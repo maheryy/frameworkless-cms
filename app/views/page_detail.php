@@ -38,12 +38,8 @@
                             <label for="author">Auteur</label>
                         </div>
                         <div class="form-field">
-                            <select class="form-control" name="visibility" id="visibility">
-                                <?php foreach ($visibility_types as $key => $value) :?>
-                                    <option value="<?= $key ?>" <?= $key == $page['visibility'] ? 'selected=selected' : '' ?>><?= $value ?></option>
-                                <?php endforeach; ?>
-                            </select>
-                            <label for="visibility">Visibilité</label>
+                            <input type="text" class="form-control" name="slug" id="slug" value="<?= $page['slug'] ?? ''?>">
+                            <label for="slug">Slug</label>
                         </div>
                         <?php if ($page['status'] == \App\Core\Utils\Constants::STATUS_PUBLISHED) :?>
                             <div class="form-field">
@@ -63,10 +59,6 @@
                         <div class="form-field">
                             <textarea class="form-control" name="meta_description" id="meta_description"><?= $page['meta_description'] ?? ''?></textarea>
                             <label for="meta_description">Description</label>
-                        </div>
-                        <div class="form-field">
-                            <input type="text" class="form-control" name="slug" id="slug" value="<?= $page['slug'] ?? ''?>">
-                            <label for="slug">Slug</label>
                         </div>
                         <div class="form-field-inline">
                             <input type="checkbox" class="form-control-check" name="display_search_engine" id="display_search_engine"

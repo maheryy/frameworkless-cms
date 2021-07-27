@@ -362,6 +362,7 @@ class User extends Controller
             'permissions' => $permissions,
             'role_permissions' => $role_permissions,
             'url_form' => UrlBuilder::makeUrl('User', 'roleAction'),
+            'can_create' => $this->hasPermission(Constants::PERM_CREATE_ROLE),
             'can_update' => $this->hasPermission(Constants::PERM_UPDATE_ROLE),
         ];
         $this->renderViewOnly('role_tab_default', $view_data);

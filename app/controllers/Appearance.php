@@ -75,6 +75,7 @@ class Appearance extends Controller
             'display_review_links' => (bool)$this->getValue(Constants::STG_REVIEW_ACTIVE),
             'url_form' => UrlBuilder::makeUrl('Appearance', 'menuAction'),
             'url_delete' => $url_delete ?? null,
+            'can_create' => $this->hasPermission(Constants::PERM_CREATE_MENU),
             'can_update' => $this->hasPermission(Constants::PERM_UPDATE_MENU),
             'can_delete' => $this->hasPermission(Constants::PERM_DELETE_MENU),
         ];

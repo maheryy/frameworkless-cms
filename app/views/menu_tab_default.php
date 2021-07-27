@@ -105,8 +105,13 @@
                     </ul>
                 </div>
                 <div class="form-action px-0 right">
-                    <button class="<?= isset($menu_data) ? 'btn-primary' : 'btn-success' ?> text-base <?= !$can_update ? 'hidden' : '' ?>" data-role="submitPermissions"
-                            data-options=<?= json_encode(['add_data' => ['ref' => $referer]]) ?>><?= isset($menu_data) ? 'Sauvegarder' : 'Ajouter' ?></button>
+                    <?php if($referer == -1) : ?>
+                    <button class="btn-success text-base <?= !$can_create ? 'hidden' : '' ?>" data-role="submitPermissions"
+                            data-options='<?= json_encode(['add_data' => ['ref' => $referer]]) ?>'>Ajouter</button>
+                    <?php else : ?>
+                        <button class="btn-primary text-base <?= !$can_update ? 'hidden' : '' ?>" data-role="submitPermissions"
+                                data-options='<?= json_encode(['add_data' => ['ref' => $referer]]) ?>'>Sauvegarder</button>
+                    <?php endif; ?>
                     <?php if ($can_delete && $url_delete) : ?>
                         <button class="btn-danger text-base" data-url="<?= $url_delete ?>" data-role="actionItem" data-options='<?= json_encode(['confirm' => true]) ?>'>Supprimer</button>
                     <?php endif; ?>
