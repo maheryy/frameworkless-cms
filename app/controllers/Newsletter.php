@@ -4,11 +4,13 @@ namespace App\Controllers;
 
 use App\Core\Controller;
 use App\Core\Database;
+use App\Core\Exceptions\HttpNotFoundException;
 use App\Core\Exceptions\NotFoundException;
 use App\Core\Utils\Constants;
 use App\Core\Utils\Formatter;
 use App\Core\Utils\FormRegistry;
 use App\Core\Utils\Mailer;
+use App\Core\Utils\Request;
 use App\Core\Utils\UrlBuilder;
 use App\Core\Utils\Validator;
 use App\Core\View;
@@ -19,12 +21,17 @@ class Newsletter extends Controller
     public function __construct(array $options = [])
     {
         parent::__construct($options);
+
+        if (!$this->getValue('newsletter_active')) {
+            if(Request::isPost()) $this->sendError('Le service est indisponible, veuillez réessayer plus tard');
+
+            throw new HttpNotFoundException('Page not found');
+        }
     }
 
     # /newsletters
     public function listView()
     {
-
         $view_data = [
             'newsletters' => $this->repository->post->findAllNewsletters(),
             'subscribers' => $this->repository->subscriber->findAll(),

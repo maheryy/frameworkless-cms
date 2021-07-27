@@ -94,6 +94,10 @@ class Constants
     const STG_PUBLIC_SIGNUP = 'public_signup';
     const STG_SITE_LAYOUT = 'site_layout';
     const STG_HERO_DATA = 'hero_data';
+    const STG_REVIEW_ACTIVE = 'review_active';
+    const STG_REVIEW_APPROVAL = 'review_approval';
+    const STG_REVIEW_DISPLAY_MAX = 'review_display_max';
+    const STG_NEWSLETTER_ACTIVE = 'newsletter_active';
 
     # Review statuses
     const REVIEW_PENDING = 0;

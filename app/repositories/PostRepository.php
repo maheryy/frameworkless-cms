@@ -29,7 +29,9 @@ class PostRepository extends BaseRepository
             ->joinInner($user_table, "$this->table.author_id = $user_table.id")
             ->joinInner($details_table, "$this->table.id = $details_table.post_id")
             ->where(Expr::eq("$this->table.type", Constants::POST_TYPE_PAGE))
-            ->where(Expr::neq("$this->table.status", Constants::STATUS_DELETED));
+            ->where(Expr::neq("$this->table.status", Constants::STATUS_DELETED))
+            ->orderDesc('created_at')
+            ->orderAsc('status');
 
         return $this->model->fetchAll($this->queryBuilder);
     }

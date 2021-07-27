@@ -3,7 +3,9 @@
 namespace App\Controllers;
 
 use App\Core\Controller;
+use App\Core\Exceptions\HttpNotFoundException;
 use App\Core\Utils\Constants;
+use App\Core\Utils\Request;
 use App\Core\Utils\UrlBuilder;
 
 class Review extends Controller
@@ -12,6 +14,12 @@ class Review extends Controller
     public function __construct(array $options = [])
     {
         parent::__construct($options);
+
+        if (!$this->getValue('review_active')) {
+            if (Request::isPost()) $this->sendError('Le service est indisponible, veuillez réessayer');
+
+            throw new HttpNotFoundException('Page not found');
+        }
     }
 
     # /reviews
@@ -44,10 +52,18 @@ class Review extends Controller
 
         $status = null;
         switch ($this->request->get('action')) {
-            case 'hold': $status = Constants::REVIEW_PENDING; break;
-            case 'reject': $status = Constants::REVIEW_INVALID; break;
-            case 'approve': $status = Constants::REVIEW_VALID; break;
-            case 'delete': $status = Constants::STATUS_DELETED; break;
+            case 'hold':
+                $status = Constants::REVIEW_PENDING;
+                break;
+            case 'reject':
+                $status = Constants::REVIEW_INVALID;
+                break;
+            case 'approve':
+                $status = Constants::REVIEW_VALID;
+                break;
+            case 'delete':
+                $status = Constants::STATUS_DELETED;
+                break;
         }
 
         $this->repository->review->update((int)$this->request->get('id'), ['status' => $status]);

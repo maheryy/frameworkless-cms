@@ -13,10 +13,6 @@
   display_back_office: True
 
 
-/seed: #TO REMOVE
-  controller: Installer
-  method: loadSeeders
-
 # installer
 /installer:
   controller: Installer
@@ -254,10 +250,17 @@
   require_auth: True
   permission: 17
 
-/settings-page-save:
+/settings-review-save:
   controller: Settings
-  method: settingsPageAction
+  method: settingsReviewAction
   require_auth: True
+  permission: 17
+
+/settings-newsletter-save:
+  controller: Settings
+  method: settingsNewsletterAction
+  require_auth: True
+  permission: 17
 
 
 # Newsletter

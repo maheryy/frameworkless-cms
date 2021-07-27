@@ -20,7 +20,7 @@ class LayoutManager
     }
 
 
-    public function getSidebar()
+    public function getSidebar(array $settings = [])
     {
         return [
             'dashboard' => [
@@ -48,6 +48,7 @@ class LayoutManager
                 'label' => 'Newsletter',
                 'icon' => 'fas fa-newspaper',
                 'route' => UrlBuilder::getUrl('newsletters'),
+                'hidden' => !$settings['newsletter_active'],
                 'sublinks' => [
                     'list_newsletter' => [
                         'label' => 'Liste newsletter',
@@ -64,7 +65,7 @@ class LayoutManager
                 'label' => 'Avis',
                 'icon' => 'fas fa-star',
                 'route' => UrlBuilder::getUrl('reviews'),
-                'hidden' => !$this->hasPermission(Constants::PERM_READ_REVIEW)
+                'hidden' => !$settings['review_active'] || !$this->hasPermission(Constants::PERM_READ_REVIEW)
             ],
             'appearance' => [
                 'label' => 'Apparance',

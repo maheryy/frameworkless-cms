@@ -38,6 +38,7 @@ class Appearance extends Controller
             'default_tab' => $default_menu_id,
             'default_tab_view' => PATH_VIEWS . 'menu_tab_default.php',
             'social_medias' => Constants::getSocialList(),
+            'display_review_links' => (bool) $this->getValue(Constants::STG_REVIEW_ACTIVE),
             'tab_options' => [
                 'url_tab_view' => UrlBuilder::makeUrl('Appearance', 'menuTabView'),
                 'container_id' => 'tab-content'
@@ -70,6 +71,7 @@ class Appearance extends Controller
             'menu_types' => Constants::getMenusTypes(),
             'menu_items' => $menu_items,
             'social_medias' => Constants::getSocialList(),
+            'display_review_links' => (bool) $this->getValue(Constants::STG_REVIEW_ACTIVE),
             'url_form' => UrlBuilder::makeUrl('Appearance', 'menuAction'),
             'url_delete' => $url_delete ?? null,
             'can_update' => $this->hasPermission(Constants::PERM_UPDATE_MENU),
@@ -188,6 +190,7 @@ class Appearance extends Controller
             'hero_data' => json_decode($this->getValue(Constants::STG_HERO_DATA), true),
             'link_menus' => $this->repository->menu->findMenuLinks(),
             'link_socials' => $this->repository->menu->findMenuSocials(),
+            'display_newsletter' => (bool) $this->getValue(Constants::STG_NEWSLETTER_ACTIVE),
             'can_update' => $this->hasPermission(Constants::PERM_UPDATE_CUSTOMIZATION),
         ];
         $this->render('layout_custom', $view_data);

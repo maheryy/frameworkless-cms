@@ -27,6 +27,7 @@ class Error extends Controller
             'error_title' => 'Unknown error',
             'error_message' => $error->getMessage()
         ];
+        http_response_code(400);
         $this->render('error_default', $view_data);
     }
 
@@ -40,6 +41,7 @@ class Error extends Controller
         } else {
             $view_data['error_message'] = $error;
         }
+        http_response_code(404);
         $this->render('error_default', $view_data);
     }
 
@@ -53,11 +55,13 @@ class Error extends Controller
         } else {
             $view_data['error_message'] = $error;
         }
+        http_response_code(403);
         $this->render('error_default', $view_data);
     }
 
     public function displayError404()
     {
+        http_response_code(404);
         $this->render('error_404');
     }
 }

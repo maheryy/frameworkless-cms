@@ -311,6 +311,10 @@ Sed dictum lorem vel lacinia placerat. Donec maximus feugiat scelerisque.',
                     'image' => 'https://images.pexels.com/photos/2598638/pexels-photo-2598638.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=750&w=1260',
                 ])
             ],
+            ['name' => Constants::STG_REVIEW_ACTIVE, 'value' => 1],
+            ['name' => Constants::STG_REVIEW_APPROVAL, 'value' => 1],
+            ['name' => Constants::STG_REVIEW_DISPLAY_MAX, 'value' => 10],
+            ['name' => Constants::STG_NEWSLETTER_ACTIVE, 'value' => 1],
         ];
     }
 

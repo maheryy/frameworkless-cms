@@ -31,16 +31,18 @@
                         <input type="hidden" class="element-data" data-options='<?= json_encode(['type' => 2]) ?>'>
                         <span class="label">Lien personnalisé</span>
                     </li>
-                    <li class="transferable-element">
-                        <input type="hidden" class="element-data"
-                               data-options='<?= json_encode(['type' => 2, 'page_title' => 'Nos avis', 'page_link' => '/reviews', 'link_readonly' => true]) ?>'>
-                        <span class="label">Page avis</span>
-                    </li>
-                    <li class="transferable-element">
-                        <input type="hidden" class="element-data"
-                               data-options='<?= json_encode(['type' => 2, 'page_title' => 'Votre avis', 'page_link' => '/review', 'link_readonly' => true]) ?>'>
-                        <span class="label">Formulaire avis</span>
-                    </li>
+                    <?php if ($display_review_links) : ?>
+                        <li class="transferable-element">
+                            <input type="hidden" class="element-data"
+                                   data-options='<?= json_encode(['type' => 2, 'page_title' => 'Nos avis', 'page_link' => '/reviews', 'link_readonly' => true]) ?>'>
+                            <span class="label">Page avis</span>
+                        </li>
+                        <li class="transferable-element">
+                            <input type="hidden" class="element-data"
+                                   data-options='<?= json_encode(['type' => 2, 'page_title' => 'Votre avis', 'page_link' => '/review', 'link_readonly' => true]) ?>'>
+                            <span class="label">Formulaire avis</span>
+                        </li>
+                    <?php endif; ?>
                 </ul>
             </div>
             <div class="transferable-source source-socials w-full <?= isset($menu_data['menu_type']) && $menu_data['menu_type'] == \App\Core\Utils\Constants::MENU_SOCIALS ? '' : 'hidden' ?>">

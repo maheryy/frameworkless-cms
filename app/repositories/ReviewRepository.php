@@ -18,9 +18,10 @@ class ReviewRepository extends BaseRepository
     {
         $this->queryBuilder
             ->where(Expr::neq('status', Constants::STATUS_DELETED))
+            ->orderDesc('date')
             ->orderAsc('status');
 
-        if($limit) {
+        if ($limit) {
             $this->queryBuilder->limit($limit);
         }
 
@@ -33,7 +34,7 @@ class ReviewRepository extends BaseRepository
             ->where(Expr::eq('status', Constants::REVIEW_VALID))
             ->orderDesc('date');
 
-        if($limit) {
+        if ($limit) {
             $this->queryBuilder->limit($limit);
         }
 
@@ -46,7 +47,7 @@ class ReviewRepository extends BaseRepository
             ->where(Expr::eq('status', Constants::REVIEW_PENDING))
             ->orderDesc('date');
 
-        if($limit) {
+        if ($limit) {
             $this->queryBuilder->limit($limit);
         }
 
