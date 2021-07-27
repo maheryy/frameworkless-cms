@@ -34,11 +34,18 @@
 /login:
   controller: Auth
   method: loginView
-  title: Connexion
 
 /login-send:
   controller: Auth
   method: loginAction
+
+/register:
+  controller: Auth
+  method: registerView
+
+/register-send:
+  controller: Auth
+  method: registerAction
 
 /logout:
   controller: Auth

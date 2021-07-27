@@ -13,18 +13,25 @@
             <input type="email" class="form-control" id="email" name="email" value="<?= $user['email'] ?>">
             <label for="email">Adresse email</label>
         </div>
-        <div class="form-field required">
-            <select class="form-control" id="role" name="role" <?= $hold_confirmation ? 'disabled' : '' ?>>
-                <?php foreach ($roles as $role) : ?>
-                    <option <?= $user['role'] == $role['id'] ? 'selected' : '' ?>
-                            value="<?= $role['id'] ?>"><?= $role['name'] ?></option>
-                <?php endforeach; ?>
-            </select>
-            <label for="role">Role</label>
-        </div>
+        <?php if($is_admin) : ?>
+            <div class="form-field required">
+                <select class="form-control" id="role" name="role" <?= $hold_confirmation ? 'disabled' : '' ?>>
+                    <?php foreach ($roles as $role) : ?>
+                        <option <?= $user['role'] == $role['id'] ? 'selected' : '' ?>
+                                value="<?= $role['id'] ?>"><?= $role['name'] ?></option>
+                    <?php endforeach; ?>
+                </select>
+                <label for="role">Role</label>
+            </div>
+        <?php else: ?>
+            <div class="form-field">
+                <input type="text" class="form-control" value="<?= $role_name ?>" disabled>
+                <label for="role">Role</label>
+            </div>
+        <?php endif; ?>
         <?php if ($is_current_user) : ?>
             <div class="form-field">
-                <button class="btn-secondary" data-role="switchPasswordUpdate">Changer de mot de passe</button>
+                <button type="button" class="btn-secondary" data-role="switchPasswordUpdate">Changer de mot de passe</button>
                 <div id="change-password" class="form-field-inline required hidden">
                     <input type="password" class="form-control" name="password" id="password" disabled>
                     <label for="password">Mot de passe</label>

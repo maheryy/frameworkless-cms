@@ -38,6 +38,9 @@ form.form-default {
 
 .form-info {
   padding: 1em 5px;
+  display: flex;
+  flex-direction: column;
+  text-align: center;
 }
 
 .form-group-inline {

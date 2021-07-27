@@ -3,8 +3,8 @@ DROP TABLE IF EXISTS `{PREFIX10}_role`;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `{PREFIX10}_role`
 (
-    `id`   int                          NOT NULL AUTO_INCREMENT,
-    `name` varchar(60) COLLATE utf8_bin NOT NULL,
+    `id`   int                                             NOT NULL AUTO_INCREMENT,
+    `name` varchar(60) CHARACTER SET utf8 COLLATE utf8_bin NOT NULL,
     PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb3 COLLATE=utf8_bin;
 /*!40101 SET character_set_client = @saved_cs_client */;
@@ -13,16 +13,15 @@ DROP TABLE IF EXISTS `{PREFIX11}_user`;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `{PREFIX11}_user`
 (
-    `id`         int                                             NOT NULL AUTO_INCREMENT,
-    `username`   varchar(45) CHARACTER SET utf8 COLLATE utf8_bin NOT NULL,
-    `password`   varchar(255) COLLATE utf8_bin                            DEFAULT NULL,
-    `email`      varchar(255) COLLATE utf8_bin                   NOT NULL,
-    `role`       int                                                      DEFAULT NULL,
-    `status`     tinyint                                         NOT NULL DEFAULT '1',
-    `created_at` timestamp                                       NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    `updated_at` timestamp                                       NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    `id`         int                                              NOT NULL AUTO_INCREMENT,
+    `username`   varchar(45) CHARACTER SET utf8 COLLATE utf8_bin  NOT NULL,
+    `password`   varchar(255) CHARACTER SET utf8 COLLATE utf8_bin          DEFAULT NULL,
+    `email`      varchar(255) CHARACTER SET utf8 COLLATE utf8_bin NOT NULL,
+    `role`       int                                                       DEFAULT NULL,
+    `status`     tinyint                                          NOT NULL DEFAULT '1',
+    `created_at` timestamp                                        NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    `updated_at` timestamp                                        NOT NULL DEFAULT CURRENT_TIMESTAMP,
     PRIMARY KEY (`id`),
-    UNIQUE KEY `{PREFIX11}_user_username_uindex` (`username`),
     KEY          `{PREFIX11}_user_{PREFIX10}_role_id_fk` (`role`),
     CONSTRAINT `{PREFIX11}_user_{PREFIX10}_role_id_fk` FOREIGN KEY (`role`) REFERENCES `{PREFIX10}_role` (`id`) ON DELETE SET NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb3 COLLATE=utf8_bin;
@@ -96,10 +95,10 @@ CREATE TABLE `{PREFIX16}_page_extra`
 (
     `id`               int NOT NULL AUTO_INCREMENT,
     `post_id`          int                                              DEFAULT NULL,
-    `slug`             varchar(255) COLLATE utf8_bin                    DEFAULT NULL,
+    `slug`             varchar(255) CHARACTER SET utf8 COLLATE utf8_bin DEFAULT NULL,
     `visibility`       tinyint                                          DEFAULT '0',
     `meta_title`       varchar(100) CHARACTER SET utf8 COLLATE utf8_bin DEFAULT NULL,
-    `meta_description` text COLLATE utf8_bin,
+    `meta_description` text CHARACTER SET utf8 COLLATE utf8_bin,
     `meta_indexable`   tinyint                                          DEFAULT NULL,
     PRIMARY KEY (`id`),
     KEY                `{PREFIX16}_page_extra_{PREFIX15}_post_id_fk` (`post_id`),
@@ -123,10 +122,10 @@ DROP TABLE IF EXISTS `{PREFIX18}_menu_item`;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `{PREFIX18}_menu_item`
 (
-    `id`      int                                             NOT NULL AUTO_INCREMENT,
-    `menu_id` int                                             NOT NULL,
+    `id`      int                          NOT NULL AUTO_INCREMENT,
+    `menu_id` int                          NOT NULL,
     `post_id` int                                               DEFAULT NULL,
-    `label`   varchar(20) CHARACTER SET utf8 COLLATE utf8_bin NOT NULL,
+    `label`   varchar(60) COLLATE utf8_bin NOT NULL,
     `icon`    varchar(30) CHARACTER SET utf8 COLLATE utf8_bin   DEFAULT NULL,
     `url`     varchar(2000) CHARACTER SET utf8 COLLATE utf8_bin DEFAULT NULL,
     PRIMARY KEY (`id`),
@@ -156,7 +155,7 @@ CREATE TABLE `{PREFIX20}_visitor`
     `id`    int                                              NOT NULL AUTO_INCREMENT,
     `ip`    varchar(15) CHARACTER SET utf8 COLLATE utf8_bin  NOT NULL,
     `agent` varchar(255) CHARACTER SET utf8 COLLATE utf8_bin NOT NULL,
-    `uri`   varchar(255) COLLATE utf8_bin                    NOT NULL,
+    `uri`   varchar(255) CHARACTER SET utf8 COLLATE utf8_bin NOT NULL,
     `date`  timestamp                                        NOT NULL,
     PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb3 COLLATE=utf8_bin;
@@ -166,11 +165,10 @@ DROP TABLE IF EXISTS `{PREFIX21}_subscriber`;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `{PREFIX21}_subscriber`
 (
-    `id`     int                           NOT NULL AUTO_INCREMENT,
-    `email`  varchar(255) COLLATE utf8_bin NOT NULL,
-    `status` tinyint                       NOT NULL,
-    PRIMARY KEY (`id`),
-    UNIQUE KEY `{PREFIX21}_subscriber_email_uindex` (`email`)
+    `id`     int                                              NOT NULL AUTO_INCREMENT,
+    `email`  varchar(255) CHARACTER SET utf8 COLLATE utf8_bin NOT NULL,
+    `status` tinyint                                          NOT NULL,
+    PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb3 COLLATE=utf8_bin;
 /*!40101 SET character_set_client = @saved_cs_client */;
 DROP TABLE IF EXISTS `{PREFIX22}_review`;
@@ -178,13 +176,13 @@ DROP TABLE IF EXISTS `{PREFIX22}_review`;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `{PREFIX22}_review`
 (
-    `id`     int                                             NOT NULL AUTO_INCREMENT,
-    `rate`   tinyint                                         NOT NULL,
-    `author` varchar(65) CHARACTER SET utf8 COLLATE utf8_bin NOT NULL,
-    `email`  varchar(255) COLLATE utf8_bin                   NOT NULL,
+    `id`     int                                              NOT NULL AUTO_INCREMENT,
+    `rate`   tinyint                                          NOT NULL,
+    `author` varchar(65) CHARACTER SET utf8 COLLATE utf8_bin  NOT NULL,
+    `email`  varchar(255) CHARACTER SET utf8 COLLATE utf8_bin NOT NULL,
     `review` text CHARACTER SET utf8 COLLATE utf8_bin NOT NULL,
-    `status` tinyint                                         NOT NULL,
-    `date`   timestamp                                       NOT NULL,
+    `status` tinyint                                          NOT NULL,
+    `date`   timestamp                                        NOT NULL,
     PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb3 COLLATE=utf8_bin;
 /*!40101 SET character_set_client = @saved_cs_client */;

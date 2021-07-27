@@ -22,11 +22,11 @@
                 </article>
                 <form class="form-default" method="POST" action="<?= $url_form ?>">
                     <div class="form-field required">
-                        <input class="form-control" type="password" id="password" name="password" required>
+                        <input class="form-control" type="password" id="password" name="password">
                         <label for="password">Nouveau mot de passe</label>
                     </div>
                     <div class="form-field required">
-                        <input class="form-control" type="password" id="password_confirm" name="password_confirm" required>
+                        <input class="form-control" type="password" id="password_confirm" name="password_confirm">
                         <label for="password">Confirmation mot de passe</label>
                     </div>
                     <div class="form-field hidden">
