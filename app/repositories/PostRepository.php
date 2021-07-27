@@ -125,7 +125,7 @@ class PostRepository extends BaseRepository
         return $this->model->fetchOne($this->queryBuilder);
     }
 
-    public function findPageByTitleOrSlug(string $title, string $slug, int $ignore_id)
+    public function findPageByTitleOrSlug(string $title, string $slug, ?int $ignore_id)
     {
         $details_table = Formatter::getTableName('page_extra');
         $this->queryBuilder
@@ -163,7 +163,7 @@ class PostRepository extends BaseRepository
         return $this->model->fetchAll($this->queryBuilder);
     }
 
-    public function findNewsletterByTitle(string $title, int $ignore_id)
+    public function findNewsletterByTitle(string $title, ?int $ignore_id)
     {
         $this->queryBuilder
             ->where(Expr::like('title', $title))

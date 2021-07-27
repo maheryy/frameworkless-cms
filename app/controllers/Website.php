@@ -344,7 +344,7 @@ class Website extends Controller
     }
 
 
-    public static function getHero(string $title, string $content, string $bg_image)
+    public static function getHero(?string $title, ?string $content, ?string $bg_image)
     {
         return
             '<section class="hero-header">
@@ -356,7 +356,7 @@ class Website extends Controller
             </section>' . PHP_EOL;
     }
 
-    public static function getContactFooter(string $title, int $size)
+    public static function getContactFooter(?string $title, int $size)
     {
         return
             '<div class="footer-section contact w-' . $size . '/12">
@@ -380,7 +380,7 @@ class Website extends Controller
             </div>' . PHP_EOL;
     }
 
-    public static function getNewsletterFooter(string $title, int $size)
+    public static function getNewsletterFooter(?string $title, int $size)
     {
         return
             '<div class="footer-section newsletter w-' . $size . '/12">
@@ -399,7 +399,7 @@ class Website extends Controller
             </div>' . PHP_EOL;
     }
 
-    public static function getTextFooter(string $title, string $text, int $size)
+    public static function getTextFooter(?string $title, ?string $text, int $size)
     {
         return
             '<div class="footer-section text w-' . $size . '/12">
@@ -410,7 +410,7 @@ class Website extends Controller
             </div>' . PHP_EOL;
     }
 
-    public static function getLinkFooter(string $title, array $data, int $size)
+    public static function getLinkFooter(?string $title, array $data, int $size)
     {
         $items = null;
         foreach ($data as $item) {

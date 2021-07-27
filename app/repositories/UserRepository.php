@@ -49,7 +49,7 @@ class UserRepository extends BaseRepository
     }
 
 
-    public function findByUsernameOrEmail(string $username, string $email, int $ignore_id)
+    public function findByUsernameOrEmail(string $username, string $email, ?int $ignore_id)
     {
         $this->queryBuilder
             ->where(Expr::neq('id', $ignore_id))
