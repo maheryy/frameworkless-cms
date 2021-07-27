@@ -80,11 +80,6 @@
   require_auth: True
   display_back_office: True
 
-/users-save:
-  controller: User
-  method: listAction
-  require_auth: True
-
 /new-user:
   controller: User
   method: createView
@@ -131,11 +126,6 @@
   title: Liste des pages
   require_auth: True
   display_back_office: True
-
-/pages-save:
-  controller: Page
-  method: listAction
-  require_auth: True
 
 /new-page:
   controller: Page

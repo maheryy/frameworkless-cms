@@ -32,6 +32,7 @@ class Newsletter extends Controller
     # /newsletters
     public function listView()
     {
+        $this->setCSRFToken();
         $view_data = [
             'newsletters' => $this->repository->post->findAllNewsletters(),
             'subscribers' => $this->repository->subscriber->findAll(),
@@ -134,6 +135,7 @@ class Newsletter extends Controller
     # /delete-newsletter
     public function deleteAction()
     {
+        $this->validateCSRF();
         if (!$this->request->get('id')) {
             $this->sendError(Constants::ERROR_UNKNOWN);
         }
@@ -147,6 +149,7 @@ class Newsletter extends Controller
     # /send-newsletter
     public function sendNewsletterAction()
     {
+        $this->validateCSRF();
         $newsletter = $this->repository->post->findNewsletter((int)$this->request->post('newsletter'));
         if (!$newsletter) $this->sendError('La newsletter n\'est pas trouvé');
 

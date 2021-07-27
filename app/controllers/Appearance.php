@@ -170,6 +170,7 @@ class Appearance extends Controller
     # /delete-menu
     public function deleteMenuAction()
     {
+        $this->validateCSRF();
         if (!$this->request->get('id')) {
             $this->sendError(Constants::ERROR_UNKNOWN);
         }

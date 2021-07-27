@@ -11,7 +11,7 @@
                         <?php if ($page['status'] != \App\Core\Utils\Constants::STATUS_PUBLISHED && $can_publish) :?>
                             <button class="btn-success" data-role="submitTextEditor" data-options=<?= json_encode(['add_data' => ['action_publish' => 1]]) ?>>Publier</button>
                         <?php endif;?>
-                        <button class="btn-danger <?= !$can_delete ? 'hidden' : '' ?>" data-url="<?= $url_delete ?>" data-role="actionItem">Supprimer</button>
+                        <button class="btn-danger <?= !$can_delete ? 'hidden' : '' ?>" data-url="<?= $url_delete ?>" data-role="actionItem" data-options='<?= json_encode(['confirm' => true]) ?>'>Supprimer</button>
                     </article>
                 </div>
             </div>

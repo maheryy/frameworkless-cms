@@ -31,18 +31,13 @@ class Page extends Controller
             $pages[$key]['status_label'] = $statuses[$page['status']];
         }
 
+        $this->setCSRFToken();
         $view_data = [
             'pages' => $pages,
             'can_delete' => $this->hasPermission(Constants::PERM_DELETE_PAGE),
             'can_read' => $this->hasPermission(Constants::PERM_READ_PAGE),
         ];
         $this->render('page_list', $view_data);
-    }
-
-    # /pages-save
-    public function listAction()
-    {
-
     }
 
     # /new-page
@@ -207,6 +202,7 @@ class Page extends Controller
     # /delete-page
     public function deleteAction()
     {
+        $this->validateCSRF();
         if (!$this->request->get('id')) {
             $this->sendError(Constants::ERROR_UNKNOWN);
         }

@@ -35,18 +35,13 @@ class User extends Controller
             $users[$key]['url_delete'] = UrlBuilder::makeUrl('User', 'deleteAction', ['id' => $user['id']]);
         }
 
+        $this->setCSRFToken();
         $view_data = [
             'users' => $users,
             'can_delete' => $this->hasPermission(Constants::PERM_DELETE_USER),
             'can_read' => $this->hasPermission(Constants::PERM_READ_USER),
         ];
         $this->render('user_list', $view_data);
-    }
-
-    # /users-save
-    public function listAction()
-    {
-
     }
 
     # /new-user
@@ -274,13 +269,24 @@ class User extends Controller
     # /delete-user
     public function deleteAction()
     {
+        $this->validateCSRF();
         if (!$this->request->get('id')) {
             $this->sendError(Constants::ERROR_UNKNOWN);
         }
 
+        # Quick check if this user is the last super admin
+        if ($this->repository->user->find((int)$this->request->get('id'))['role'] == Constants::ROLE_SUPER_ADMIN
+            && $this->repository->user->countSuperAdmin() === 1
+        ) {
+            $this->sendError('Impossible de supprimer l\'administrateur de l\'application');
+        }
+
         $this->repository->user->remove((int)$this->request->get('id'));
+
         $this->sendSuccess('Utilisateur supprimé', [
-            'url_next' => UrlBuilder::makeUrl('User', 'listView'),
+            'url_next' => $this->request->get('id') == $this->session->getUserId()
+                ? UrlBuilder::makeUrl('Auth', 'logoutAction')
+                : UrlBuilder::makeUrl('User', 'listView'),
             'url_next_delay' => Constants::DELAY_SUCCESS_REDIRECTION
         ]);
     }

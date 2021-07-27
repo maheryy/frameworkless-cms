@@ -29,7 +29,7 @@
                 <?php endif; ?>
                 <?php if ($can_delete) : ?>
                     <td>
-                        <a href="<?= $user['url_delete'] ?>" data-role="actionItem">
+                        <a href="<?= $user['url_delete'] ?>" data-role="actionItem" data-options='<?= json_encode(['confirm' => true]) ?>'>
                             <i class="fas fa-trash-alt"></i>
                         </a>
                     </td>

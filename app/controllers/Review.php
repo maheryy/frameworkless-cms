@@ -26,6 +26,7 @@ class Review extends Controller
     public function listView()
     {
         $reviews = $this->repository->review->findAll();
+        $this->setCSRFToken();
         $view_data = [
             'reviews' => $reviews,
             'review_statuses' => Constants::getReviewStatuses(),
@@ -39,6 +40,7 @@ class Review extends Controller
     # /review-action
     public function reviewAction()
     {
+        $this->validateCSRF();
         if (!$this->request->get('id')) {
             $this->sendError(Constants::ERROR_UNKNOWN);
         }

@@ -81,7 +81,7 @@
                     <?php if ($can_delete) : ?>
                         <td>
                             <a href="<?= \App\Core\Utils\UrlBuilder::makeUrl('Newsletter', 'deleteAction', ['id' => $newsletter['id']]) ?>"
-                               data-role="actionItem">
+                               data-role="actionItem" data-options='<?= json_encode(['confirm' => true]) ?>'>
                                 <i class="fas fa-trash-alt"></i>
                             </a>
                         </td>

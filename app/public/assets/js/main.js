@@ -548,8 +548,10 @@ const roleFunctions = {
             e.preventDefault();
             const url = $(this).attr('href') ?? getUrl(this);
             if (!url) return;
-            const options = getOptions(this);
             let additional_data = [];
+            const options = getOptions(this);
+
+            if (options.confirm && !confirm("Êtes-vous sûr de vouloir effectuer cette ation ?")) return;
             if (options && options.add_data) {
                 for (const [k, v] of Object.entries(options.add_data)) {
                     additional_data.push({name: k, value: v});

@@ -60,6 +60,9 @@
                         </button>
                     </div>
                 </form>
+                <?php if ($url_reset) : ?>
+                    <em class="text-sm font-extralight"><a href="<?= $url_reset ?>" class="link-default">Réinitialiser l'application</a></em>
+                <?php endif; ?>
             </article>
             <article id="content-2" class="tab-content <?= $active_tab === 2 ? 'active' : 'hidden' ?>">
                 <form id="form-mail" class="form-default" method="POST" action="<?= $url_form_mail ?>">

@@ -8,7 +8,7 @@
                 <div class="col-12 flex justify-end">
                     <article>
                         <button class="btn-primary <?= !$can_update ? 'hidden' : '' ?>" data-role="submitTextEditor">Enregistrer</button>
-                        <button class="btn-danger <?= !$can_delete ? 'hidden' : '' ?>" data-url="<?= $url_delete ?>" data-role="actionItem">Supprimer</button>
+                        <button class="btn-danger <?= !$can_delete ? 'hidden' : '' ?>" data-url="<?= $url_delete ?>" data-role="actionItem" data-options='<?= json_encode(['confirm' => true]) ?>'>Supprimer</button>
                     </article>
                 </div>
             </div>
