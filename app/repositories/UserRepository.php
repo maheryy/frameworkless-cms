@@ -39,6 +39,7 @@ class UserRepository extends BaseRepository
     public function findByLogin(string $login)
     {
         $this->queryBuilder
+            ->where(Expr::neq('status', Constants::STATUS_DELETED))
             ->where(
                 Expr::like('username', $login),
                 Expr::like('email', $login)
@@ -47,11 +48,6 @@ class UserRepository extends BaseRepository
         return $this->model->fetchOne($this->queryBuilder);
     }
 
-    public function findByEmail(string $email)
-    {
-        $this->queryBuilder->where(Expr::like('email', $email));
-        return $this->model->fetchOne($this->queryBuilder);
-    }
 
     public function findByUsernameOrEmail(string $username, string $email, int $ignore_id)
     {

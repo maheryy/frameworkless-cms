@@ -1,4 +1,4 @@
-#login-content {
+#login-content, #register-content {
   background-color: #f6f7f7;
   width: 100vw;
   height: 100vh;
@@ -7,7 +7,7 @@
     height: 100px;
   }
 
-  .login-container {
+  .login-container, .register-container {
     width: 400px;
     position: relative;
     top: 50vh;

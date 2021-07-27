@@ -1,6 +1,7 @@
 #tabs-container {
   width: 80%;
   margin: auto;
+
   #tab-list {
     display: flex;
     justify-items: flex-start;
@@ -14,8 +15,9 @@
       border-top: 1px solid $card-shadow;
 
       &:first-of-type {
-        border-left : 1px solid $card-shadow;
+        border-left: 1px solid $card-shadow;
       }
+
       .tab-btn {
         appearance: none;
         border: none;
@@ -30,6 +32,7 @@
           height: calc(2.5rem + 7px);
           border: 1px solid $card-shadow;
           border-bottom: none;
+          transform: translateY(1px);
         }
       }
     }

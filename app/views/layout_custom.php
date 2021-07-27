@@ -70,10 +70,12 @@
                             data-options='<?= json_encode(['element' => \App\Core\Utils\Constants::LS_FOOTER_CONTACT]) ?>'>
                         Ajouter contact
                     </button>
-                    <button class="transferable-element btn-secondary py-0.25" type="button"
-                            data-options='<?= json_encode(['element' => \App\Core\Utils\Constants::LS_FOOTER_NEWSLETTER]) ?>'>
-                        Ajouter newsletter
-                    </button>
+                    <?php if ($display_newsletter) : ?>
+                        <button class="transferable-element btn-secondary py-0.25" type="button"
+                                data-options='<?= json_encode(['element' => \App\Core\Utils\Constants::LS_FOOTER_NEWSLETTER]) ?>'>
+                            Ajouter newsletter
+                        </button>
+                    <?php endif; ?>
                 </div>
                 <div id="transferable-target">
                     <ul class="list-elements">

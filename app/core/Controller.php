@@ -45,8 +45,8 @@ abstract class Controller
             $this->router->redirect(UrlBuilder::makeUrl('Installer', 'installerView'));
         }
         # Check permission given in routes.yml
-        if (isset($options['permission']) && !$this->hasPermission((int) $options['permission'])) {
-            if(Request::isPost()) $this->sendError(Constants::ERROR_FORBIDDEN);
+        if (isset($options['permission']) && !$this->hasPermission((int)$options['permission'])) {
+            if (Request::isPost()) $this->sendError(Constants::ERROR_FORBIDDEN);
 
             throw new ForbiddenAccessException(Constants::ERROR_FORBIDDEN);
         }
@@ -184,15 +184,19 @@ abstract class Controller
      */
     protected function setLayoutParams()
     {
-        $layout = new LayoutManager($this->session->get('permissions'));
+        if (!isset($this->settings)) {
+            $this->settings = $this->repository->settings->findAll();
+        }
 
         $this->setParam('current_route', $this->router->getFullUri());
-        $this->setParam('link_user',  UrlBuilder::makeUrl('User', 'userView', ['id' => $this->session->getUserId()]));
+        $this->setParam('link_user', UrlBuilder::makeUrl('User', 'userView', ['id' => $this->session->getUserId()]));
         $this->setParam('link_logout', UrlBuilder::makeUrl('Auth', 'logoutAction'));
         $this->setParam('link_home', UrlBuilder::makeUrl('Home', 'dashboardView'));
         $this->setParam('link_website', '/');
+
+        $layout = new LayoutManager($this->session->get('permissions'));
         $this->setParam('sidebar', $layout->getSidebarPath());
-        $this->setParam('sidebar_list', $layout->getSidebar());
+        $this->setParam('sidebar_list', $layout->getSidebar($this->settings));
         $this->setParam('sidebar_settings', $layout->getSettings());
     }
 

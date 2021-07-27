@@ -4,6 +4,7 @@ namespace App\Controllers;
 
 use App\Core\Controller;
 use App\Core\Database;
+use App\Core\Exceptions\HttpNotFoundException;
 use App\Core\Exceptions\NotFoundException;
 use App\Core\Router;
 use App\Core\Utils\Formatter;
@@ -53,6 +54,7 @@ class Auth extends Controller
         $url_form_params = $redirect ? ['redirect' => Formatter::encodeUrlQuery($redirect)] : [];
         $view_data = [
             'url_form' => UrlBuilder::makeUrl('Auth', 'loginAction', $url_form_params),
+            'url_register' => $this->getValue('public_signup') ? UrlBuilder::makeUrl('Auth', 'registerView') : null,
             'url_forgotten_password' => UrlBuilder::makeUrl('Auth', 'passwordRecoveryView'),
         ];
 
@@ -271,6 +273,104 @@ class Auth extends Controller
         $this->render('account_confirm', $view_data);
     }
 
+    # /register
+    public function registerView()
+    {
+        if (!$this->getValue('public_signup')) {
+            throw new HttpNotFoundException('Page not found');
+        }
+
+        if ($this->session->isLoggedIn()) {
+            $this->router->redirect(UrlBuilder::makeUrl('Home', 'dashboardView'));
+        }
+
+        $view_data = [
+            'url_form' => UrlBuilder::makeUrl('Auth', 'registerAction'),
+        ];
+
+        $this->render('register', $view_data);
+    }
+
+    # /register-send
+    public function registerAction()
+    {
+        if (!$this->getValue('public_signup')) {
+            $this->sendError('Bien tenté');
+        }
+        try {
+            $form_data = [
+                'username' => $this->request->post('username'),
+                'email' => $this->request->post('email'),
+                'password' => $this->request->post('password'),
+                'password_confirm' => $this->request->post('password_confirm'),
+            ];
+
+            # Check for duplicate
+            if ($found = $this->repository->user->findByUsernameOrEmail($form_data['username'], $form_data['email'], 0)) {
+                if ($found['email'] === $form_data['email']) {
+                    $this->sendError('Cette adresse email est déjà pris');
+                } else {
+                    $this->sendError('Ce nom d\'utilisateur est déjà pris');
+                }
+            }
+
+            $validator = new Validator(FormRegistry::getUserRegistration());
+            if (!$validator->validate($form_data)) {
+                $this->sendError('Veuillez vérifier les champs invalides', $validator->getErrors());
+            }
+
+            Database::beginTransaction();
+
+            # Create user
+            $user_id = $this->repository->user->create([
+                'username' => $form_data['username'],
+                'password' => password_hash($form_data['password'], PASSWORD_DEFAULT),
+                'email' => $form_data['email'],
+                'role' => $this->getValue(Constants::STG_ROLE),
+                'status' => Constants::STATUS_INACTIVE,
+            ]);
+
+            # Create token
+            $token_reference = (new Token())->generate(8)->encode();
+            $token = (new Token())->generate();
+
+            # Store the token with expiration
+            $this->repository->validationToken->create([
+                'user_id' => $user_id,
+                'type' => Constants::TOKEN_EMAIL_CONFIRM,
+                'token' => $token->getHash(),
+                'reference' => $token_reference,
+                'created_at' => Formatter::getDateTime(),
+                'expires_at' => Formatter::getModifiedDateTime('+ ' . Constants::EMAIL_CONFIRM_TIMEOUT . ' minutes'),
+            ]);
+
+            # Send confirmation email
+            $mail = Mailer::send([
+                'to' => $form_data['email'],
+                'subject' => 'Confirmation de votre compte',
+                'content' => View::getHtml('email/confirmation_email', [
+                    'email' => $form_data['email'],
+                    'link_confirm' => UrlBuilder::makeAbsoluteUrl('Auth', 'confirmAccountView', [
+                        'ref' => $token_reference->get(),
+                        'token' => $token->getEncoded()
+                    ]),
+                ]),
+            ]);
+
+            if (!$mail['success']) {
+                $this->sendError($mail['message']);
+            }
+
+            Database::commit();
+            $this->sendSuccess('Vous êtes bien inscrit ! Veuillez confirmer votre compte', [
+                'url_next' => UrlBuilder::makeUrl('Auth', 'loginView'),
+                'url_next_delay' => 2
+            ]);
+        } catch (\Exception $e) {
+            Database::rollback();
+            $this->sendError(Constants::ERROR_UNKNOWN);
+        }
+    }
 
     private function createSessionData(array $user_data)
     {

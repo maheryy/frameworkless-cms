@@ -13,10 +13,6 @@
   display_back_office: True
 
 
-/seed: #TO REMOVE
-  controller: Installer
-  method: loadSeeders
-
 # installer
 /installer:
   controller: Installer
@@ -38,11 +34,18 @@
 /login:
   controller: Auth
   method: loginView
-  title: Connexion
 
 /login-send:
   controller: Auth
   method: loginAction
+
+/register:
+  controller: Auth
+  method: registerView
+
+/register-send:
+  controller: Auth
+  method: registerAction
 
 /logout:
   controller: Auth
@@ -160,7 +163,6 @@
   controller: Page
   method: pageAction
   require_auth: True
-  permission: 7
 
 /delete-page:
   controller: Page
@@ -191,10 +193,9 @@
   controller: User
   method: roleAction
   require_auth: True
-  permission: 20
 
 
-# Webpage editor (appearance)
+# Appearance
 /menu:
   controller: Appearance
   method: menuView
@@ -213,7 +214,6 @@
   controller: Appearance
   method: menuAction
   require_auth: True
-  permission: 12
 
 /delete-menu:
   controller: Appearance
@@ -257,10 +257,18 @@
   require_auth: True
   permission: 17
 
-/settings-page-save:
+/settings-review-save:
   controller: Settings
-  method: settingsPageAction
+  method: settingsReviewAction
   require_auth: True
+  permission: 17
+
+/settings-newsletter-save:
+  controller: Settings
+  method: settingsNewsletterAction
+  require_auth: True
+  permission: 17
+
 
 # Newsletter
 /newsletters:
@@ -276,11 +284,13 @@
   title: Newsletter
   require_auth: True
   display_back_office: True
+  permission: 25
 
 /new-newsletter-save:
   controller: Newsletter
   method: createAction
   require_auth: True
+  permission: 25
 
 /newsletter:
   controller: Newsletter
@@ -288,21 +298,25 @@
   title: Newsletter
   require_auth: True
   display_back_office: True
+  permission: 24
 
 /newsletter-save:
   controller: Newsletter
   method: newsletterAction
   require_auth: True
+  permission: 26
 
 /send-newsletter:
   controller: Newsletter
   method: sendNewsletterAction
   require_auth: True
+  permission: 28
 
 /delete-newsletter:
   controller: Newsletter
   method: deleteAction
   require_auth: True
+  permission: 27
 
 /unsubscribe:
   controller: Newsletter
@@ -316,11 +330,8 @@
   title: Les avis
   display_back_office: True
   require_auth: True
+  permission: 21
 
-/delete-review:
-  controller: Review
-  method: deleteAction
-  require_auth: True
 /review-action:
   controller: Review
   method: reviewAction

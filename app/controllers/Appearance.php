@@ -38,6 +38,7 @@ class Appearance extends Controller
             'default_tab' => $default_menu_id,
             'default_tab_view' => PATH_VIEWS . 'menu_tab_default.php',
             'social_medias' => Constants::getSocialList(),
+            'display_review_links' => (bool) $this->getValue(Constants::STG_REVIEW_ACTIVE),
             'tab_options' => [
                 'url_tab_view' => UrlBuilder::makeUrl('Appearance', 'menuTabView'),
                 'container_id' => 'tab-content'
@@ -70,6 +71,7 @@ class Appearance extends Controller
             'menu_types' => Constants::getMenusTypes(),
             'menu_items' => $menu_items,
             'social_medias' => Constants::getSocialList(),
+            'display_review_links' => (bool) $this->getValue(Constants::STG_REVIEW_ACTIVE),
             'url_form' => UrlBuilder::makeUrl('Appearance', 'menuAction'),
             'url_delete' => $url_delete ?? null,
             'can_update' => $this->hasPermission(Constants::PERM_UPDATE_MENU),
@@ -82,11 +84,19 @@ class Appearance extends Controller
     public function menuAction()
     {
         $this->validateCSRF();
-        $menu_id = $this->request->post('ref');
+        $menu_id = (int)$this->request->post('ref');
         $menu_items = $this->request->post('menu_items');
 
+        # Double check permissions
+        if ($menu_id === -1 && !$this->hasPermission(Constants::PERM_CREATE_MENU)
+            || $menu_id !== -1 && !$this->hasPermission(Constants::PERM_UPDATE_MENU)
+        ) {
+            $this->sendError(Constants::ERROR_FORBIDDEN);
+        }
+
+
         if (!$menu_id) {
-            $this->sendError(Constants::ERROR_UNKNOWN, ['menu_id' => $menu_id]);
+            $this->sendError(Constants::ERROR_UNKNOWN);
         }
         if (!$this->request->post('menu_name')) {
             $this->sendError('Veuillez nommer le menu');
@@ -95,7 +105,7 @@ class Appearance extends Controller
             $this->sendError('Veuillez ajouter au moins un élément');
         }
 
-        if ($this->repository->menu->findByTitle($this->request->post('menu_name'), ($menu_id != -1 ? $menu_id : null))) {
+        if ($this->repository->menu->findByTitle($this->request->post('menu_name'), ($menu_id !== -1 ? $menu_id : null))) {
             $this->sendError('Ce nom est déjà pris');
         }
 
@@ -122,7 +132,7 @@ class Appearance extends Controller
             Database::beginTransaction();
 
             # New menu
-            if ($menu_id == -1) {
+            if ($menu_id === -1) {
                 $menu_id = $this->repository->menu->create([
                     'title' => $this->request->post('menu_name'),
                     'type' => !empty($items[0]['icon']) ? Constants::MENU_SOCIALS : Constants::MENU_LINKS,
@@ -180,6 +190,7 @@ class Appearance extends Controller
             'hero_data' => json_decode($this->getValue(Constants::STG_HERO_DATA), true),
             'link_menus' => $this->repository->menu->findMenuLinks(),
             'link_socials' => $this->repository->menu->findMenuSocials(),
+            'display_newsletter' => (bool) $this->getValue(Constants::STG_NEWSLETTER_ACTIVE),
             'can_update' => $this->hasPermission(Constants::PERM_UPDATE_CUSTOMIZATION),
         ];
         $this->render('layout_custom', $view_data);

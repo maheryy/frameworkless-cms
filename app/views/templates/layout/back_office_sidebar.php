@@ -17,6 +17,7 @@
     </p>
     <ul class="sidebar-list">
         <?php foreach ($sidebar_list as $link) : ?>
+            <?php if (!empty($link['hidden'])) continue; ?>
             <li class="sidebar-link <?= !isset($link['sublinks']) && $current_route === $link['route'] ? 'selected' : '' ?>">
                 <a href="<?= $link['route'] ?>">
                     <i class="link-icon <?= $link['icon'] ?>"></i>
@@ -25,7 +26,7 @@
                 <?php if (isset($link['sublinks'])) : ?>
                     <ul class="sidebar-sub-list">
                         <?php foreach ($link['sublinks'] as $sub_link) : ?>
-                            <?php if (!$sub_link['is_visible']) continue; ?>
+                            <?php if (!empty($sub_link['hidden'])) continue; ?>
                             <li <?= $current_route === $sub_link['route']
                                 ? "class='sidebar-link selected' data-role='setActiveLink'"
                                 : "class='sidebar-link'" ?>>
@@ -40,7 +41,7 @@
         <?php endforeach; ?>
     </ul>
     <ul class="sidebar-list bottom">
-        <?php if ($sidebar_settings['is_visible']) : ?>
+        <?php if (!empty($sidebar_settings['hidden'])) : ?>
             <li class="sidebar-link <?= $current_route === $sidebar_settings['route'] ? 'selected' : '' ?>">
                 <a href=" <?= $sidebar_settings['route'] ?>">
                     <i class="link-icon  <?= $sidebar_settings['icon'] ?>"></i>

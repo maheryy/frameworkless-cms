@@ -32,9 +32,12 @@ class Settings extends Controller
                 'port' => SMTP_PORT,
                 'user' => SMTP_USERNAME,
             ],
+            'review_display_options' => [5, 10, 25, 50, 100],
             'url_form_general' => UrlBuilder::makeUrl('Settings', 'settingsGeneralAction'),
             'url_form_mail' => UrlBuilder::makeUrl('Settings', 'settingsMailAction'),
-            'url_form_page' => UrlBuilder::makeUrl('Settings', 'settingsPageAction'),
+            'url_form_review' => UrlBuilder::makeUrl('Settings', 'settingsReviewAction'),
+            'url_form_newsletter' => UrlBuilder::makeUrl('Settings', 'settingsNewsletterAction'),
+//            'url_form_page' => UrlBuilder::makeUrl('Settings', 'settingsPageAction'),
             'can_update' => $this->hasPermission(Constants::PERM_UPDATE_SETTINGS),
         ];
         $this->render('settings', $view_data);
@@ -54,7 +57,9 @@ class Settings extends Controller
             Database::beginTransaction();
             $this->repository->settings->updateSettings($form_data);
             Database::commit();
-            $this->sendSuccess(Constants::SUCCESS_SAVED);
+            $this->sendSuccess(Constants::SUCCESS_SAVED, [
+                'url_next' => UrlBuilder::makeUrl('Settings', 'settingsView')
+            ]);
         } catch (\Exception $e) {
             Database::rollback();
             $this->sendError(Constants::ERROR_UNKNOWN, [$e->getMessage()]);
@@ -97,27 +102,55 @@ class Settings extends Controller
                 'smtp_user' => $form_data['smtp_user'],
                 'smtp_password' => $form_data['smtp_password'],
             ]);
-            $this->sendSuccess(Constants::SUCCESS_SAVED);
+            $this->sendSuccess(Constants::SUCCESS_SAVED, [
+                'url_next' => UrlBuilder::makeUrl('Settings', 'settingsView')
+            ]);
         } catch (\Exception $e) {
             $this->sendError(Constants::ERROR_UNKNOWN, [$e->getMessage()]);
         }
     }
 
-    /*
-    # /settings-page-save
-    public function settingsPageAction()
+    # /settings-review-save
+    public function settingsReviewAction()
     {
         $this->validateCSRF();
         try {
             Database::beginTransaction();
+            $this->repository->settings->updateSettings([
+                Constants::STG_REVIEW_ACTIVE => (int)$this->request->post(Constants::STG_REVIEW_ACTIVE),
+                Constants::STG_REVIEW_DISPLAY_MAX => (int)$this->request->post(Constants::STG_REVIEW_DISPLAY_MAX),
+                Constants::STG_REVIEW_APPROVAL => (int)$this->request->post(Constants::STG_REVIEW_APPROVAL)
+            ]);
 
-
-            $this->sendSuccess('Informations sauvegardés');
             Database::commit();
+            $this->sendSuccess(Constants::SUCCESS_SAVED, [
+                'url_next' => UrlBuilder::makeUrl('Settings', 'settingsView')
+            ]);
         } catch (\Exception $e) {
             Database::rollback();
             $this->sendError('Une erreur est survenue', [$e->getMessage()]);
         }
     }
-    */
+
+
+    # /settings-newsletter-save
+    public function settingsNewsletterAction()
+    {
+        $this->validateCSRF();
+        try {
+            Database::beginTransaction();
+            $this->repository->settings->updateSettings([
+                Constants::STG_NEWSLETTER_ACTIVE => (int)$this->request->post(Constants::STG_NEWSLETTER_ACTIVE),
+            ]);
+            Database::commit();
+
+            $this->sendSuccess(Constants::SUCCESS_SAVED, [
+                'url_next' => UrlBuilder::makeUrl('Settings', 'settingsView')
+            ]);
+        } catch (\Exception $e) {
+            Database::rollback();
+            $this->sendError('Une erreur est survenue', [$e->getMessage()]);
+        }
+    }
+
 }

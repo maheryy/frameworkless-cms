@@ -15,7 +15,12 @@
                     <label for="password">Mot de passe</label>
                 </div>
                 <div class="form-info center">
-                    <label class="link-forgotten-password">
+                    <?php if ($url_register) : ?>
+                        <label class="link-forgotten-password">
+                            <a href="<?= $url_register ?>">Pas encore inscrit ?</a>
+                        </label>
+                    <?php endif; ?>
+                    <label class="link-forgotten-password py-0.25">
                         <a href="<?= $url_forgotten_password ?>">Mot de passe oublié ?</a>
                     </label>
                 </div>

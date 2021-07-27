@@ -270,7 +270,8 @@ const roleFunctions = {
         $(this).DataTable({
             columnDefs: [
                 {className: 'text-center', targets: '_all'}
-            ]
+            ],
+            aaSorting: []
         });
     },
     initTinyMCE: function () {

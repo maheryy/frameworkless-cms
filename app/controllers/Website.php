@@ -140,6 +140,7 @@ class Website extends Controller
 
     private function getReviewsPage()
     {
+        if (!$this->getValue(Constants::STG_REVIEW_ACTIVE)) $this->handle404NotFound();
         return [
             'view' => 'website_review_list',
             'context' => [
@@ -147,13 +148,14 @@ class Website extends Controller
                 'meta_title' => 'Les avis de nos clients',
                 'meta_description' => 'Les avis de nos clients',
                 'is_indexable' => false,
-                'reviews' => $this->repository->review->findAllApproved()
+                'reviews' => $this->repository->review->findAllApproved((int) $this->getValue(Constants::STG_REVIEW_DISPLAY_MAX))
             ]
         ];
     }
 
     private function getReviewFormPage()
     {
+        if (!$this->getValue(Constants::STG_REVIEW_ACTIVE)) $this->handle404NotFound();
         return [
             'view' => 'website_review_form',
             'context' => [
@@ -206,6 +208,9 @@ class Website extends Controller
 
     private function handleNewsletter(?string $email)
     {
+        if (!$this->getValue('newsletter_active')) {
+            return ['success' => false, 'message' => 'Le service est indisponible, veuillez réessayer plus tard'];
+        }
         if (!Validator::isValidEmail($email)) {
             return ['success' => false, 'message' => Validator::ERROR_EMAIL_DEFAULT];
         }
@@ -264,8 +269,8 @@ class Website extends Controller
                 'author' => $name,
                 'email' => $email,
                 'review' => $review,
-                'status' => Constants::REVIEW_VALID,
-                'date' => date('Y-m-d'),
+                'status' => $this->getValue(Constants::STG_REVIEW_APPROVAL) ? Constants::REVIEW_VALID : Constants::REVIEW_PENDING,
+                'date' => date('Y-m-d H:i:s'),
             ]);
 
 

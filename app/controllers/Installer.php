@@ -106,8 +106,6 @@ class Installer extends Controller
                 $this->sendError('Veuillez vérifier les champs invalides', $validator->getErrors());
             }
 
-            $form_data['password'] = password_hash($form_data['password'], PASSWORD_DEFAULT);
-
             Database::beginTransaction();
 
             # Create tables
@@ -116,6 +114,7 @@ class Installer extends Controller
 
             # Load seeders
             $this->loadSeeders();
+
             # Set main settings
             $this->repository->settings->updateSettings([
                 Constants::STG_TITLE => $form_data['website_title'],
@@ -124,13 +123,23 @@ class Installer extends Controller
             ]);
 
             # Create user
-            $user_id = $this->repository->user->create([
+            $user = [
                 'username' => $form_data['username'],
+                'password' => password_hash($form_data['password'], PASSWORD_DEFAULT),
                 'email' => $form_data['email'],
-                'password' => $form_data['password'],
+                'role' => Constants::ROLE_SUPER_ADMIN,
                 'status' => Constants::STATUS_INACTIVE,
-                'role' => Constants::ROLE_SUPER_ADMIN
-            ]);
+                'created_at' => date('Y-m-d H:i:s'),
+                'updated_at' => date('Y-m-d H:i:s'),
+            ];
+
+            # Check if a user already exists (due to seeders constraint)
+            if ($this->repository->user->find(1)) {
+                $this->repository->user->update(1, $user);
+                $user_id = 1;
+            } else {
+                $user_id = $this->repository->user->create($user);
+            }
 
             # Create token
             $token_reference = (new Token())->generate(8)->encode();

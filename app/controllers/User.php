@@ -73,7 +73,11 @@ class User extends Controller
             }
             # Check for duplicate
             if ($found = $this->repository->user->findByUsernameOrEmail($form_data['username'], $form_data['email'], 0)) {
-                $this->sendError(($found['email'] === $form_data['email'] ? 'l\'adresse email ' : 'le nom d\'utilisateur') . ' est déjà pris');
+                if ($found['email'] === $form_data['email']) {
+                    $this->sendError('Cette adresse email est déjà pris');
+                } else {
+                    $this->sendError('Ce nom d\'utilisateur est déjà pris');
+                }
             }
 
             Database::beginTransaction();
@@ -206,6 +210,8 @@ class User extends Controller
             'user' => $user,
             'hold_confirmation' => $user['status'] == Constants::STATUS_INACTIVE,
             'is_current_user' => $this->session->getUserId() == $user['id'],
+            'is_admin' => $this->session->isAdmin() || $this->session->isSuperAdmin(),
+            'role_name' => !$this->session->isAdmin() && !$this->session->isSuperAdmin() ? $this->repository->role->find($this->session->getRole())['name'] : null,
             'url_form' => $user['status'] == Constants::STATUS_INACTIVE ? UrlBuilder::makeUrl('User', 'reconfirmationAction') : UrlBuilder::makeUrl('User', 'userAction'),
             'url_delete' => UrlBuilder::makeUrl('User', 'deleteAction', ['id' => $user['id']]),
             'can_update' => $is_current_user || $this->hasPermission(Constants::PERM_UPDATE_USER),
@@ -229,7 +235,11 @@ class User extends Controller
 
         # Check for duplicate
         if ($found = $this->repository->user->findByUsernameOrEmail($form_data['username'], $form_data['email'], (int)$form_data['user_id'])) {
-            $this->sendError(($found['email'] === $form_data['email'] ? 'l\'adresse email ' : 'le nom d\'utilisateur') . ' est déjà pris');
+            if ($found['email'] === $form_data['email']) {
+                $this->sendError('Cette adresse email est déjà pris');
+            } else {
+                $this->sendError('Ce nom d\'utilisateur est déjà pris');
+            }
         }
 
         try {
@@ -241,11 +251,13 @@ class User extends Controller
             $update_fields = [
                 'username' => $form_data['username'],
                 'email' => $form_data['email'],
-                'role' => $form_data['role'],
                 'updated_at' => Formatter::getDateTime()
             ];
             if (isset($form_data['password'])) {
                 $update_fields['password'] = password_hash($form_data['password'], PASSWORD_DEFAULT);
+            }
+            if (isset($form_data['role']) && ($this->session->isAdmin() || $this->session->isSuperAdmin())) {
+                $update_fields['role'] = $form_data['role'];
             }
 
             $this->repository->user->update($form_data['user_id'], $update_fields);
@@ -353,11 +365,18 @@ class User extends Controller
     public function roleAction()
     {
         $this->validateCSRF();
-        $role_id = $this->request->post('ref');
+        $role_id = (int)$this->request->post('ref');
         $permissions = $this->request->post('permissions');
 
+        # Double check permissions
+        if ($role_id === -1 && !$this->hasPermission(Constants::PERM_CREATE_ROLE)
+            || $role_id !== -1 && !$this->hasPermission(Constants::PERM_UPDATE_ROLE)
+        ) {
+            $this->sendError(Constants::ERROR_FORBIDDEN);
+        }
+
         if (!$role_id) {
-            $this->sendError(Constants::ERROR_UNKNOWN, ['role_id' => $role_id]);
+            $this->sendError(Constants::ERROR_UNKNOWN);
         }
         if (!$this->request->post('role_name')) {
             $this->sendError('Veuillez nommer le rôle');
@@ -366,14 +385,14 @@ class User extends Controller
             $this->sendError('Veuillez ajouter au moins une permission');
         }
 
-        if ($this->repository->role->findByName($this->request->post('role_name'), ($role_id != -1 ? $role_id : null))) {
+        if ($this->repository->role->findByName($this->request->post('role_name'), ($role_id !== -1 ? $role_id : null))) {
             $this->sendError('Ce nom est déjà pris');
         }
 
         try {
             Database::beginTransaction();
             # New role
-            if ($role_id == -1) {
+            if ($role_id === -1) {
                 $role_id = $this->repository->role->create(['name' => $this->request->post('role_name')]);
                 $success_msg = 'Un nouveau rôle a été ajouté';
             } else {

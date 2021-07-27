@@ -64,8 +64,14 @@ class Constants
     const PERM_READ_ROLE = 18;
     const PERM_CREATE_ROLE = 19;
     const PERM_UPDATE_ROLE = 20;
-    const PERM_MANAGE_REVIEW = 20;
-    const PERM_DELETE_REVIEW = 21;
+    const PERM_READ_REVIEW = 21;
+    const PERM_MANAGE_REVIEW = 22;
+    const PERM_DELETE_REVIEW = 23;
+    const PERM_READ_NEWSLETTER = 24;
+    const PERM_CREATE_NEWSLETTER = 25;
+    const PERM_UPDATE_NEWSLETTER = 26;
+    const PERM_DELETE_NEWSLETTER = 27;
+    const PERM_SEND_NEWSLETTER = 28;
 
     # Menu types
     const MENU_LINKS = 1;
@@ -88,6 +94,10 @@ class Constants
     const STG_PUBLIC_SIGNUP = 'public_signup';
     const STG_SITE_LAYOUT = 'site_layout';
     const STG_HERO_DATA = 'hero_data';
+    const STG_REVIEW_ACTIVE = 'review_active';
+    const STG_REVIEW_APPROVAL = 'review_approval';
+    const STG_REVIEW_DISPLAY_MAX = 'review_display_max';
+    const STG_NEWSLETTER_ACTIVE = 'newsletter_active';
 
     # Review statuses
     const REVIEW_PENDING = 0;
