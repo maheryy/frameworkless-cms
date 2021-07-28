@@ -212,8 +212,8 @@ class Installer extends Controller
                 $this->sendSuccess('Connexion réussie !');
             }
 
-            $data['app_debug'] = 1;
-            $data['app_dev'] = 1;
+            $data['app_debug'] = 0;
+            $data['app_dev'] = 0;
 
             self::generateConfig($data);
             $this->sendSuccess('La base de donnéees est prête', [

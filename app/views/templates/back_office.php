@@ -7,6 +7,7 @@
     <link rel="stylesheet" href="/assets/vendor/fontawesome/css/fontawesome-all.min.css">
     <link rel="stylesheet" href="/assets/vendor/datatables/datatables.min.css">
     <link rel="stylesheet" href="/assets/css/main.min.css">
+    <link rel="icon" href="/assets/img/icon.png">
     <script src="/assets/vendor/jquery/jquery-3.5.1.min.js"></script>
     <script src="/assets/vendor/datatables/datatables.min.js"></script>
     <script src="/assets/vendor/tinymce/tinymce.min.js"></script>
