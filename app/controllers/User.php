@@ -11,7 +11,6 @@ use App\Core\Utils\Mailer;
 use App\Core\Utils\Constants;
 use App\Core\Utils\FormRegistry;
 use App\Core\Utils\Request;
-use App\Core\Utils\Session;
 use App\Core\Utils\Token;
 use App\Core\Utils\UrlBuilder;
 use App\Core\Utils\Validator;

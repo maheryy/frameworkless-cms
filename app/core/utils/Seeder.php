@@ -31,9 +31,7 @@ class Seeder
             'pageExtra',
             'menu',
             'menuItem',
-            'review',
-            'visitor',
-            'subscriber',
+            'review'
         ];
     }
 
@@ -329,13 +327,6 @@ Sed dictum lorem vel lacinia placerat. Donec maximus feugiat scelerisque.',
                 'password' => null,
                 'role' => Constants::ROLE_SUPER_ADMIN,
                 'status' => Constants::STATUS_ACTIVE,
-            ],
-            [
-                'username' => 'tester',
-                'email' => 'tester@esgix.com',
-                'password' => password_hash('tester123', PASSWORD_DEFAULT),
-                'role' => Constants::ROLE_ADMIN,
-                'status' => Constants::STATUS_ACTIVE,
             ]
         ];
     }
@@ -524,78 +515,6 @@ Sed dictum lorem vel lacinia placerat. Donec maximus feugiat scelerisque.',
                 'review' => 'Bof bof, il y a mieux quand même.',
                 'status' => Constants::REVIEW_VALID,
                 'date' => date('Y-m-d', strtotime('-1 days')),
-            ],
-        ];
-    }
-
-    public static function visitor()
-    {
-        return [
-            [
-                'ip' => '172.18.0.26',
-                'agent' => 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) XXXXX',
-                'uri' => '/',
-                'date' => date('Y-m-d', strtotime('-2 days')),
-            ],
-            [
-                'ip' => '172.18.0.25',
-                'agent' => 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) XXXXX',
-                'uri' => '/',
-                'date' => date('Y-m-d', strtotime('-2 days')),
-            ],
-            [
-                'ip' => '172.18.0.24',
-                'agent' => 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) XXXXX',
-                'uri' => '/',
-                'date' => date('Y-m-d', strtotime('-1 days')),
-            ],
-            [
-                'ip' => '172.18.0.23',
-                'agent' => 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) XXXXX',
-                'uri' => '/',
-                'date' => date('Y-m-d', strtotime('-1 days')),
-            ],
-            [
-                'ip' => '172.18.0.26',
-                'agent' => 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) XXXXX',
-                'uri' => '/',
-                'date' => date('Y-m-d', strtotime('-1 days')),
-            ],
-            [
-                'ip' => '172.18.0.25',
-                'agent' => 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) XXXXX',
-                'uri' => '/',
-                'date' => date('Y-m-d', strtotime('-1 days')),
-            ],
-        ];
-    }
-
-    public static function subscriber()
-    {
-        return [
-            [
-                'email' => 'mahery.rsh@gmail.com',
-                'status' => Constants::STATUS_ACTIVE
-            ],
-            [
-                'email' => 'mahery.rsh@gmail.com',
-                'status' => Constants::STATUS_ACTIVE
-            ],
-            [
-                'email' => 'mahery.rsh@gmail.com',
-                'status' => Constants::STATUS_ACTIVE
-            ],
-            [
-                'email' => 'mahery.rsh@gmail.com',
-                'status' => Constants::STATUS_ACTIVE
-            ],
-            [
-                'email' => 'mahery.rsh@gmail.com',
-                'status' => Constants::STATUS_ACTIVE
-            ],
-            [
-                'email' => 'mahery.rsh@gmail.com',
-                'status' => Constants::STATUS_ACTIVE
             ],
         ];
     }

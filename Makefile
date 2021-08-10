@@ -30,3 +30,4 @@ clear:
 env:
 	@cp .env.dist .env
 	@echo .env created !
+	@chmod o+w app/config
