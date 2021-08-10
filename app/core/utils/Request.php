@@ -40,17 +40,6 @@ class Request
     }
 
     /**
-     * Return the defined $_REQUEST[$key] array variable, null otherwise
-     *
-     * @param string $key
-     * @return array|null
-     */
-    public function requestArray(string $key)
-    {
-        return isset($_REQUEST[$key]) && is_array($_REQUEST[$key]) ? $_REQUEST[$key] : null;
-    }
-
-    /**
      * Return an url variable, null otherwise
      *
      * @param string $key
@@ -72,17 +61,6 @@ class Request
         return $this->dataGet[$key] ?? null;
     }
 
-    /**
-     * Return the defined $_GET[$key] variable, null otherwise
-     *
-     * @param string $key
-     * @return array|null
-
-    public function getArray(string $key)
-    {
-        return isset($_GET[$key]) && is_array($_GET[$key]) ? $_GET[$key] : null;
-    }
-     */
 
     /**
      * Return the defined $_POST[$key] variable, null otherwise
@@ -95,17 +73,6 @@ class Request
         return $this->dataPost[$key] ?? null;
     }
 
-    /**
-     * Return the defined $_POST[$key] array variable, null otherwise
-     *
-     * @param string $key
-     * @return array|null
-
-    public function postArray(string $key)
-    {
-        return isset($_POST[$key]) && is_array($_POST[$key]) ? $_POST[$key] : null;
-    }
-     */
 
     /**
      * Return the defined $_DELETE[$key] variable, null otherwise
@@ -235,8 +202,8 @@ class Request
      * Return a COOKIE|POST|GET|REQUEST Variable
      *
      * @param string $key
-     * @param int $source $_COOKIE|$_POST|$_GET|$_REQUEST
-     * @return string|int|array|null
+     * @param array $source $_COOKIE|$_POST|$_GET|$_REQUEST
+     * @return string|null
      */
     private function getVariable(string $key, array $source)
     {
@@ -248,7 +215,7 @@ class Request
     /**
      * Return all COOKIE|POST|GET|REQUEST Variables
      *
-     * @param int $source $_COOKIE|$_POST|$_GET|$_REQUEST
+     * @param array $source $_COOKIE|$_POST|$_GET|$_REQUEST
      * @return array
      */
     private function all(array $source)
@@ -268,30 +235,4 @@ class Request
     {
         return $_SERVER['REQUEST_METHOD'] === 'POST';
     }
-
-    /*
-     * Anonymous class to isolate post variables using request->post->variable_name
-     *
-    private function postClass() {
-        return new class {
-            public function __get($name)
-            {
-                if (!isset($_POST[$name])) return null;
-
-                return is_string($_POST[$name])
-                    ? Formatter::sanitizeInput($_POST[$name])
-                    : $_POST[$name];
-            }
-
-            public function all() {
-                $res = [];
-                foreach ($_POST as $key => $value) {
-                    $res[$key] = is_string($value) ? Formatter::sanitizeInput($value) : $value;
-                }
-
-                return $res;
-            }
-        };
-    }
-    */
 }

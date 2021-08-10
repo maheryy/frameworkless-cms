@@ -4,7 +4,6 @@ namespace App\Controllers;
 
 use App\Core\Controller;
 use App\Core\Database;
-use App\Core\Exceptions\HttpNotFoundException;
 use App\Core\Router;
 use App\Core\Utils\Constants;
 use App\Core\Utils\Formatter;
